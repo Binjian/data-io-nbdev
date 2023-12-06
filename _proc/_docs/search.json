@@ -11,7 +11,7 @@
     "href": "index.html",
     "title": "data_io_nbdev",
     "section": "",
-    "text": "This file will become your README and also the index of your documentation."
+    "text": "The data_io_nbdev package is a python package that provides io interface for the time sequence processing.\nIt consists of the following subpackages:"
   },
   {
     "objectID": "index.html#install",
