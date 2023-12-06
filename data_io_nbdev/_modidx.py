@@ -5,4 +5,7 @@ d = { 'settings': { 'branch': 'main',
                 'doc_host': 'https://Binjian.github.io',
                 'git_url': 'https://github.com/Binjian/data-io-nbdev',
                 'lib_path': 'data_io_nbdev'},
-  'syms': {'data_io_nbdev.core': {'data_io_nbdev.core.say_hello': ('core.html#say_hello', 'data_io_nbdev/core.py')}}}
+  'syms': { 'data_io_nbdev.core': { 'data_io_nbdev.core.HelloSayer': ('core.html#hellosayer', 'data_io_nbdev/core.py'),
+                                    'data_io_nbdev.core.HelloSayer.__init__': ('core.html#hellosayer.__init__', 'data_io_nbdev/core.py'),
+                                    'data_io_nbdev.core.HelloSayer.say': ('core.html#hellosayer.say', 'data_io_nbdev/core.py'),
+                                    'data_io_nbdev.core.say_hello': ('core.html#say_hello', 'data_io_nbdev/core.py')}}}

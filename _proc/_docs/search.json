@@ -33,5 +33,19 @@
     "title": "dataflow",
     "section": "show a graph with mermaid",
     "text": "show a graph with mermaid\n\n\n\n\nflowchart LR\n  A[Hard edge] --&gt; B(Round edge)\n  B --&gt; C{Decision}\n  C --&gt; D[Result one]\n  C --&gt; E[Result two]\n\n\n\n\n\n\n\n\n\n\n\n\nG\n\n  \n\nrun\n\n run   \n\nintr\n\n intr   \n\nrun–intr\n\n   \n\nkernel\n\n kernel   \n\nrun–kernel\n\n   \n\nrunbl\n\n runbl   \n\nintr–runbl\n\n   \n\nrunbl–run\n\n   \n\nzombie\n\n zombie   \n\nkernel–zombie\n\n   \n\nsleep\n\n sleep   \n\nkernel–sleep\n\n   \n\nrunmem\n\n runmem   \n\nkernel–runmem\n\n   \n\nsleep–runmem\n\n   \n\nswap\n\n swap   \n\nsleep–swap\n\n   \n\nrunswap\n\n runswap   \n\nswap–runswap\n\n   \n\nrunswap–runmem\n\n   \n\nnew\n\n new   \n\nrunswap–new\n\n   \n\nnew–runmem\n\n  \n\n\n\n\n\n\n\n\n\nsequenceDiagram\n  participant Alice\n  participant Bob\n  Alice-&gt;&gt;John: Hello John, how are you?\n  loop Healthcheck\n    John-&gt;&gt;John: Fight against hypochondria\n  end\n  Note right of John: Rational thoughts &lt;br/&gt;prevail!\n  John--&gt;&gt;Alice: Great!\n  John-&gt;&gt;Bob: How about you?\n  Bob--&gt;&gt;John: Jolly good!"
+  },
+  {
+    "objectID": "core.html#add-a-class",
+    "href": "core.html#add-a-class",
+    "title": "dataflow",
+    "section": "add a class",
+    "text": "add a class\n\n\nHelloSayer\n\n HelloSayer (to)\n\nSay hello to to using say_hello\n\n\n\nHelloSayer.say\n\n HelloSayer.say ()\n\n\no = HelloSayer(\"Alexis\")\no.say()\n\n'Hello Alexis!'"
+  },
+  {
+    "objectID": "core.html#add-math",
+    "href": "core.html#add-math",
+    "title": "dataflow",
+    "section": "add math",
+    "text": "add math\n\\[\\sum_{i=1}^{k+1}i\\]"
   }
 ]
