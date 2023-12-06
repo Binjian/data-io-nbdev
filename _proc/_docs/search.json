@@ -1,0 +1,37 @@
+[
+  {
+    "objectID": "core.html",
+    "href": "core.html",
+    "title": "dataflow",
+    "section": "",
+    "text": "say_hello\n\n say_hello (to:str)\n\nSay hello to somebody\n\nassert say_hello(\"Jeremy\")==\"Hello Jeremy!\"\n\n\nfrom fastcore.test import *\n\n\ntest_eq(say_hello(\"Jeremy\"), \"Hello Jeremy!\")\n\n\nfrom IPython.display import display, SVG\n\n\ndisplay(SVG('&lt;svg height=\"100\" xmlns=\"http://www.w3.org/2000/svg\"&gt;&lt;circle cx=\"50\" cy=\"50\" r=\"40\"/&gt;&lt;/svg&gt; '))"
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "data_io_nbdev",
+    "section": "",
+    "text": "This file will become your README and also the index of your documentation."
+  },
+  {
+    "objectID": "index.html#install",
+    "href": "index.html#install",
+    "title": "data_io_nbdev",
+    "section": "Install",
+    "text": "Install\npip install data_io_nbdev"
+  },
+  {
+    "objectID": "index.html#how-to-use",
+    "href": "index.html#how-to-use",
+    "title": "data_io_nbdev",
+    "section": "How to use",
+    "text": "How to use\nFill me in please! Don’t forget code examples:\n\n1+1\n\n2"
+  },
+  {
+    "objectID": "core.html#show-a-graph-with-mermaid",
+    "href": "core.html#show-a-graph-with-mermaid",
+    "title": "dataflow",
+    "section": "show a graph with mermaid",
+    "text": "show a graph with mermaid\n\n\n\n\nflowchart LR\n  A[Hard edge] --&gt; B(Round edge)\n  B --&gt; C{Decision}\n  C --&gt; D[Result one]\n  C --&gt; E[Result two]\n\n\n\n\n\n\n\n\n\n\n\n\nG\n\n  \n\nrun\n\n run   \n\nintr\n\n intr   \n\nrun–intr\n\n   \n\nkernel\n\n kernel   \n\nrun–kernel\n\n   \n\nrunbl\n\n runbl   \n\nintr–runbl\n\n   \n\nrunbl–run\n\n   \n\nzombie\n\n zombie   \n\nkernel–zombie\n\n   \n\nsleep\n\n sleep   \n\nkernel–sleep\n\n   \n\nrunmem\n\n runmem   \n\nkernel–runmem\n\n   \n\nsleep–runmem\n\n   \n\nswap\n\n swap   \n\nsleep–swap\n\n   \n\nrunswap\n\n runswap   \n\nswap–runswap\n\n   \n\nrunswap–runmem\n\n   \n\nnew\n\n new   \n\nrunswap–new\n\n   \n\nnew–runmem\n\n  \n\n\n\n\n\n\n\n\n\nsequenceDiagram\n  participant Alice\n  participant Bob\n  Alice-&gt;&gt;John: Hello John, how are you?\n  loop Healthcheck\n    John-&gt;&gt;John: Fight against hypochondria\n  end\n  Note right of John: Rational thoughts &lt;br/&gt;prevail!\n  John--&gt;&gt;Alice: Great!\n  John-&gt;&gt;Bob: How about you?\n  Bob--&gt;&gt;John: Jolly good!"
+  }
+]

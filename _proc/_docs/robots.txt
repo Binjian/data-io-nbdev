@@ -1,1 +1,1 @@
-Sitemap: https://Binjian.github.io/data_io_nbdev/sitemap.xml
+Sitemap: https://Binjian.github.io/data-io-nbdev/sitemap.xml
