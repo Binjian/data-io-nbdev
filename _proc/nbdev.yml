@@ -1,0 +1,9 @@
+project:
+  output-dir: _docs
+
+website:
+  title: "data_io_nbdev"
+  site-url: "https://Binjian.github.io/data_io_nbdev"
+  description: "io interface"
+  repo-branch: main
+  repo-url: "https://github.com/Binjian/data_io_nbdev"
