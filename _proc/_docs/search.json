@@ -4,7 +4,7 @@
     "href": "core.html",
     "title": "dataflow",
     "section": "",
-    "text": "say_hello\n\n say_hello (to:str)\n\nSay hello to somebody\n\nassert say_hello(\"Jeremy\")==\"Hello Jeremy!\"\n\n\nfrom fastcore.test import *\n\n\ntest_eq(say_hello(\"Jeremy\"), \"Hello Jeremy!\")\n\n\nfrom IPython.display import display, SVG\n\n\ndisplay(SVG('&lt;svg height=\"100\" xmlns=\"http://www.w3.org/2000/svg\"&gt;&lt;circle cx=\"50\" cy=\"50\" r=\"40\"/&gt;&lt;/svg&gt; '))"
+    "text": "source"
   },
   {
     "objectID": "index.html",
