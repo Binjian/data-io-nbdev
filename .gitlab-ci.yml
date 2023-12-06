@@ -31,6 +31,7 @@ pages:
     - nbdev_docs
     - cp -r _docs/ public/
     - ls
+    - bash -c 'python -m http.server 8888 -d public &>/dev/null' &
   artifacts:
     paths:
       - public
