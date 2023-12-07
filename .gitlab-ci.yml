@@ -1,4 +1,4 @@
-image: robtheoceanographer/nbdev2:latest
+image: robtheoceanographer/nbdev2:2.3.12
 
 # Cache modules in between jobs
 cache:
@@ -31,7 +31,8 @@ pages:
     - nbdev_docs
     - cp -r _docs/ public/
     - ls
-    - bash -c 'nbdev_preview --path public --port 8088 &>/dev/null' &
+#    - bash -c ' -d public &>/dev/null' &
+#    - bash -c 'python -m http.server 8888 -d public &>/dev/null' &
   artifacts:
     paths:
       - public

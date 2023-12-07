@@ -2,8 +2,8 @@
 
 d = { 'settings': { 'branch': 'main',
                 'doc_baseurl': '/data-io-nbdev',
-                'doc_host': 'https://Binjian.github.io',
-                'git_url': 'https://github.com/Binjian/data-io-nbdev',
+                'doc_host': '/',
+                'git_url': 'https://gitlab.newrizon.work/Binjian/data-io-nbdev/tree/main/',
                 'lib_path': 'data_io_nbdev'},
   'syms': { 'data_io_nbdev.core': { 'data_io_nbdev.core.HelloSayer': ('core.html#hellosayer', 'data_io_nbdev/core.py'),
                                     'data_io_nbdev.core.HelloSayer.__init__': ('core.html#hellosayer.__init__', 'data_io_nbdev/core.py'),
