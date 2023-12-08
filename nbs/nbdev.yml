@@ -3,7 +3,7 @@ project:
 
 website:
   title: "data-io-nbdev"
-  site-url: "https://Binjian.gitlab.io/data-io-nbdev"
+  site-url: "//data-io-nbdev"
   description: "io interface"
   repo-branch: main
-  repo-url: "https://gitlab.com/Binjian/data-io-nbdev/tree/main/"
+  repo-url: "https://github.com/Binjian/data-io-nbdev/tree/main/"

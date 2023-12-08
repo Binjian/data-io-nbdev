@@ -1,11 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://Binjian.github.io/data-io-nbdev/core.html</loc>
-    <lastmod>2023-12-06T10:48:18.032Z</lastmod>
+    <loc>//data-io-nbdev/core.html</loc>
+    <lastmod>2023-12-08T02:10:28.555Z</lastmod>
   </url>
   <url>
-    <loc>https://Binjian.github.io/data-io-nbdev/index.html</loc>
-    <lastmod>2023-12-06T10:48:09.936Z</lastmod>
+    <loc>//data-io-nbdev/index.html</loc>
+    <lastmod>2023-12-08T02:10:27.687Z</lastmod>
+  </url>
+  <url>
+    <loc>//data-io-nbdev/sandbox.html</loc>
+    <lastmod>2023-12-08T02:10:28.143Z</lastmod>
   </url>
 </urlset>

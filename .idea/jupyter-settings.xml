@@ -7,7 +7,7 @@
           <value>
             <JupyterConnectionParameters>
               <option name="managed" value="true" />
-              <option name="sdkName" value="nbdev" />
+              <option name="sdkName" value="meos-nbd" />
             </JupyterConnectionParameters>
           </value>
         </entry>
