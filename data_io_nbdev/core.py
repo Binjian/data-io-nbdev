@@ -4,8 +4,8 @@
 __all__ = ['say_hello', 'HelloSayer']
 
 # %% ../nbs/99_sandbox.ipynb 4
-def say_hello(to: str): 
-    "Say hello to somebody"
+def say_hello(to: str):
+    """Say hello to somebody"""
     return f'Hello {to}!'
 
 # %% ../nbs/99_sandbox.ipynb 16
