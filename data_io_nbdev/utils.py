@@ -11,7 +11,10 @@ from datetime import datetime
 from functools import reduce
 
 
-# %% ../nbs/98_utils.ipynb 5
+# %% ../nbs/98_utils.ipynb 4
+from eos.data_io.config import drivers_by_id, trucks_by_id
+
+# %% ../nbs/98_utils.ipynb 6
 def generate_state()->pd.DataFrame:
     """
     generate a pandas DataFrame for testing purpose
@@ -33,7 +36,7 @@ def generate_state()->pd.DataFrame:
     state.sort_index(inplace=True)
     return state
 
-# %% ../nbs/98_utils.ipynb 8
+# %% ../nbs/98_utils.ipynb 9
 def generate_action()->pd.DataFrame:
     """
     generate a pandas DataFrame for testing purpose
@@ -67,7 +70,7 @@ def generate_action()->pd.DataFrame:
     action.index.names = ["rows", "idx"]
     return action
 
-# %% ../nbs/98_utils.ipynb 11
+# %% ../nbs/98_utils.ipynb 12
 def generate_reward()->pd.DataFrame:
     """
     generate a pandas DataFrame for testing purpose
@@ -88,7 +91,7 @@ def generate_reward()->pd.DataFrame:
     return reward
 
 
-# %% ../nbs/98_utils.ipynb 14
+# %% ../nbs/98_utils.ipynb 15
 def generate_nstate()->pd.DataFrame:
     """
     generate a pandas DataFrame for testing purpose
@@ -116,7 +119,7 @@ def generate_nstate()->pd.DataFrame:
     nstate.index.names = ["rows", "idx"]
     return nstate
 
-# %% ../nbs/98_utils.ipynb 17
+# %% ../nbs/98_utils.ipynb 18
 def generate_observation()-> list[pd.Series]:
     """
     generate a list of pandas Series for testing purpose
@@ -164,7 +167,7 @@ def generate_observation()-> list[pd.Series]:
     return observation_list
 
 
-# %% ../nbs/98_utils.ipynb 20
+# %% ../nbs/98_utils.ipynb 21
 def generate_df_multiindex()->pd.DataFrame:
 
     observation_list = generate_observation()
@@ -188,10 +191,7 @@ def generate_df_multiindex()->pd.DataFrame:
     return dfs_episode
 
 
-# %% ../nbs/98_utils.ipynb 23
-from eos.data_io.config import drivers_by_id, trucks_by_id
-
-# %% ../nbs/98_utils.ipynb 24
+# %% ../nbs/98_utils.ipynb 25
 def generate_eos_df()->pd.DataFrame:
     """
     generate a pandas DataFrame for testing purpose

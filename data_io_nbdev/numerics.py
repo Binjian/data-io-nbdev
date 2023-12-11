@@ -13,10 +13,9 @@ import numpy as np
 import pandas as pd
 import tensorflow as tf
 
-
 # %% ../nbs/02_numerics.ipynb 4
 def assemble_state_ser(
-        state_columns: pd.DataFrame, tz: ZoneInfo
+    state_columns: pd.DataFrame, tz: ZoneInfo
 ) -> Tuple[pd.Series, int]:
     """
     assemble state df from state_columns dataframe

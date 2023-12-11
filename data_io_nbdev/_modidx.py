@@ -3,7 +3,7 @@
 d = { 'settings': { 'branch': 'main',
                 'doc_baseurl': '/data-io-nbdev',
                 'doc_host': '/',
-                'git_url': 'https://github.com/Binjian/data-io-nbdev/tree/main/',
+                'git_url': 'https://github.com/Binjian`/data-io-nbdev/tree/main/',
                 'lib_path': 'data_io_nbdev'},
   'syms': { 'data_io_nbdev.core': {'data_io_nbdev.core.say_hello': ('core.html#say_hello', 'data_io_nbdev/core.py')},
             'data_io_nbdev.data.location': { 'data_io_nbdev.data.location.EosLocation': ( '01.data.location.html#eoslocation',

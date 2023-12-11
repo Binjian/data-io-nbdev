@@ -145,5 +145,12 @@
     "title": "utils",
     "section": "prepend two levels of index “vehicle” and “driver” to the DataFrame object",
     "text": "prepend two levels of index “vehicle” and “driver” to the DataFrame object\n\nsource\n\ngenerate_eos_df\n\n generate_eos_df ()\n\ngenerate a pandas DataFrame for testing purpose\n\nassert isinstance(generate_eos_df().index, pd.MultiIndex), f\"dfs_episode.index is not a MultiIndex\"\n\n\nfrom fastcore.test import *\n\n\ntest_eq(isinstance(generate_eos_df().index, pd.MultiIndex), True)"
+  },
+  {
+    "objectID": "99_sandbox.html",
+    "href": "99_sandbox.html",
+    "title": "sandbox",
+    "section": "",
+    "text": "source"
   }
 ]
