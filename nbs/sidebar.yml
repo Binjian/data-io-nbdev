@@ -3,6 +3,7 @@ website:
     contents:
       - index.ipynb
       - 00_core.ipynb
+      - 01.data.core.ipynb
       - 01.data.location.ipynb
       - 01.data.time.ipynb
       - 02_numerics.ipynb

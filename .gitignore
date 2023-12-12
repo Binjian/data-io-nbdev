@@ -160,3 +160,5 @@ cython_debug/
 #.idea/
 /.python-version
 /_proc/02_numerics.ipynb
+/_docs/
+/_proc/

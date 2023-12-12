@@ -9,32 +9,65 @@ from ordered_set import OrderedSet
 from zoneinfo import ZoneInfo
 from .time import timezones
 
-# %% ../../nbs/01.data.location.ipynb 3
+# %% ../../nbs/01.data.location.ipynb 5
+from fastcore.utils import *
+
+# %% ../../nbs/01.data.location.ipynb 6
 LocationCat = OrderedSet(
     [
-        "jiangyin",
-        "shanghai",
-        "anting",
-        "unknown",
+        "jiangyin",  # Location cat for Jiangyin
+        "shanghai",  # Location cat for Shanghai
+        "anting",  # Location cat for Anting
+        "unknown",  # Location cat for unknown
     ]
 )
 
 
-# %% ../../nbs/01.data.location.ipynb 4
+# %% ../../nbs/01.data.location.ipynb 9
 class EosLocation(BaseModel):
+    """
+    location class for eos, `abbr`, `name`, `cname`, `tz` are required
+        
+    args:
+    
+        abbr: abbreviation
+        name: name
+        cname: chinese name
+        tz: timezone
+        
+    return:
+            EosLocation
+    """
     model_config = ConfigDict(arbitrary_types_allowed=True)
 
-    abbr: str
-    name: str
-    cname: str
-    tz: ZoneInfo
+    abbr: str  # abbreviation
+    name: str  # name
+    cname: str  # chinese name
+    tz: ZoneInfo  # timezone
 
-    @field_serializer('tz')
-    def serialize_tz(self, tz: ZoneInfo, _info):
-        return tz.key
+# %% ../../nbs/01.data.location.ipynb 12
+@field_serializer('tz')
+@patch
+def serialize_tz(self:EosLocation,  #
+                 tz: ZoneInfo,  # timezone
+                 _info: str):  # other info
+    """
+    serialize timezone to string
+    
+    args:
+    
+        tz: timezone
+        _info:  other info
+        
+    return:
+        
+            str
+        
+    """
+    return tz.key
 
 
-# %% ../../nbs/01.data.location.ipynb 5
+# %% ../../nbs/01.data.location.ipynb 13
 locations = [
     EosLocation(
         abbr="jy",
@@ -128,10 +161,10 @@ locations = [
     )
 ]
 
-# %% ../../nbs/01.data.location.ipynb 6
+# %% ../../nbs/01.data.location.ipynb 14
 locations_by_abbr = dict(zip([location.abbr for location in locations], locations))
 
 
-# %% ../../nbs/01.data.location.ipynb 7
+# %% ../../nbs/01.data.location.ipynb 16
 # since ZoneInfo is hashable, we can use it as key! one to many mapping! among all the tz, the last is the output
 locations_from_tz = dict(zip([location.tz for location in locations], locations))
