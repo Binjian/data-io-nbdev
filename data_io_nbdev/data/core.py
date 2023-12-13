@@ -4,7 +4,7 @@
 __all__ = ['KvaserType', 'RCANType', 'RawType', 'veos_lifetime_start_date', 'veos_lifetime_end_date', 'ItemT', 'RE_RECIPEKEY',
            'MotionPower', 'ECUMixin', 'CloudMixin', 'StateUnitCodes', 'StateSpecs', 'StateSpecsCloud', 'StateSpecsECU',
            'ActionSpecs', 'RewardSpecs', 'ObservationMeta', 'ObservationMetaCloud', 'ObservationMetaECU',
-           'DataFrameDoc', 'PoolQuery', 'get_filemeta_config']
+           'DataFrameDoc', 'PoolQuery', 'get_filemeta_config', 'configparser_as_dict']
 
 # %% ../../nbs/01.data.core.ipynb 3
 import re
@@ -122,7 +122,15 @@ class CloudMixin(BaseModel):
 
 # %% ../../nbs/01.data.core.ipynb 17
 class StateUnitCodes(BaseModel):
-    """Observation of the episode."""
+    """
+    Observation of the episode
+    
+    attribute:
+    
+        velocity_unit_code: unit of velocity, default "kph"
+        thrust_unit_code: unit of thrust, default "pct"
+        brake_unit_code: unit of brake, default "pct"
+    """
 
     velocity_unit_code: str = "kph"  # unit of velocity, default "kph"
     thrust_unit_code: str = "pct"  # unit of thrust, default "pct"
@@ -132,7 +140,17 @@ class StateUnitCodes(BaseModel):
 # %% ../../nbs/01.data.core.ipynb 18
 @dataclass(kw_only=True)
 class StateSpecs:
-    """Observation of the episode."""
+    """
+    Observation of the episode
+    
+    attributes:
+        
+            state_unit_codes: StateUnitCodes
+            state_number: number of states, default 3, velocity, thrust, brake
+            unit_number_per_state: number of units, default 4
+            unit_duration: duration of each unit, default 1 second
+            frequency: frequency of each unit, default 50 Hz
+    """
 
     state_unit_codes: StateUnitCodes = Field(default_factory=StateUnitCodes)
     state_number: int = 3  # number of states, default 3, velocity, thrust, brake
@@ -145,6 +163,10 @@ class StateSpecs:
 class StateSpecsCloud(StateSpecs):
     """
     StateSpecs for cloud interface
+    
+    attributes:
+        
+        cloud_interface: CloudMixin
     """
 
     cloud_interface: CloudMixin = Field(default_factory=CloudMixin)
@@ -168,6 +190,11 @@ class StateSpecsCloud(StateSpecs):
 class StateSpecsECU(StateSpecs):
     """
     StateSpecs for Kvaser interface
+    
+    
+    attributes:
+        
+        ecu_interface: ECUMixin
     """
 
     ecu_interface: ECUMixin = Field(default_factory=ECUMixin)
@@ -183,7 +210,15 @@ class StateSpecsECU(StateSpecs):
 
 # %% ../../nbs/01.data.core.ipynb 21
 class ActionSpecs(BaseModel):
-    """Action of the episode."""
+    """
+    Action of the episode
+    
+    attributes:
+        
+        action_unit_code: unit of action, default "nm"
+        action_row_number: number of rows, default 4
+        action_column_number: number of columns, default 17
+    """
 
     action_unit_code: str = "nm"  # unit of action, default "nm"
     action_row_number: int = 4  # trucks_by_id["default"].torque_table_row_num_flash  # 4  # number of rows, default 4
@@ -210,13 +245,13 @@ class ObservationMeta(BaseModel):
     
     Attributes:
         
-        state_specs: StateSpecs()
-        action_specs: ActionSpecs()
-        reward_specs: RewardSpecs()
-        site: EosLocation()  # "at"  # observation (testing) site
+        state_specs: StateSpecs
+        action_specs: ActionSpecs
+        reward_specs: RewardSpecs
+        site: EosLocation  # "at"  # observation (testing) site
     """
 
-    state_specs: StateSpecs  # StateSpecs()
+    state_specs: StateSpecs  # StateSpecs
     # ActionSpecs(action_unit_code="nm",
     #             action_row_number=trucks_by_id["default"].torque_table_row_num_flash,  # 4
     #             action_column_number=trucks_by_id["default"].torque_table_col_num,  # 17)
@@ -245,7 +280,8 @@ class ObservationMeta(BaseModel):
         """
         return self.get_number_of_states(), self.get_number_of_actions()
 
-    def have_same_meta(self, meta_to_compare: 'ObservationMeta'):
+    def have_same_meta(self, 
+            meta_to_compare: 'ObservationMeta'):  # another ObservationMeta object (forward declaratin)
         """
         Compare two plots, return True if they are the same, while ignoring the 'when' field
         """
@@ -283,7 +319,7 @@ class ObservationMeta(BaseModel):
         ]
         return torque_table_row_names
 
-# %% ../../nbs/01.data.core.ipynb 24
+# %% ../../nbs/01.data.core.ipynb 29
 # @dataclass(slots=True)  # use slot to save memory and fix the attributes
 class ObservationMetaCloud(ObservationMeta):
     """
@@ -292,7 +328,7 @@ class ObservationMetaCloud(ObservationMeta):
 
     state_specs: StateSpecsCloud  # Field(default_factory=StateSpecs)
 
-# %% ../../nbs/01.data.core.ipynb 25
+# %% ../../nbs/01.data.core.ipynb 30
 # @dataclass(slots=True)  # use slot to save memory and fix the attributes
 class ObservationMetaECU(ObservationMeta):
     """
@@ -301,9 +337,17 @@ class ObservationMetaECU(ObservationMeta):
 
     state_specs: StateSpecsECU  # Field(default_factory=StateSpecsECU)
 
-# %% ../../nbs/01.data.core.ipynb 26
+# %% ../../nbs/01.data.core.ipynb 31
 class DataFrameDoc(TypedDict):
-    """Record doc type of mongo pool for record"""
+    """
+    Record doc type of mongo pool for record
+    
+    attributes:
+        
+        timestamp: timestamp of the record
+        meta: metadata of the record
+        observation: observation of the record
+    """
 
     timestamp: datetime  # only usage of Datetime type, as interface to MongoDB timestamp (BSON Date)
     meta: dict
@@ -311,10 +355,10 @@ class DataFrameDoc(TypedDict):
     # for RECORD seq_len = 1
 
 
-# %% ../../nbs/01.data.core.ipynb 27
+# %% ../../nbs/01.data.core.ipynb 32
 ItemT = TypeVar("ItemT", Dict, pd.DataFrame)
 
-# %% ../../nbs/01.data.core.ipynb 28
+# %% ../../nbs/01.data.core.ipynb 33
 class PoolQuery(BaseModel):
     """Query for Record"""
 
@@ -335,10 +379,10 @@ class PoolQuery(BaseModel):
         int
     ] = None  # default for record query, for episode query should be > 200, like 240
 
-# %% ../../nbs/01.data.core.ipynb 29
+# %% ../../nbs/01.data.core.ipynb 34
 RE_RECIPEKEY = re.compile(r"^[A-Za-z]\w*\.ini$")
 
-# %% ../../nbs/01.data.core.ipynb 30
+# %% ../../nbs/01.data.core.ipynb 35
 def get_filemeta_config(
         data_folder: str,
         config_file: Optional[str],
@@ -396,3 +440,20 @@ def get_filemeta_config(
         recipe['DEFAULT']['coll_type'] = coll_type
 
     return recipe
+
+# %% ../../nbs/01.data.core.ipynb 41
+def configparser_as_dict(config: ConfigParser):
+    """
+    Converts a ConfigParser object into a dictionary.
+
+    The resulting dictionary has sections as keys which point to a dict of the
+    sections options as key => value pairs.
+    """
+    the_dict = {}
+    sections = config.sections()
+    sections.append("DEFAULT")
+    for section in sections:
+        the_dict[section] = {}
+        for key, val in config.items(section):
+            the_dict[section][key] = val
+    return the_dict
