@@ -5,9 +5,18 @@ website:
       - 00_core.ipynb
       - section: Data
         contents:
-          - 01.data.core.ipynb
-          - 01.data.location.ipynb
-          - 01.data.time.ipynb
-      - 02_numerics.ipynb
+        - 01.data.core.ipynb
+        - section: External
+          contents:
+          - 01.data.external.numpy_utils.ipynb
+          - 01.data.external.pandas_utils.ipynb
+        - 01.data.location.ipynb
+        - 01.data.time.ipynb
+        - section: System
+          contents:
+          - 01.data.system.decorator.ipynb
+          - 01.data.system.exception.ipynb
+          - 01.data.system.gracefulkiller.ipynb
+          - 01.data.system.log.ipynb
       - 98_utils.ipynb
       - 99_sandbox.ipynb
