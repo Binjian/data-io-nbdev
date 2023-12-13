@@ -3,7 +3,7 @@
 # %% auto 0
 __all__ = ['assemble_state_ser']
 
-# %% ../nbs/02_numerics.ipynb 3
+# %% ../nbs/02_numerics.ipynb 4
 import math
 from datetime import datetime
 from functools import reduce
@@ -13,20 +13,27 @@ import numpy as np
 import pandas as pd
 import tensorflow as tf
 
-# %% ../nbs/02_numerics.ipynb 4
+# %% ../nbs/02_numerics.ipynb 5
 def assemble_state_ser(
-    state_columns: pd.DataFrame, tz: ZoneInfo
+    state_columns: pd.DataFrame, 
+    tz: ZoneInfo
 ) -> Tuple[pd.Series, int]:
     """
-    assemble state df from state_columns dataframe
-    order is vital for the model:
+    assemble state df from state_columns dataframe order is vital for the model
+    
+    inputs:
+    
+        state_columns: pd.DataFrame
+    
     "timestep, velocity, thrust, brake"
     contiguous storage in each measurement
     due to sort_index, output:
     [col0: brake, col1: thrust, col2: timestep, col3: velocity]
+    
     return:
-    state: pd.Series
-    table_row_start: int
+    
+        state: pd.Series
+        table_row_start: int
     """
 
     # state_columns['timestep'] = pd.to_datetime(datetime.now().timestamp(), unit='us').tz_localize(tz)

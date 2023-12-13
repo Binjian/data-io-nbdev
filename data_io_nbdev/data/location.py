@@ -161,10 +161,10 @@ locations = [
     )
 ]
 
-# %% ../../nbs/01.data.location.ipynb 14
+# %% ../../nbs/01.data.location.ipynb 15
 locations_by_abbr = dict(zip([location.abbr for location in locations], locations))
 
 
-# %% ../../nbs/01.data.location.ipynb 16
+# %% ../../nbs/01.data.location.ipynb 17
 # since ZoneInfo is hashable, we can use it as key! one to many mapping! among all the tz, the last is the output
 locations_from_tz = dict(zip([location.tz for location in locations], locations))
