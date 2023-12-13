@@ -6,9 +6,21 @@ __all__ = ['GracefulKiller']
 # %% ../../nbs/02.system.gracefulkiller.ipynb 3
 import signal
 from threading import Event
+from dataclasses import dataclass
 
 # %% ../../nbs/02.system.gracefulkiller.ipynb 4
+@dataclass
 class GracefulKiller:
+    """
+    GracefulKiller is a class that can be used to handle the exit signals
+    
+    It forwards the three exit signals to threads that are waiting for the exit event to be set.  
+    
+    Attribute:
+    
+        exit: Event
+            the event that will be set when the exit signal is received
+    """
     exit: Event
 
     def __init__(self, exit_evt: Event):
