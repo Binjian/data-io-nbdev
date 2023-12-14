@@ -57,12 +57,23 @@ class MotionPower(NamedTuple):
     
             MotionPower tuple    
     """
-    timestep: pd.Timestamp  # timestamp of the tuple
-    velocity: float  # velocity in m/s
-    thrust: float  # thrust in percentage of full acc pedal
-    brake: float  # brake in percentage of full brake pedal
-    current: float  # current in A
-    voltage: float  # voltage in V
+    timestep: pd.Timestamp   
+    """timestamp of the tuple"""
+    
+    velocity: float  
+    """velocity in m/s"""
+    
+    thrust: float  
+    """thrust in percentage of full acc pedal"""
+    
+    brake: float  
+    """brake in percentage of full brake pedal"""
+    
+    current: float  
+    """current in A"""
+    
+    voltage: float  
+    """voltage in V"""
 
 
 # %% ../../nbs/01.data.core.ipynb 13

@@ -21,8 +21,9 @@ import tensorflow as tf
 
 # %% ../../../nbs/01.data.external.pandas_utils.ipynb 7
 def assemble_state_ser(
-    state_columns: pd.DataFrame, tz: ZoneInfo
-) -> Tuple[pd.Series, int]:
+    state_columns: pd.DataFrame,  # state_columns: Dataframe with columns ['timestep', 'velocity', 'thrust', 'brake']
+        tz: ZoneInfo  # timezone for the timestamp
+) -> Tuple[pd.Series, int]:  # state: Series with index ['rows', 'idx'], table_row_start: int
     """
     assemble state df from state_columns dataframe order is vital for the model
     
@@ -73,7 +74,7 @@ def assemble_state_ser(
 
     return state, table_row_start
 
-# %% ../../../nbs/01.data.external.pandas_utils.ipynb 18
+# %% ../../../nbs/01.data.external.pandas_utils.ipynb 19
 def assemble_reward_ser(
     power_columns: pd.DataFrame, obs_sampling_rate: int, ts
 ) -> pd.Series:
@@ -103,7 +104,7 @@ def assemble_reward_ser(
     reward.index.names = ["rows", "idx"]
     return reward
 
-# %% ../../../nbs/01.data.external.pandas_utils.ipynb 19
+# %% ../../../nbs/01.data.external.pandas_utils.ipynb 20
 def assemble_flash_table(
     torque_map_line: np.ndarray,
     table_start: int,
@@ -135,7 +136,7 @@ def assemble_flash_table(
 
     return df_torque_table
 
-# %% ../../../nbs/01.data.external.pandas_utils.ipynb 20
+# %% ../../../nbs/01.data.external.pandas_utils.ipynb 21
 def assemble_action_ser(
     torque_map_line: np.ndarray,
     torque_table_row_names: list[str],
@@ -210,7 +211,7 @@ def assemble_action_ser(
 
     return action
 
-# %% ../../../nbs/01.data.external.pandas_utils.ipynb 21
+# %% ../../../nbs/01.data.external.pandas_utils.ipynb 22
 def nest(d: dict) -> dict:
     """
     Convert a flat dictionary with tuple key to a nested dictionary through to the leaves
@@ -226,7 +227,7 @@ def nest(d: dict) -> dict:
         target[str(key[-1])] = value  # for mongo only string keys are allowed.
     return result
 
-# %% ../../../nbs/01.data.external.pandas_utils.ipynb 22
+# %% ../../../nbs/01.data.external.pandas_utils.ipynb 23
 def df_to_nested_dict(df_multi_indexed_col: pd.DataFrame) -> dict:
     """
     Convert a dataframe with multi-indexed columns to a nested dictionary
@@ -236,7 +237,7 @@ def df_to_nested_dict(df_multi_indexed_col: pd.DataFrame) -> dict:
     )  # for multi-indexed dataframe, the index in the first level of the dictionary is still a tuple!
     return {k: nest(v) for k, v in d.items()}
 
-# %% ../../../nbs/01.data.external.pandas_utils.ipynb 23
+# %% ../../../nbs/01.data.external.pandas_utils.ipynb 24
 def eos_df_to_nested_dict(episode: pd.DataFrame) -> dict:
     """
     Convert an eos dataframe with multi-indexed columns to a nested dictionary
@@ -257,7 +258,7 @@ def eos_df_to_nested_dict(episode: pd.DataFrame) -> dict:
 
     return single_key_dict
 
-# %% ../../../nbs/01.data.external.pandas_utils.ipynb 24
+# %% ../../../nbs/01.data.external.pandas_utils.ipynb 25
 def ep_nest(d: Dict) -> Dict:
     """
     Convert a flat dictionary with tuple key to a nested dictionary with arrays at the leaves
@@ -278,7 +279,7 @@ def ep_nest(d: Dict) -> Dict:
 
     return result
 
-# %% ../../../nbs/01.data.external.pandas_utils.ipynb 25
+# %% ../../../nbs/01.data.external.pandas_utils.ipynb 26
 def df_to_ep_nested_dict(df_multi_indexed_col: pd.DataFrame) -> dict:
     """
     Convert a dataframe with multi-indexed columns to a nested dictionary
@@ -288,7 +289,7 @@ def df_to_ep_nested_dict(df_multi_indexed_col: pd.DataFrame) -> dict:
     )  # for multi-indexed dataframe, the index in the first level of the dictionary is still a tuple!
     return {k: ep_nest(v) for k, v in d.items()}
 
-# %% ../../../nbs/01.data.external.pandas_utils.ipynb 26
+# %% ../../../nbs/01.data.external.pandas_utils.ipynb 27
 def avro_ep_encoding(episode: pd.DataFrame) -> list[Dict]:
     """
     avro encoding,
@@ -324,7 +325,7 @@ def avro_ep_encoding(episode: pd.DataFrame) -> list[Dict]:
 
     return array_of_dict
 
-# %% ../../../nbs/01.data.external.pandas_utils.ipynb 27
+# %% ../../../nbs/01.data.external.pandas_utils.ipynb 28
 def avro_ep_decoding(episodes: list[Dict], tz_info: Optional[ZoneInfo]) -> pd.DataFrame:
     """
     avro decoding,
@@ -391,7 +392,7 @@ def avro_ep_decoding(episodes: list[Dict], tz_info: Optional[ZoneInfo]) -> pd.Da
 
     return df_episodes
 
-# %% ../../../nbs/01.data.external.pandas_utils.ipynb 28
+# %% ../../../nbs/01.data.external.pandas_utils.ipynb 29
 def decode_mongo_records(
     df: pd.DataFrame,
     torque_table_row_names: list[str],
@@ -498,7 +499,7 @@ def decode_mongo_records(
 
     return df_states, df_actions, ser_rewards, df_nstates
 
-# %% ../../../nbs/01.data.external.pandas_utils.ipynb 29
+# %% ../../../nbs/01.data.external.pandas_utils.ipynb 30
 def decode_mongo_episodes(
     df: pd.DataFrame,
 ) -> pd.DataFrame:
@@ -549,7 +550,7 @@ def decode_mongo_episodes(
     )
     return df_episodes
 
-# %% ../../../nbs/01.data.external.pandas_utils.ipynb 30
+# %% ../../../nbs/01.data.external.pandas_utils.ipynb 31
 def encode_dataframe_from_parquet(df: pd.DataFrame) -> pd.DataFrame:
     """
     decode the dataframe from parquet with flat column indices to MultiIndexed DataFrame
@@ -582,7 +583,7 @@ def encode_dataframe_from_parquet(df: pd.DataFrame) -> pd.DataFrame:
 
     return df
 
-# %% ../../../nbs/01.data.external.pandas_utils.ipynb 31
+# %% ../../../nbs/01.data.external.pandas_utils.ipynb 32
 def decode_episode_batch_to_padded_arrays(
     episodes: pd.DataFrame,
     torque_table_row_names: list[str],
@@ -641,7 +642,7 @@ def decode_episode_batch_to_padded_arrays(
 
     return s_n_t, a_n_t, r_n_t, ns_n_t
 
-# %% ../../../nbs/01.data.external.pandas_utils.ipynb 32
+# %% ../../../nbs/01.data.external.pandas_utils.ipynb 33
 def encode_episode_dataframe_from_series(
     observations: List[pd.Series],
     torque_table_row_names: List[str],
@@ -688,7 +689,7 @@ def encode_episode_dataframe_from_series(
 
     return episode
 
-# %% ../../../nbs/01.data.external.pandas_utils.ipynb 33
+# %% ../../../nbs/01.data.external.pandas_utils.ipynb 34
 def recover_episodestart_tzinfo_from_timestamp(
     ts: pd.Timestamp, tzinfo: ZoneInfo
 ) -> pd.Timestamp:

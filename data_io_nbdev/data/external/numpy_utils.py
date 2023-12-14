@@ -17,18 +17,24 @@ def nan_helper_1d(
     ) -> Tuple[np.ndarray, Callable]:
     """Helper to handle indices and logical indices of NaNs.
 
-    Input:
+    Parameters:
+    
         - y, 1d numpy array with possible NaNs
-    Output:
+        
+    Returns:
+        
         - nans, logical indices of NaNs
         - index, a function, with signature indices= index(logical_indices),
             to convert logical indices of NaNs to 'equivalent' indices
-    Example:
-        >>> # linear interpolation of NaNs
+            
+    Example: linear interpolation of NaNs
+    
         >>> nans, x= nan_helper_1d(y)
         >>> y[nans]= np.interp(x(nans), x(~nans), y[~nans])
 
-    sources: https://stackoverflow.com/questions/6518811/interpolate-nan-values-in-a-numpy-array
+    sources: 
+    
+    https://stackoverflow.com/questions/6518811/interpolate-nan-values-in-a-numpy-array
     """
 
     return np.isnan(y), lambda z: z.nonzero()[0]
@@ -39,15 +45,21 @@ def nan_interp_1d(
 ) -> np.ndarray:  # np array with NaNs replaced by linear interpolation
     """Linear interpolation of NaNs.
 
-    Input:
+    Parameter:
+    
         - y, 1d numpy array with possible NaNs
-    Output:
+        
+    Return:
+    
         - y, 1d numpy array with NaNs replaced by linear interpolation
-    Example:
-        >>> # linear interpolation of NaNs
+    
+    Example: linear interpolation of NaNs
+    
         >>> y = nan_interp_1d(y)
 
-    sources: https://stackoverflow.com/questions/6518811/interpolate-nan-values-in-a-numpy-array
+    sources: 
+    
+    https://stackoverflow.com/questions/6518811/interpolate-nan-values-in-a-numpy-array
     """
 
     nans, x = nan_helper_1d(y)
@@ -61,15 +73,21 @@ def ragged_nparray_list_interp(
 ) -> np.ndarray:  # np array with NaNs replaced by linear interpolation
     """Linear interpolation of NaNs.
 
-    Input:
+    Parameter:
+    
         - y, list ragged array
-    Output:
+        
+    Return:
+        
         - y, 2d numpy array with missing elements replaced by linear interpolation
-    Example:
-        >>> # linear interpolation of NaNs
+        
+    Example: linear interpolation of NaNs
+        
         >>> y = nan_interp_1d(y)
 
-    sources: https://stackoverflow.com/questions/6518811/interpolate-nan-values-in-a-numpy-array
+    sources: 
+    
+    https://stackoverflow.com/questions/6518811/interpolate-nan-values-in-a-numpy-array
     """
 
     # with np.printoptions(precision=4, suppress=True, formatter={'float': '{:0.1f}'.format}, linewidth=100):
@@ -114,15 +132,19 @@ def timestamps_from_can_strings(
 ) -> np.ndarray:  # np array of timestamps
     """Extract timestamps from CAN strings.
 
-    Input:
+    Parameters:
+    
         - can_timestamp_strings, list of CAN strings
         - signal_freq, signal frequency
         - unit_num, number of CAN units
         - unit_duration, duration in seconds per CAN unit
-    Output:
+        
+    Return:
+        
         - timestamps, 1d numpy array of timestamps
-    Example:
-        >>> # extract timestamps from "CAN" strings
+        
+    Example: extract timestamps from "CAN" strings
+    
         >>> timestamps_arr = timestamps_from_can_strings(can_timestamp_strings)
 
     """
