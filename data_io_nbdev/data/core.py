@@ -452,7 +452,7 @@ def get_filemeta_config(
 
     return recipe
 
-# %% ../../nbs/01.data.core.ipynb 41
+# %% ../../nbs/01.data.core.ipynb 36
 def configparser_as_dict(config: ConfigParser):
     """
     Converts a ConfigParser object into a dictionary.

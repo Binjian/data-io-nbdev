@@ -9,24 +9,30 @@ import numpy as np
 import pandas as pd
 from datetime import datetime
 from functools import reduce
+from zoneinfo import ZoneInfo
+from configparser import ConfigParser
+
 
 
 # %% ../nbs/98_utils.ipynb 4
-from eos.data_io.config import drivers_by_id, trucks_by_id
+from eos.data_io.config import drivers_by_id
+from eos.data_io.config.vehicles import trucks_by_id
+
 
 # %% ../nbs/98_utils.ipynb 6
-def generate_state()->pd.DataFrame:
+def generate_state(tz: ZoneInfo)->pd.DataFrame:
     """
     generate a pandas DataFrame for testing purpose
     """
-    ts = pd.to_datetime(datetime.now())
-    ts_ind1 = ts + pd.to_timedelta(np.arange(0, 4 * 20, 20), "ms")
+    ts = pd.to_datetime(datetime.now(tz=tz))
+    ts_ind = ts + pd.to_timedelta(np.arange(0, 4 * 20, 20), "ms")
+    ts_ind = ts_ind.tz_localize(None).astype("datetime64[us]").tz_localize(tz)
     s = np.arange(12)
     a_1 = s[:4]
     a_2 = s[4:8]
     a_3 = s[8:]
     df_ss = pd.DataFrame(
-        {"timestep": ts_ind1, "velocity": a_1, "thrust": a_2, "brake": a_3}
+        {"timestep": ts_ind, "velocity": a_1, "thrust": a_2, "brake": a_3}
     )  # .set_index('timestep')
     df_ss.columns.name = "qtuple"
     ui_t = df_ss.loc[:, ["velocity", "thrust"]]
@@ -36,21 +42,22 @@ def generate_state()->pd.DataFrame:
     state.sort_index(inplace=True)
     return state
 
-# %% ../nbs/98_utils.ipynb 9
-def generate_action()->pd.DataFrame:
+# %% ../nbs/98_utils.ipynb 10
+def generate_action(tz: ZoneInfo)->pd.DataFrame:
     """
     generate a pandas DataFrame for testing purpose
     """
 
     s = np.arange(12)
-    ts = pd.to_datetime(datetime.now())
+    ts = pd.to_datetime(datetime.now(tz=tz))
     a = len(s) + np.arange(15)
     speed_ser = pd.Series(np.linspace(40, 60, 3), name="speed")
     row_array = a.reshape(3, 5).transpose()
     rows_df = pd.DataFrame(row_array)
     rows_df.columns = [f"r{i}" for i in np.arange(3)]
-    ts_ind0 = ts + pd.to_timedelta(np.arange(5 * 20, 8 * 20, 20), "ms")
-    ts_ser = pd.Series(ts_ind0, name="timestep")
+    ts_ind = ts + pd.to_timedelta(np.arange(5 * 20, 8 * 20, 20), "ms")
+    ts_ind = ts_ind.tz_localize(None).astype("datetime64[us]").tz_localize(tz)
+    ts_ser = pd.Series(ts_ind, name="timestep")
     throttle_ser = pd.Series(np.linspace(0, 1.0, 5), name="throttle")
     # throttle_ser
     dfs = [rows_df, ts_ser, speed_ser, throttle_ser]
@@ -70,17 +77,18 @@ def generate_action()->pd.DataFrame:
     action.index.names = ["rows", "idx"]
     return action
 
-# %% ../nbs/98_utils.ipynb 12
-def generate_reward()->pd.DataFrame:
+# %% ../nbs/98_utils.ipynb 14
+def generate_reward(tz: ZoneInfo)->pd.DataFrame:
     """
     generate a pandas DataFrame for testing purpose
     """
-    ts = pd.to_datetime(datetime.now())
-    ts_ind1 = ts + pd.to_timedelta(np.arange(0, 4 * 20, 20), "ms")
+    ts = pd.to_datetime(datetime.now(tz=tz))
+    ts_ind = ts + pd.to_timedelta(np.arange(0, 4 * 20, 20), "ms")
+    ts_ind = ts_ind.tz_localize(None).astype("datetime64[us]").tz_localize(tz)
     s = np.arange(12)
     a = len(s) + np.arange(15)
     reward = (
-        pd.DataFrame({"work": len(s) + len(a), "timestep": ts_ind1[0]}, index=[0])
+        pd.DataFrame({"work": len(s) + len(a), "timestep": ts_ind[0]}, index=[0])
         .stack()
         .swaplevel(0, 1)
         .sort_index()
@@ -91,17 +99,18 @@ def generate_reward()->pd.DataFrame:
     return reward
 
 
-# %% ../nbs/98_utils.ipynb 15
-def generate_nstate()->pd.DataFrame:
+# %% ../nbs/98_utils.ipynb 18
+def generate_nstate(tz: ZoneInfo)->pd.DataFrame:
     """
     generate a pandas DataFrame for testing purpose
     """
-    ts = pd.to_datetime(datetime.now())
+    ts = pd.to_datetime(datetime.now(tz=tz))
     s = np.arange(12)
     a = len(s) + np.arange(15)
-    reward = generate_reward()
+    reward = generate_reward(tz=tz)
     
     ts_ind = ts + pd.to_timedelta(5, "s") + pd.to_timedelta(np.arange(0, 4 * 20, 20), "ms")
+    ts_ind = ts_ind.tz_localize(None).astype("datetime64[us]").tz_localize(tz)
     s = (
             np.arange(12) + len(s) + len(a) + len(reward) - 1
     )  # exclude the timestamp in reward
@@ -119,19 +128,22 @@ def generate_nstate()->pd.DataFrame:
     nstate.index.names = ["rows", "idx"]
     return nstate
 
-# %% ../nbs/98_utils.ipynb 18
-def generate_observation()-> list[pd.Series]:
+# %% ../nbs/98_utils.ipynb 21
+def generate_observation(tz: ZoneInfo)-> list[pd.Series]:
     """
     generate a list of pandas Series for testing purpose
     """
 
-    ts = pd.to_datetime(datetime.now())
-    state = generate_state()
-    action = generate_action()
-    reward = generate_reward()
-    nstate = generate_nstate()
+    ts = pd.to_datetime(datetime.now(tz=tz))
+    state = generate_state(tz)
+    action = generate_action(tz)
+    reward = generate_reward(tz)
+    nstate = generate_nstate(tz)
     
-    timestamp = pd.Series([ts], name="timestamp")
+    timestamp = pd.DatetimeIndex([ts], name="timestamp").tz_localize(None).astype(
+        "datetime64[us]"
+    ).tz_localize(tz)
+    timestamp = pd.Series(timestamp, name="timestamp")
     timestamp.index = pd.MultiIndex.from_product(
         [timestamp.index, [0]], names=["rows", "idx"]
     )
@@ -167,10 +179,10 @@ def generate_observation()-> list[pd.Series]:
     return observation_list
 
 
-# %% ../nbs/98_utils.ipynb 21
-def generate_df_multiindex()->pd.DataFrame:
+# %% ../nbs/98_utils.ipynb 24
+def generate_df_multiindex(tz: ZoneInfo)->pd.DataFrame:
 
-    observation_list = generate_observation()
+    observation_list = generate_observation(tz=tz)
     dfs_epi = pd.concat(observation_list, axis=1).transpose()
     dfs_epi.columns.names = ["qtuple", "rows", "idx"]
     # dfs_epi
@@ -191,14 +203,14 @@ def generate_df_multiindex()->pd.DataFrame:
     return dfs_episode
 
 
-# %% ../nbs/98_utils.ipynb 25
-def generate_eos_df()->pd.DataFrame:
+# %% ../nbs/98_utils.ipynb 27
+def generate_eos_df(tz: ZoneInfo)->pd.DataFrame:
     """
     generate a pandas DataFrame for testing purpose
     """
-    dfs_episode = generate_df_multiindex()
+    dfs_episode = generate_df_multiindex(tz=tz)
     
-    ts = pd.to_datetime(datetime.now())
+    ts = pd.to_datetime(datetime.now(tz=tz))
     dfs_episode = pd.concat(
         [dfs_episode], keys=[drivers_by_id["wang-cheng"].pid], names=["driver"]
     )
@@ -212,3 +224,7 @@ def generate_eos_df()->pd.DataFrame:
     dfs_episode.sort_index(inplace=True)
     return dfs_episode
 
+
+# %% ../nbs/98_utils.ipynb 33
+from .data.location import EosLocation, locations_by_abbr
+from .data.core import configparser_as_dict, get_filemeta_config, ObservationMetaECU, StateSpecsECU, ActionSpecs, RewardSpecs 

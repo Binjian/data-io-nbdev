@@ -174,10 +174,10 @@ def assemble_action_ser(
     span_each_row = (flash_end_ts - flash_start_ts) / row_num
     flash_timestamps_ser = pd.Series(
         [
-            pd.to_datetime(flash_start_ts + step * span_each_row, unit="us").tz_convert(
+            pd.to_datetime(flash_start_ts + step * span_each_row, utc=True, unit="us").tz_convert(
                 tz
             )
-            for step in np.linspace(1, row_num, row_num)
+            for step in np.linspace(0, row_num, row_num)
         ],
         name="timestep",
     )
@@ -211,7 +211,7 @@ def assemble_action_ser(
 
     return action
 
-# %% ../../../nbs/01.data.external.pandas_utils.ipynb 22
+# %% ../../../nbs/01.data.external.pandas_utils.ipynb 37
 def nest(d: dict) -> dict:
     """
     Convert a flat dictionary with tuple key to a nested dictionary through to the leaves
@@ -227,7 +227,7 @@ def nest(d: dict) -> dict:
         target[str(key[-1])] = value  # for mongo only string keys are allowed.
     return result
 
-# %% ../../../nbs/01.data.external.pandas_utils.ipynb 23
+# %% ../../../nbs/01.data.external.pandas_utils.ipynb 38
 def df_to_nested_dict(df_multi_indexed_col: pd.DataFrame) -> dict:
     """
     Convert a dataframe with multi-indexed columns to a nested dictionary
@@ -237,7 +237,7 @@ def df_to_nested_dict(df_multi_indexed_col: pd.DataFrame) -> dict:
     )  # for multi-indexed dataframe, the index in the first level of the dictionary is still a tuple!
     return {k: nest(v) for k, v in d.items()}
 
-# %% ../../../nbs/01.data.external.pandas_utils.ipynb 24
+# %% ../../../nbs/01.data.external.pandas_utils.ipynb 39
 def eos_df_to_nested_dict(episode: pd.DataFrame) -> dict:
     """
     Convert an eos dataframe with multi-indexed columns to a nested dictionary
@@ -258,7 +258,7 @@ def eos_df_to_nested_dict(episode: pd.DataFrame) -> dict:
 
     return single_key_dict
 
-# %% ../../../nbs/01.data.external.pandas_utils.ipynb 25
+# %% ../../../nbs/01.data.external.pandas_utils.ipynb 40
 def ep_nest(d: Dict) -> Dict:
     """
     Convert a flat dictionary with tuple key to a nested dictionary with arrays at the leaves
@@ -279,7 +279,7 @@ def ep_nest(d: Dict) -> Dict:
 
     return result
 
-# %% ../../../nbs/01.data.external.pandas_utils.ipynb 26
+# %% ../../../nbs/01.data.external.pandas_utils.ipynb 41
 def df_to_ep_nested_dict(df_multi_indexed_col: pd.DataFrame) -> dict:
     """
     Convert a dataframe with multi-indexed columns to a nested dictionary
@@ -289,7 +289,7 @@ def df_to_ep_nested_dict(df_multi_indexed_col: pd.DataFrame) -> dict:
     )  # for multi-indexed dataframe, the index in the first level of the dictionary is still a tuple!
     return {k: ep_nest(v) for k, v in d.items()}
 
-# %% ../../../nbs/01.data.external.pandas_utils.ipynb 27
+# %% ../../../nbs/01.data.external.pandas_utils.ipynb 42
 def avro_ep_encoding(episode: pd.DataFrame) -> list[Dict]:
     """
     avro encoding,
@@ -325,7 +325,7 @@ def avro_ep_encoding(episode: pd.DataFrame) -> list[Dict]:
 
     return array_of_dict
 
-# %% ../../../nbs/01.data.external.pandas_utils.ipynb 28
+# %% ../../../nbs/01.data.external.pandas_utils.ipynb 43
 def avro_ep_decoding(episodes: list[Dict], tz_info: Optional[ZoneInfo]) -> pd.DataFrame:
     """
     avro decoding,
@@ -392,7 +392,7 @@ def avro_ep_decoding(episodes: list[Dict], tz_info: Optional[ZoneInfo]) -> pd.Da
 
     return df_episodes
 
-# %% ../../../nbs/01.data.external.pandas_utils.ipynb 29
+# %% ../../../nbs/01.data.external.pandas_utils.ipynb 44
 def decode_mongo_records(
     df: pd.DataFrame,
     torque_table_row_names: list[str],
@@ -499,7 +499,7 @@ def decode_mongo_records(
 
     return df_states, df_actions, ser_rewards, df_nstates
 
-# %% ../../../nbs/01.data.external.pandas_utils.ipynb 30
+# %% ../../../nbs/01.data.external.pandas_utils.ipynb 45
 def decode_mongo_episodes(
     df: pd.DataFrame,
 ) -> pd.DataFrame:
@@ -550,7 +550,7 @@ def decode_mongo_episodes(
     )
     return df_episodes
 
-# %% ../../../nbs/01.data.external.pandas_utils.ipynb 31
+# %% ../../../nbs/01.data.external.pandas_utils.ipynb 46
 def encode_dataframe_from_parquet(df: pd.DataFrame) -> pd.DataFrame:
     """
     decode the dataframe from parquet with flat column indices to MultiIndexed DataFrame
@@ -583,7 +583,7 @@ def encode_dataframe_from_parquet(df: pd.DataFrame) -> pd.DataFrame:
 
     return df
 
-# %% ../../../nbs/01.data.external.pandas_utils.ipynb 32
+# %% ../../../nbs/01.data.external.pandas_utils.ipynb 47
 def decode_episode_batch_to_padded_arrays(
     episodes: pd.DataFrame,
     torque_table_row_names: list[str],
@@ -642,7 +642,7 @@ def decode_episode_batch_to_padded_arrays(
 
     return s_n_t, a_n_t, r_n_t, ns_n_t
 
-# %% ../../../nbs/01.data.external.pandas_utils.ipynb 33
+# %% ../../../nbs/01.data.external.pandas_utils.ipynb 48
 def encode_episode_dataframe_from_series(
     observations: List[pd.Series],
     torque_table_row_names: List[str],
@@ -689,7 +689,7 @@ def encode_episode_dataframe_from_series(
 
     return episode
 
-# %% ../../../nbs/01.data.external.pandas_utils.ipynb 34
+# %% ../../../nbs/01.data.external.pandas_utils.ipynb 49
 def recover_episodestart_tzinfo_from_timestamp(
     ts: pd.Timestamp, tzinfo: ZoneInfo
 ) -> pd.Timestamp:
