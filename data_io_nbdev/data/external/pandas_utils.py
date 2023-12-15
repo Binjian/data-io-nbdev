@@ -22,22 +22,24 @@ import tensorflow as tf
 # %% ../../../nbs/01.data.external.pandas_utils.ipynb 7
 def assemble_state_ser(
     state_columns: pd.DataFrame,  # state_columns: Dataframe with columns ['timestep', 'velocity', 'thrust', 'brake']
-        tz: ZoneInfo  # timezone for the timestamp
-) -> Tuple[pd.Series, int]:  # state: Series with index ['rows', 'idx'], table_row_start: int
+    tz: ZoneInfo,  # timezone for the timestamp
+) -> Tuple[
+    pd.Series, int
+]:  # state: Series with index ['rows', 'idx'], table_row_start: int
     """
     assemble state df from state_columns dataframe order is vital for the model
-    
+
     inputs:
-    
+
         state_columns: pd.DataFrame
-    
+
     "timestep, velocity, thrust, brake"
     contiguous storage in each measurement
     due to sort_index, output:
     [col0: brake, col1: thrust, col2: timestep, col3: velocity]
-    
+
     return:
-    
+
         state: pd.Series
         table_row_start: int
     """
@@ -174,9 +176,9 @@ def assemble_action_ser(
     span_each_row = (flash_end_ts - flash_start_ts) / row_num
     flash_timestamps_ser = pd.Series(
         [
-            pd.to_datetime(flash_start_ts + step * span_each_row, utc=True, unit="us").tz_convert(
-                tz
-            )
+            pd.to_datetime(
+                flash_start_ts + step * span_each_row, utc=True, unit="us"
+            ).tz_convert(tz)
             for step in np.linspace(0, row_num, row_num)
         ],
         name="timestep",

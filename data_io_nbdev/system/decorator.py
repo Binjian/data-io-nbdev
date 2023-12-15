@@ -10,15 +10,16 @@ import functools
 def prepend_string_arg(str_arg="TQD_trqTrqSetNormal_MAP_v"):
     """
     function decorator to prepend a string argument to a     function
-    
-    Parameters: 
-    
+
+    Parameters:
+
         str_arg (str): string argument to prepend
-        
+
     Return:
-        
+
             function: decorated function
     """
+
     def decorate(func):
         @functools.wraps(func)
         def wrapper(*args, **kwargs):

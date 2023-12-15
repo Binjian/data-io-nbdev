@@ -13,27 +13,27 @@ warnings.filterwarnings("ignore", message="currentThread", category=DeprecationW
 
 # %% ../../../nbs/01.data.external.numpy_utils.ipynb 6
 def nan_helper_1d(
-        y: np.ndarray  # utils for handling indices and logical indices of NaNs
-    ) -> Tuple[np.ndarray, Callable]:
+    y: np.ndarray,  # utils for handling indices and logical indices of NaNs
+) -> Tuple[np.ndarray, Callable]:
     """Helper to handle indices and logical indices of NaNs.
 
     Parameters:
-    
+
         - y, 1d numpy array with possible NaNs
-        
+
     Returns:
-        
+
         - nans, logical indices of NaNs
         - index, a function, with signature indices= index(logical_indices),
             to convert logical indices of NaNs to 'equivalent' indices
-            
+
     Example: linear interpolation of NaNs
-    
+
         >>> nans, x= nan_helper_1d(y)
         >>> y[nans]= np.interp(x(nans), x(~nans), y[~nans])
 
-    sources: 
-    
+    sources:
+
     https://stackoverflow.com/questions/6518811/interpolate-nan-values-in-a-numpy-array
     """
 
@@ -41,24 +41,24 @@ def nan_helper_1d(
 
 # %% ../../../nbs/01.data.external.numpy_utils.ipynb 7
 def nan_interp_1d(
-        y: np.ndarray  # linear interpolation of NaNs
+    y: np.ndarray,  # linear interpolation of NaNs
 ) -> np.ndarray:  # np array with NaNs replaced by linear interpolation
     """Linear interpolation of NaNs.
 
     Parameter:
-    
+
         - y, 1d numpy array with possible NaNs
-        
+
     Return:
-    
+
         - y, 1d numpy array with NaNs replaced by linear interpolation
-    
+
     Example: linear interpolation of NaNs
-    
+
         >>> y = nan_interp_1d(y)
 
-    sources: 
-    
+    sources:
+
     https://stackoverflow.com/questions/6518811/interpolate-nan-values-in-a-numpy-array
     """
 
@@ -68,25 +68,25 @@ def nan_interp_1d(
 
 # %% ../../../nbs/01.data.external.numpy_utils.ipynb 8
 def ragged_nparray_list_interp(
-        ragged_list_list: List[List],  # list to be interpolated with NaNs 
-        ob_num: int  # number of observations
+    ragged_list_list: List[List],  # list to be interpolated with NaNs
+    ob_num: int,  # number of observations
 ) -> np.ndarray:  # np array with NaNs replaced by linear interpolation
     """Linear interpolation of NaNs.
 
     Parameter:
-    
+
         - y, list ragged array
-        
+
     Return:
-        
+
         - y, 2d numpy array with missing elements replaced by linear interpolation
-        
+
     Example: linear interpolation of NaNs
-        
+
         >>> y = nan_interp_1d(y)
 
-    sources: 
-    
+    sources:
+
     https://stackoverflow.com/questions/6518811/interpolate-nan-values-in-a-numpy-array
     """
 
@@ -126,25 +126,25 @@ def ragged_nparray_list_interp(
 # %% ../../../nbs/01.data.external.numpy_utils.ipynb 9
 def timestamps_from_can_strings(
     can_timestamp_strings: List[str],  # list of strings from CAN
-    signal_freq: float,   # signal frequency
+    signal_freq: float,  # signal frequency
     unit_num: int,  # number of CAN units
-    unit_duration: float  # duration in seconds per CAN unit
+    unit_duration: float,  # duration in seconds per CAN unit
 ) -> np.ndarray:  # np array of timestamps
     """Extract timestamps from CAN strings.
 
     Parameters:
-    
+
         - can_timestamp_strings, list of CAN strings
         - signal_freq, signal frequency
         - unit_num, number of CAN units
         - unit_duration, duration in seconds per CAN unit
-        
+
     Return:
-        
+
         - timestamps, 1d numpy array of timestamps
-        
+
     Example: extract timestamps from "CAN" strings
-    
+
         >>> timestamps_arr = timestamps_from_can_strings(can_timestamp_strings)
 
     """

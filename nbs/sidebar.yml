@@ -18,5 +18,14 @@ website:
         - 02.system.exception.ipynb
         - 02.system.gracefulkiller.ipynb
         - 02.system.log.ipynb
+        - 02.system.plot.ipynb
+      - section: Config
+        contents:
+        - 03.config.db.ipynb
+        - 03.config.drivers.ipynb
+        - 03.config.messenger.ipynb
+        - 03.config.utils.ipynb
+        - 03.config.vcu.ipynb
+        - 03.config.vehicles.ipynb
       - 98_utils.ipynb
       - 99_sandbox.ipynb

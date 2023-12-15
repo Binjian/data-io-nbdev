@@ -12,15 +12,12 @@ from functools import reduce
 from zoneinfo import ZoneInfo
 from configparser import ConfigParser
 
-
-
 # %% ../nbs/98_utils.ipynb 4
-from eos.data_io.config import drivers_by_id
-from eos.data_io.config.vehicles import trucks_by_id
-
+from .config.drivers import drivers_by_id
+from .config.vehicles import trucks_by_id
 
 # %% ../nbs/98_utils.ipynb 6
-def generate_state(tz: ZoneInfo)->pd.DataFrame:
+def generate_state(tz: ZoneInfo) -> pd.DataFrame:
     """
     generate a pandas DataFrame for testing purpose
     """
@@ -43,7 +40,7 @@ def generate_state(tz: ZoneInfo)->pd.DataFrame:
     return state
 
 # %% ../nbs/98_utils.ipynb 10
-def generate_action(tz: ZoneInfo)->pd.DataFrame:
+def generate_action(tz: ZoneInfo) -> pd.DataFrame:
     """
     generate a pandas DataFrame for testing purpose
     """
@@ -72,13 +69,13 @@ def generate_action(tz: ZoneInfo)->pd.DataFrame:
         .swaplevel(0, 1)
         .sort_index()
     )
-    
+
     action.name = "action"
     action.index.names = ["rows", "idx"]
     return action
 
 # %% ../nbs/98_utils.ipynb 14
-def generate_reward(tz: ZoneInfo)->pd.DataFrame:
+def generate_reward(tz: ZoneInfo) -> pd.DataFrame:
     """
     generate a pandas DataFrame for testing purpose
     """
@@ -98,9 +95,8 @@ def generate_reward(tz: ZoneInfo)->pd.DataFrame:
     reward.name = "reward"
     return reward
 
-
 # %% ../nbs/98_utils.ipynb 18
-def generate_nstate(tz: ZoneInfo)->pd.DataFrame:
+def generate_nstate(tz: ZoneInfo) -> pd.DataFrame:
     """
     generate a pandas DataFrame for testing purpose
     """
@@ -108,11 +104,13 @@ def generate_nstate(tz: ZoneInfo)->pd.DataFrame:
     s = np.arange(12)
     a = len(s) + np.arange(15)
     reward = generate_reward(tz=tz)
-    
-    ts_ind = ts + pd.to_timedelta(5, "s") + pd.to_timedelta(np.arange(0, 4 * 20, 20), "ms")
+
+    ts_ind = (
+        ts + pd.to_timedelta(5, "s") + pd.to_timedelta(np.arange(0, 4 * 20, 20), "ms")
+    )
     ts_ind = ts_ind.tz_localize(None).astype("datetime64[us]").tz_localize(tz)
     s = (
-            np.arange(12) + len(s) + len(a) + len(reward) - 1
+        np.arange(12) + len(s) + len(a) + len(reward) - 1
     )  # exclude the timestamp in reward
     a1 = s[:4]
     a2 = s[4:8]
@@ -129,7 +127,7 @@ def generate_nstate(tz: ZoneInfo)->pd.DataFrame:
     return nstate
 
 # %% ../nbs/98_utils.ipynb 21
-def generate_observation(tz: ZoneInfo)-> list[pd.Series]:
+def generate_observation(tz: ZoneInfo) -> list[pd.Series]:
     """
     generate a list of pandas Series for testing purpose
     """
@@ -139,10 +137,13 @@ def generate_observation(tz: ZoneInfo)-> list[pd.Series]:
     action = generate_action(tz)
     reward = generate_reward(tz)
     nstate = generate_nstate(tz)
-    
-    timestamp = pd.DatetimeIndex([ts], name="timestamp").tz_localize(None).astype(
-        "datetime64[us]"
-    ).tz_localize(tz)
+
+    timestamp = (
+        pd.DatetimeIndex([ts], name="timestamp")
+        .tz_localize(None)
+        .astype("datetime64[us]")
+        .tz_localize(tz)
+    )
     timestamp = pd.Series(timestamp, name="timestamp")
     timestamp.index = pd.MultiIndex.from_product(
         [timestamp.index, [0]], names=["rows", "idx"]
@@ -152,7 +153,7 @@ def generate_observation(tz: ZoneInfo)-> list[pd.Series]:
     reward_index = [(reward.name, *i) for i in reward.index]
     action_index = [(action.name, *i) for i in action.index]
     nstate_index = [(nstate.name, *i) for i in nstate.index]
-    
+
     multiindex = pd.MultiIndex.from_tuples(
         [timestamp_index, *state_index, *action_index, *reward_index, *nstate_index]
     )
@@ -178,38 +179,39 @@ def generate_observation(tz: ZoneInfo)-> list[pd.Series]:
     ]
     return observation_list
 
-
 # %% ../nbs/98_utils.ipynb 24
-def generate_df_multiindex(tz: ZoneInfo)->pd.DataFrame:
-
+def generate_df_multiindex(tz: ZoneInfo) -> pd.DataFrame:
     observation_list = generate_observation(tz=tz)
     dfs_epi = pd.concat(observation_list, axis=1).transpose()
     dfs_epi.columns.names = ["qtuple", "rows", "idx"]
     # dfs_epi
-    
+
     dfs_episode = dfs_epi.copy()
     dfs_episode.set_index(("timestamp", "", 0), inplace=True)
     dfs_episode.sort_index(axis=1, inplace=True)
     dfs_episode.index.name = "timestamp"
     idx = pd.IndexSlice
     state_cols_float = [("state", col) for col in ["brake", "thrust", "velocity"]]
-    action_cols_float = [("action", col) for col in ["r0", "r1", "r2", "speed", "throttle"]]
+    action_cols_float = [
+        ("action", col) for col in ["r0", "r1", "r2", "speed", "throttle"]
+    ]
     reward_cols_float = [("reward", "work")]
     nstate_cols_float = [("nstate", col) for col in ["brake", "thrust", "velocity"]]
-    for col in action_cols_float + state_cols_float + reward_cols_float + nstate_cols_float:
+    for col in (
+        action_cols_float + state_cols_float + reward_cols_float + nstate_cols_float
+    ):
         dfs_episode[col[0], col[1]] = dfs_episode[col[0], col[1]].astype(
             "float"
         )  # float16 not allowed in parquet
     return dfs_episode
 
-
 # %% ../nbs/98_utils.ipynb 27
-def generate_eos_df(tz: ZoneInfo)->pd.DataFrame:
+def generate_eos_df(tz: ZoneInfo) -> pd.DataFrame:
     """
     generate a pandas DataFrame for testing purpose
     """
     dfs_episode = generate_df_multiindex(tz=tz)
-    
+
     ts = pd.to_datetime(datetime.now(tz=tz))
     dfs_episode = pd.concat(
         [dfs_episode], keys=[drivers_by_id["wang-cheng"].pid], names=["driver"]
@@ -224,7 +226,13 @@ def generate_eos_df(tz: ZoneInfo)->pd.DataFrame:
     dfs_episode.sort_index(inplace=True)
     return dfs_episode
 
-
 # %% ../nbs/98_utils.ipynb 33
 from .data.location import EosLocation, locations_by_abbr
-from .data.core import configparser_as_dict, get_filemeta_config, ObservationMetaECU, StateSpecsECU, ActionSpecs, RewardSpecs 
+from data_io_nbdev.data.core import (
+    configparser_as_dict,
+    get_filemeta_config,
+    ObservationMetaECU,
+    StateSpecsECU,
+    ActionSpecs,
+    RewardSpecs,
+)

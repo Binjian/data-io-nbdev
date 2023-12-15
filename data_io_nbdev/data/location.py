@@ -22,22 +22,22 @@ LocationCat = OrderedSet(
     ]
 )
 
-
 # %% ../../nbs/01.data.location.ipynb 9
 class EosLocation(BaseModel):
     """
     location class for eos, `abbr`, `name`, `cname`, `tz` are required
-        
+
     args:
-    
+
         abbr: abbreviation
         name: name
         cname: chinese name
         tz: timezone
-        
+
     return:
             EosLocation
     """
+
     model_config = ConfigDict(arbitrary_types_allowed=True)
 
     abbr: str  # abbreviation
@@ -45,29 +45,27 @@ class EosLocation(BaseModel):
     cname: str  # chinese name
     tz: ZoneInfo  # timezone
 
-# %% ../../nbs/01.data.location.ipynb 12
-@field_serializer('tz')
-@patch
-def serialize_tz(self:EosLocation,  #
-                 tz: ZoneInfo,  # timezone
-                 _info: str):  # other info
-    """
-    serialize timezone to string
-    
-    args:
-    
-        tz: timezone
-        _info:  other info
-        
-    return:
-        
-            str
-        
-    """
-    return tz.key
+    @field_serializer("tz")
+    def serialize_tz(self, tz: ZoneInfo, _info):  #  # timezone  # other info
+        """
+        serialize timezone to string
 
+        args:
+
+            tz: timezone
+            _info:  other info
+
+        return:
+
+                str
+
+        """
+        return tz.key
 
 # %% ../../nbs/01.data.location.ipynb 13
+# | export
+
+# %% ../../nbs/01.data.location.ipynb 14
 locations = [
     EosLocation(
         abbr="jy",
@@ -158,13 +156,12 @@ locations = [
         name="unknown",
         cname="未知",
         tz=timezones["utc"],
-    )
+    ),
 ]
 
-# %% ../../nbs/01.data.location.ipynb 15
+# %% ../../nbs/01.data.location.ipynb 16
 locations_by_abbr = dict(zip([location.abbr for location in locations], locations))
 
-
-# %% ../../nbs/01.data.location.ipynb 17
+# %% ../../nbs/01.data.location.ipynb 18
 # since ZoneInfo is hashable, we can use it as key! one to many mapping! among all the tz, the last is the output
 locations_from_tz = dict(zip([location.tz for location in locations], locations))

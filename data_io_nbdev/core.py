@@ -11,86 +11,87 @@ import pandas as pd
 def say_hi(to: str):
     """
     Say hello to somebody
-    
-    
+
+
     Args:
         to: somebody to say hello to
     """
 
-    return f'Hi {to}!'
-
+    return f"Hi {to}!"
 
 # %% ../nbs/99_sandbox.ipynb 6
 def say_hello(to: str):
     """Say hello to somebody"""
-    return f'Hello {to}!'
+    return f"Hello {to}!"
 
 # %% ../nbs/99_sandbox.ipynb 18
 class HelloSayer:
     """Say hello to `to` using `say_hello`"""
-    def __init__(self, to): 
+
+    def __init__(self, to):
         self.to = to
-    def say(self): 
+
+    def say(self):
         """
         Do the saying
         """
         return say_hello(self.to)
 
 # %% ../nbs/99_sandbox.ipynb 21
-def draw_n(n:int, # Number of cards to draw
-           replace:bool=True # Draw with replacement?
-          )->list: # List of cards
+def draw_n(
+    n: int, replace: bool = True  # Number of cards to draw  # Draw with replacement?
+) -> list:  # List of cards
     "Draw `n` cards."
-    return [1,2,3]
+    return [1, 2, 3]
 
 # %% ../nbs/99_sandbox.ipynb 25
-def draw_np(n:int, replace:bool=True) -> list:
+def draw_np(n: int, replace: bool = True) -> list:
     """
     Draw `n` cards.
-    
+
     Parameters
     ----------
     n
         Number of cards to draw
     replace
         Draw with replacement?
-        
+
     Returns
     -------
     cards
         List of cards
     """
-    return [1,2,3]
+    return [1, 2, 3]
 
 # %% ../nbs/99_sandbox.ipynb 27
 class MP(NamedTuple):
     """
     Motion power tuple
-    
+
     Parameters
     ----------
-    timestep: 
+    timestep:
         timestamp of the tuple
-    velocity: 
+    velocity:
         velocity in m/s,
-    thrust: 
+    thrust:
         thrust in percentage of full acc pedal,
-    brake: 
+    brake:
         brake in percentage of full brake pedal,
-    current: 
+    current:
         current in A,
-    voltage: 
+    voltage:
         voltage in V,
-    
+
     Returns
     -------
     MotionPower
         motion power tuple
     """
+
     timestep: pd.Timestamp  # timestamp of the tuple
     velocity: float  # velocity in m/s
     thrust: float  # thrust in percentage of full acc pedal
     brake: float  # brake in percentage of full brake pedal
     current: float  # current in A
     voltage: float  # voltage in V
-

@@ -29,17 +29,17 @@ mpl_logger.disabled = True
 
 # %% ../../nbs/02.system.log.ipynb 8
 def set_root_logger(
-        name: str,  # name of the root logger
-        data_root: Path,  # root path of the data
-        agent: str,   # agent name, ie. "DDPG"/"RDPG"
-        tz: ZoneInfo,   # time zone of the logging
-        truck: str,   # truck name, ie. "VB7"
-        driver: str,  # driver name, ie. "wang-cheng"
+    name: str,  # name of the root logger
+    data_root: Path,  # root path of the data
+    agent: str,  # agent name, ie. "DDPG"/"RDPG"
+    tz: ZoneInfo,  # time zone of the logging
+    truck: str,  # truck name, ie. "VB7"
+    driver: str,  # driver name, ie. "wang-cheng"
 ) -> Tuple[logging.Logger, dict]:  # return the logger and the dict_logger
     """
     Set the root logger for the system
     """
-    
+
     logger = logging.getLogger(name)
     logger.propagate = False
 

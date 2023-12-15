@@ -163,3 +163,4 @@ cython_debug/
 /_docs/
 /_proc/
 /nbs/data/
+/data

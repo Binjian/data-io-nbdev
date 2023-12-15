@@ -14,7 +14,6 @@ from pathlib import Path
 from typing import Dict, List, NamedTuple, Optional, Tuple, TypeVar, Union, TypeAlias
 from zoneinfo import ZoneInfo  # type: ignore
 
-
 # %% ../../nbs/01.data.core.ipynb 4
 import pandas as pd  # type: ignore
 from pydantic import BaseModel, Field, GetPydanticSchema  # type: ignore
@@ -22,12 +21,10 @@ from pydantic.dataclasses import dataclass  # type: ignore
 from typing_extensions import TypedDict
 from .location import EosLocation
 
-
 # %% ../../nbs/01.data.core.ipynb 6
 KvaserType: TypeAlias = dict[str, str]
 RCANType: TypeAlias = dict[str, dict[str, list[Union[str, list[list[str]]]]]]
 RawType: TypeAlias = Union[KvaserType, RCANType]
-
 
 # %% ../../nbs/01.data.core.ipynb 7
 #  Define TypedDict for type hinting of typed collections: records and episodes
@@ -38,59 +35,59 @@ veos_lifetime_end_date: pd.Timestamp = pd.Timestamp(
     ts_input="2031-12-31T00:00:00+08:00", tz="Asia/Shanghai"
 )
 
-
 # %% ../../nbs/01.data.core.ipynb 10
 class MotionPower(NamedTuple):
     """
     Motion power tuple for raw data captured by Kvaser
-    
+
     Attributes:
-        
+
         timestep: timestamp of the tuple
         velocity: velocity in m/s,
         thrust: thrust in percentage of full acc pedal,
         brake: brake in percentage of full brake pedal,
         current: current in A,
         voltage: voltage in V,
-    
-    return:
-    
-            MotionPower tuple    
-    """
-    timestep: pd.Timestamp   
-    """timestamp of the tuple"""
-    
-    velocity: float  
-    """velocity in m/s"""
-    
-    thrust: float  
-    """thrust in percentage of full acc pedal"""
-    
-    brake: float  
-    """brake in percentage of full brake pedal"""
-    
-    current: float  
-    """current in A"""
-    
-    voltage: float  
-    """voltage in V"""
 
+    return:
+
+            MotionPower tuple
+    """
+
+    timestep: pd.Timestamp
+    """timestamp of the tuple"""
+
+    velocity: float
+    """velocity in m/s"""
+
+    thrust: float
+    """thrust in percentage of full acc pedal"""
+
+    brake: float
+    """brake in percentage of full brake pedal"""
+
+    current: float
+    """current in A"""
+
+    voltage: float
+    """voltage in V"""
 
 # %% ../../nbs/01.data.core.ipynb 13
 class ECUMixin(BaseModel):
     """
     ECU mixin class, for inheriting by Kvaser generated observation data
-    
+
     Attributes:
-        
+
         ecu_observation_number: number of observations per ECU
         ecu_observation_frequency: frequency of observations per ECU
         ecu_countdown: countdown time for ECU
-        
+
     return:
-    
-            ECUMixin 
+
+            ECUMixin
     """
+
     # optional: can be adjusted by developer
     ecu_observation_number: int = 30
     #     (KvaserMixin.kvaser_observation_number
@@ -108,17 +105,17 @@ class ECUMixin(BaseModel):
 class CloudMixin(BaseModel):
     """
     Cloud mixin class, for inheriting by tbox generated observation data
-    
+
     Attributes:
-        
+
         cloud_signal_frequency: frequency of observations of Tbox
         cloud_gear_frequency: frequency of gear signal of Tbox
-        cloud_unit_duration: unit duration of Tbox in seconds 
+        cloud_unit_duration: unit duration of Tbox in seconds
         cloud_unit_number: number of observation units of Tbox
-        
+
     return:
-    
-            CloudMixin 
+
+            CloudMixin
     """
 
     cloud_signal_frequency: int = 50  # TboxMixin.tbox_signal_frequency  # 50  # Hz
@@ -130,14 +127,13 @@ class CloudMixin(BaseModel):
     #     (TboxMixin.tbox_unit_number
     # )  # int = 4  # cloud number of units of cloud observation
 
-
 # %% ../../nbs/01.data.core.ipynb 17
 class StateUnitCodes(BaseModel):
     """
     Observation of the episode
-    
+
     attribute:
-    
+
         velocity_unit_code: unit of velocity, default "kph"
         thrust_unit_code: unit of thrust, default "pct"
         brake_unit_code: unit of brake, default "pct"
@@ -147,15 +143,14 @@ class StateUnitCodes(BaseModel):
     thrust_unit_code: str = "pct"  # unit of thrust, default "pct"
     brake_unit_code: str = "pct"  # unit of brake, default "pct"
 
-
 # %% ../../nbs/01.data.core.ipynb 18
 @dataclass(kw_only=True)
 class StateSpecs:
     """
     Observation of the episode
-    
+
     attributes:
-        
+
             state_unit_codes: StateUnitCodes
             state_number: number of states, default 3, velocity, thrust, brake
             unit_number_per_state: number of units, default 4
@@ -174,9 +169,9 @@ class StateSpecs:
 class StateSpecsCloud(StateSpecs):
     """
     StateSpecs for cloud interface
-    
+
     attributes:
-        
+
         cloud_interface: CloudMixin
     """
 
@@ -190,21 +185,20 @@ class StateSpecsCloud(StateSpecs):
             * self.cloud_interface.cloud_signal_frequency
         )  # 4*1*50 = 200
         self.unit_duration = (
-                self.cloud_interface.cloud_unit_duration
-                * self.cloud_interface.cloud_unit_number
+            self.cloud_interface.cloud_unit_duration
+            * self.cloud_interface.cloud_unit_number
         )  # 1.0 * 4 = 4.0s
         self.frequency = self.cloud_interface.cloud_signal_frequency  # 50
-
 
 # %% ../../nbs/01.data.core.ipynb 20
 @dataclass
 class StateSpecsECU(StateSpecs):
     """
     StateSpecs for Kvaser interface
-    
-    
+
+
     attributes:
-        
+
         ecu_interface: ECUMixin
     """
 
@@ -214,8 +208,8 @@ class StateSpecsECU(StateSpecs):
         self.state_number = 3
         self.unit_number_per_state = self.ecu_interface.ecu_observation_number  # 30
         self.unit_duration = (
-                self.ecu_interface.ecu_observation_number
-                / self.ecu_interface.ecu_observation_frequency  # 1.5s
+            self.ecu_interface.ecu_observation_number
+            / self.ecu_interface.ecu_observation_frequency  # 1.5s
         )
         self.frequency = self.ecu_interface.ecu_observation_frequency  # 20
 
@@ -223,9 +217,9 @@ class StateSpecsECU(StateSpecs):
 class ActionSpecs(BaseModel):
     """
     Action of the episode
-    
+
     attributes:
-        
+
         action_unit_code: unit of action, default "nm"
         action_row_number: number of rows, default 4
         action_column_number: number of columns, default 17
@@ -239,11 +233,11 @@ class ActionSpecs(BaseModel):
 class RewardSpecs(BaseModel):
     """
     Reward of the episode
-    
+
     Attributes:
-        
+
         reward_unit_code: unit of reward, default "wh"
-        reward_number: number of rewards, default 1, current reward, can be extended to multiple past rewards   
+        reward_number: number of rewards, default 1, current reward, can be extended to multiple past rewards
     """
 
     reward_unit_code: str = "wh"  # unit of reward, default "wh"
@@ -253,9 +247,9 @@ class RewardSpecs(BaseModel):
 class ObservationMeta(BaseModel):
     """
     selected metadata for db document matching pandas DataFrame
-    
+
     Attributes:
-        
+
         state_specs: StateSpecs
         action_specs: ActionSpecs
         reward_specs: RewardSpecs
@@ -282,7 +276,7 @@ class ObservationMeta(BaseModel):
         get number of actions from ActionSpecs
         """
         return (
-                self.action_specs.action_row_number * self.action_specs.action_column_number
+            self.action_specs.action_row_number * self.action_specs.action_column_number
         )
 
     def get_number_of_states_actions(self) -> Tuple[int, int]:
@@ -291,24 +285,38 @@ class ObservationMeta(BaseModel):
         """
         return self.get_number_of_states(), self.get_number_of_actions()
 
-    def have_same_meta(self, 
-            meta_to_compare: 'ObservationMeta'):  # another ObservationMeta object (forward declaratin)
+    def have_same_meta(
+        self, meta_to_compare: "ObservationMeta"
+    ):  # another ObservationMeta object (forward declaratin)
         """
         Compare two plots, return True if they are the same, while ignoring the 'when' field
         """
         return all(
             [
-                all([
-                    self.state_specs.state_unit_codes == meta_to_compare.state_specs.state_unit_codes,
-                    self.state_specs.state_number == meta_to_compare.state_specs.state_number,
-                    self.state_specs.unit_number_per_state == meta_to_compare.state_specs.unit_number_per_state,
-                    self.state_specs.unit_duration == meta_to_compare.state_specs.unit_duration,
-                    self.state_specs.frequency == meta_to_compare.state_specs.frequency
-                ]),
-                all([self.action_specs.action_row_number == meta_to_compare.action_specs.action_row_number,
-                     self.action_specs.action_column_number == meta_to_compare.action_specs.action_column_number,
-                     self.action_specs.action_unit_code == meta_to_compare.action_specs.action_unit_code
-                     ]),
+                all(
+                    [
+                        self.state_specs.state_unit_codes
+                        == meta_to_compare.state_specs.state_unit_codes,
+                        self.state_specs.state_number
+                        == meta_to_compare.state_specs.state_number,
+                        self.state_specs.unit_number_per_state
+                        == meta_to_compare.state_specs.unit_number_per_state,
+                        self.state_specs.unit_duration
+                        == meta_to_compare.state_specs.unit_duration,
+                        self.state_specs.frequency
+                        == meta_to_compare.state_specs.frequency,
+                    ]
+                ),
+                all(
+                    [
+                        self.action_specs.action_row_number
+                        == meta_to_compare.action_specs.action_row_number,
+                        self.action_specs.action_column_number
+                        == meta_to_compare.action_specs.action_column_number,
+                        self.action_specs.action_unit_code
+                        == meta_to_compare.action_specs.action_unit_code,
+                    ]
+                ),
                 self.reward_specs == meta_to_compare.reward_specs,
                 self.site == meta_to_compare.site,
             ]
@@ -352,9 +360,9 @@ class ObservationMetaECU(ObservationMeta):
 class DataFrameDoc(TypedDict):
     """
     Record doc type of mongo pool for record
-    
+
     attributes:
-        
+
         timestamp: timestamp of the record
         meta: metadata of the record
         observation: observation of the record
@@ -364,7 +372,6 @@ class DataFrameDoc(TypedDict):
     meta: dict
     observation: dict
     # for RECORD seq_len = 1
-
 
 # %% ../../nbs/01.data.core.ipynb 32
 ItemT = TypeVar("ItemT", Dict, pd.DataFrame)
@@ -395,10 +402,10 @@ RE_RECIPEKEY = re.compile(r"^[A-Za-z]\w*\.ini$")
 
 # %% ../../nbs/01.data.core.ipynb 35
 def get_filemeta_config(
-        data_folder: str,
-        config_file: Optional[str],
-        meta: Union[ObservationMetaCloud, ObservationMetaECU],
-        coll_type: str,
+    data_folder: str,
+    config_file: Optional[str],
+    meta: Union[ObservationMetaCloud, ObservationMetaECU],
+    coll_type: str,
 ) -> ConfigParser:
     """Get the filepool config from the specified path data_folder + '\' + config_file
         and compare the meat data with the plot info
@@ -448,7 +455,7 @@ def get_filemeta_config(
                 recipe.write(configfile)
         except Exception as e:
             raise Exception(f"Error reading recipe file {config_file_path}, {e}")
-        recipe['DEFAULT']['coll_type'] = coll_type
+        recipe["DEFAULT"]["coll_type"] = coll_type
 
     return recipe
 
