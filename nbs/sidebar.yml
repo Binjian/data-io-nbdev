@@ -27,5 +27,12 @@ website:
         - 03.config.utils.ipynb
         - 03.config.vcu.ipynb
         - 03.config.vehicles.ipynb
+      - section: Connection
+        contents:
+        - 04.conn.remote_can_client.ipynb
+        - 04.conn.remote_can_exceptions.ipynb
+        - 04.conn.rmq_clearable_pull_consumer.ipynb
+        - 04.conn.tcp.ipynb
+        - 04.conn.udp.ipynb
       - 98_utils.ipynb
       - 99_sandbox.ipynb

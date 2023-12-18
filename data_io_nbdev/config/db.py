@@ -6,14 +6,7 @@ import re
 from collections import namedtuple
 
 # %% auto 0
-__all__ = [
-    "RE_DB_KEY",
-    "DBConfig",
-    "db_config_list",
-    "db_config_servers_by_name",
-    "db_config_servers_by_host",
-    "get_db_config",
-]
+__all__ = ['RE_DB_KEY', 'DBConfig', 'db_config_list', 'db_config_servers_by_name', 'db_config_servers_by_host', 'get_db_config']
 
 # %% ../../nbs/03.config.db.ipynb 3
 # Define TypedDict for type hinting of typed collections: records and episodes
@@ -178,7 +171,6 @@ db_config_servers_by_name = dict(
 db_config_servers_by_host = dict(
     zip([db_config.host for db_config in db_config_list], db_config_list)
 )
-
 
 # %% ../../nbs/03.config.db.ipynb 10
 def get_db_config(
