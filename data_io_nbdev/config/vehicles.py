@@ -15,6 +15,7 @@ from pandas import Timestamp
 # %% ../../nbs/03.config.vehicles.ipynb 3
 from ..data.time import timezones
 from ..data.location import EosLocation, locations, locations_by_abbr
+from pprint import pprint
 
 # %% ../../nbs/03.config.vehicles.ipynb 4
 PEDAL_SCALES = (

@@ -11,7 +11,7 @@ from pandas import Timestamp
 # %% ../../nbs/03.config.drivers.ipynb 3
 from ..data.location import EosLocation, locations_by_abbr
 
-# %% ../../nbs/03.config.drivers.ipynb 4
+# %% ../../nbs/03.config.drivers.ipynb 5
 DriverCat = OrderedSet(
     [
         "wang-kai",
@@ -26,10 +26,10 @@ DriverCat = OrderedSet(
     ]
 )
 
-# %% ../../nbs/03.config.drivers.ipynb 5
+# %% ../../nbs/03.config.drivers.ipynb 6
 RE_DRIVER = r"^[A-Za-z]{1,10}[-_.][A-Za-z]{1,10}(\d?){1,5}$"
 
-# %% ../../nbs/03.config.drivers.ipynb 6
+# %% ../../nbs/03.config.drivers.ipynb 7
 @dataclass
 class Driver:
     """
@@ -61,7 +61,7 @@ class Driver:
         )
         self.cat.add(self.pid)
 
-# %% ../../nbs/03.config.drivers.ipynb 7
+# %% ../../nbs/03.config.drivers.ipynb 8
 drivers = [
     Driver(
         pid="default",
@@ -123,5 +123,5 @@ drivers = [
     ),
 ]
 
-# %% ../../nbs/03.config.drivers.ipynb 8
+# %% ../../nbs/03.config.drivers.ipynb 9
 drivers_by_id = dict(zip([drv.pid for drv in drivers], drivers))
