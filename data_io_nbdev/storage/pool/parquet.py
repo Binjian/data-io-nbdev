@@ -5,11 +5,6 @@ from __future__ import annotations
 import json
 from dataclasses import dataclass
 from typing import Optional
-
-# The following three imports is a nbdev workaround, since ParquetPool is a derived class of DaskPool, nbdev seems to not import it
-from configparser import ConfigParser
-from pathlib import Path
-import logging
 import dask.dataframe as dd  # type: ignore
 import pandas as pd  # type: ignore
 import pyarrow as pa  # type: ignore
@@ -20,7 +15,7 @@ from dask.diagnostics import ProgressBar  # type: ignore
 # %% auto 0
 __all__ = ['ParquetPool']
 
-# %% ../../../nbs/05.storage.pool.parquet.ipynb 4
+# %% ../../../nbs/05.storage.pool.parquet.ipynb 5
 from .dask import DaskPool
 from data_io_nbdev.data.core import (
     ObservationMeta,
@@ -31,7 +26,7 @@ from data_io_nbdev.data.core import (
 from ...data.location import locations_by_abbr
 from ...data.external.pandas_utils import encode_dataframe_from_parquet
 
-# %% ../../../nbs/05.storage.pool.parquet.ipynb 5
+# %% ../../../nbs/05.storage.pool.parquet.ipynb 6
 @dataclass(kw_only=True)
 class ParquetPool(  # type: ignore
     DaskPool
