@@ -21,12 +21,12 @@ website:
         - 02.system.plot.ipynb
       - section: Config
         contents:
-        - 03.config.db.ipynb
+        - 03.config.vehicles.ipynb
         - 03.config.drivers.ipynb
+        - 03.config.db.ipynb
         - 03.config.messenger.ipynb
         - 03.config.utils.ipynb
         - 03.config.vcu.ipynb
-        - 03.config.vehicles.ipynb
       - section: Connection
         contents:
         - 04.conn.remote_can_client.ipynb
@@ -36,11 +36,20 @@ website:
         - 04.conn.udp.ipynb
       - section: Storage
         contents:
-        - 05.storage.pool.pool.ipynb
-        - 05.storage.pool.mongo.ipynb
-        - 05.storage.pool.dask.ipynb
-        - 05.storage.pool.parquet.ipynb
-        - 05.storage.pool.avro.ipynb
-        - 05.storage.pool.avro_schema_episode.ipynb
+        - section: Pool
+          contents:
+          - 05.storage.pool.pool.ipynb
+          - 05.storage.pool.mongo.ipynb
+          - 05.storage.pool.dask.ipynb
+          - 05.storage.pool.parquet.ipynb
+          - section: Avro
+            contents:
+            - 05.storage.pool.avro.avro.ipynb
+            - 05.storage.pool.avro.schema.ipynb
+        - section: Buffer
+          contents:
+          - 05.storage.buffer.buffer.ipynb
+          - 05.storage.buffer.mongo.ipynb
+          - 05.storage.buffer.dask.ipynb
       - 98_utils.ipynb
       - 99_sandbox.ipynb
