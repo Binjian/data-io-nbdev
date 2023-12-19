@@ -37,10 +37,10 @@ website:
       - section: Storage
         contents:
         - 05.storage.pool.pool.ipynb
+        - 05.storage.pool.mongo.ipynb
+        - 05.storage.pool.dask.ipynb
+        - 05.storage.pool.parquet.ipynb
         - 05.storage.pool.avro.ipynb
         - 05.storage.pool.avro_schema_episode.ipynb
-        - 05.storage.pool.dask.ipynb
-        - 05.storage.pool.mongo.ipynb
-        - 05.storage.pool.parquet.ipynb
       - 98_utils.ipynb
       - 99_sandbox.ipynb
