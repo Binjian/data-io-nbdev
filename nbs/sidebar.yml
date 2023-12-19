@@ -2,7 +2,7 @@ website:
   sidebar:
     contents:
       - index.ipynb
-      - 00_core.ipynb
+      - 00.core.ipynb
       - section: Data
         contents:
         - 01.data.core.ipynb
@@ -51,5 +51,18 @@ website:
           - 05.storage.buffer.buffer.ipynb
           - 05.storage.buffer.mongo.ipynb
           - 05.storage.buffer.dask.ipynb
+      - section: Dataflow
+        contents:
+          - section: Pipeline
+            contents:
+              - 06.dataflow.pipeline.queue.ipynb
+              - 06.dataflow.pipeline.deque.ipynb
+          - section: Filter
+            contents:
+              - 06.dataflow.filter.filter.ipynb
+              - 06.dataflow.filter.homo.ipynb
+              - 06.dataflow.filter.hetero.ipynb
+          - 06.dataflow.consumer.ipynb
+          - 06.dataflow.producer.ipynb
       - 98_utils.ipynb
       - 99_sandbox.ipynb
