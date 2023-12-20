@@ -180,5 +180,5 @@ skip-magic-trailing-comma = false
 # Like Black, automatically detect the appropriate line ending.
 line-ending = "auto"
 
-[too.ruff.lint.pydocstyle]
+[tool.ruff.lint.pydocstyle]
 convention = "google"  # google, numpy, pep257, pep287, short, or short_numpy
