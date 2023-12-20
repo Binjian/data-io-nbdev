@@ -31,7 +31,7 @@ website:
         contents:
         - 04.conn.remote_can_client.ipynb
         - 04.conn.remote_can_exceptions.ipynb
-        - 04.conn.rmq_clearable_pull_consumer.ipynb
+        - 04.conn.clearable_pull_consumer.ipynb
         - 04.conn.tcp.ipynb
         - 04.conn.udp.ipynb
         - 04.conn.tbox.ipynb
@@ -47,7 +47,7 @@ website:
             contents:
             - 05.storage.pool.avro.avro.ipynb
             - 05.storage.pool.avro.schema.ipynb
-        - section: <b style="color:DodgerBlue;">Buffer</b>
+        - section: <b>Buffer</b>
           contents:
           - 05.storage.buffer.buffer.ipynb
           - 05.storage.buffer.mongo.ipynb
