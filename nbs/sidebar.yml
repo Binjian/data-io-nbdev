@@ -3,7 +3,7 @@ website:
     contents:
       - index.ipynb
       - 00.core.ipynb
-      - section: <b>Data</b>
+      - section: <b style="color:DodgerBlue;">Data</b>
         contents:
         - 01.data.core.ipynb
         - section: <b>External</b>
@@ -12,14 +12,14 @@ website:
           - 01.data.external.pandas_utils.ipynb
         - 01.data.location.ipynb
         - 01.data.time.ipynb
-      - section:  <b>System</b>
+      - section:  <b style="color:DodgerBlue;">System</b>
         contents:
         - 02.system.decorator.ipynb
         - 02.system.exception.ipynb
         - 02.system.gracefulkiller.ipynb
         - 02.system.log.ipynb
         - 02.system.plot.ipynb
-      - section: <b>Config</b>
+      - section: <b style="color:DodgerBlue;">Config</b>
         contents:
         - 03.config.vehicles.ipynb
         - 03.config.drivers.ipynb
@@ -27,7 +27,7 @@ website:
         - 03.config.messenger.ipynb
         - 03.config.utils.ipynb
         - 03.config.vcu.ipynb
-      - section: <b>Connection</b>
+      - section: <b style="color:DodgerBlue;">Connection</b>
         contents:
         - 04.conn.remote_can_client.ipynb
         - 04.conn.remote_can_exceptions.ipynb
@@ -35,7 +35,7 @@ website:
         - 04.conn.tcp.ipynb
         - 04.conn.udp.ipynb
         - 04.conn.tbox.ipynb
-      - section: <b>Storage</b>
+      - section: <b style="color:DodgerBlue;">Storage</b>
         contents:
         - section: <b>Pool</b>
           contents:
@@ -47,12 +47,12 @@ website:
             contents:
             - 05.storage.pool.avro.avro.ipynb
             - 05.storage.pool.avro.schema.ipynb
-        - section: <b>Buffer</b>
+        - section: <b style="color:DodgerBlue;">Buffer</b>
           contents:
           - 05.storage.buffer.buffer.ipynb
           - 05.storage.buffer.mongo.ipynb
           - 05.storage.buffer.dask.ipynb
-      - section: <b>Dataflow</b>
+      - section: <b style="color:DodgerBlue;">Dataflow</b>
         contents:
           - section: <b>Pipeline</b>
             contents:
