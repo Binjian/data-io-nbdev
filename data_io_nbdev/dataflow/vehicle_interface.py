@@ -24,6 +24,13 @@ from .pipeline.queue import Pipeline  # type: ignore
 from .pipeline.deque import PipelineDQ  # type: ignore
 from .producer import Producer  # type: ignore
 
+# %% ../../nbs/06.dataflow.vehicle_interface.ipynb 5
+from ..config.vehicles import Truck
+from ..config.drivers import Driver
+from ..config.messengers import CANMessenger
+from ..data.core import RawType
+from ..conn.tbox import TBoxCanException
+
 # %% ../../nbs/06.dataflow.vehicle_interface.ipynb 6
 @dataclass(kw_only=True)
 class VehicleInterface(
