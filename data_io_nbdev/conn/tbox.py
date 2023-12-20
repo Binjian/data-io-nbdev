@@ -6,6 +6,7 @@ __all__ = ['g_tbox_sim_path', 'g_input_json_path', 'g_output_json_path', 'g_down
            'float_array_to_buffer', 'parse_arg', 'write_json', 'send_float_array']
 
 # %% ../../nbs/04.conn.tbox.ipynb 3
+import os
 import argparse
 import json
 import struct
@@ -52,7 +53,7 @@ class TBoxCanException(Exception):
         #
 
 # %% ../../nbs/04.conn.tbox.ipynb 6
-g_tbox_sim_path = "/home/user/work/045b_demo/tbox-simulator"
+g_tbox_sim_path = Path(os.path.abspath("")) / "../res/tbox"
 g_input_json_path = ""
 g_output_json_path = ""
 g_download_script_diffon = ""
@@ -74,18 +75,15 @@ def set_tbox_sim_path(tbox_sim_path):
     g_download_script_diffoff = tbox_sim_path + download_script_diffoff
 
 # %% ../../nbs/04.conn.tbox.ipynb 8
-set_tbox_sim_path(g_tbox_sim_path)
-
-# %% ../../nbs/04.conn.tbox.ipynb 9
 def float_to_hex(value):
     h = hex(struct.unpack(">I", struct.pack("<f", value))[0])
     return h
 
-# %% ../../nbs/04.conn.tbox.ipynb 10
+# %% ../../nbs/04.conn.tbox.ipynb 9
 def hex_to_float(value):
     return float(struct.unpack(">f", struct.pack("<I", value))[0])
 
-# %% ../../nbs/04.conn.tbox.ipynb 11
+# %% ../../nbs/04.conn.tbox.ipynb 10
 def float_array_to_buffer(float_array):
     buffer_value = ""
     for i in range(len(float_array)):
@@ -96,7 +94,7 @@ def float_array_to_buffer(float_array):
         buffer_value = buffer_value + hex_str
     return buffer_value
 
-# %% ../../nbs/04.conn.tbox.ipynb 12
+# %% ../../nbs/04.conn.tbox.ipynb 11
 def parse_arg():
     parser = argparse.ArgumentParser()
 
@@ -110,7 +108,7 @@ def parse_arg():
     args = parser.parse_args()
     return args
 
-# %% ../../nbs/04.conn.tbox.ipynb 13
+# %% ../../nbs/04.conn.tbox.ipynb 12
 def write_json(output_json_path, example_json_path, data):
     # 1 read example json
     f = open(example_json_path, "r")
@@ -139,7 +137,7 @@ def write_json(output_json_path, example_json_path, data):
     f.write(json_str)
     f.close()
 
-# %% ../../nbs/04.conn.tbox.ipynb 14
+# %% ../../nbs/04.conn.tbox.ipynb 13
 @prepend_string_arg("TQD_trqTrqSetNormal_MAP_v")
 def send_float_array(
     name: str,  # string for the CAN message name
@@ -187,6 +185,6 @@ def send_float_array(
     #         extra_msg="xcp download failed",
     #     )
 
-# %% ../../nbs/04.conn.tbox.ipynb 18
-set_tbox_sim_path(str(Path(__file__).parent) + "/tbox")
+# %% ../../nbs/04.conn.tbox.ipynb 17
+set_tbox_sim_path(str(g_tbox_sim_path))
 kvaser_send_float_array = send_float_array
