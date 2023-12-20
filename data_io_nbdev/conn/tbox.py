@@ -2,8 +2,8 @@
 
 # %% auto 0
 __all__ = ['g_tbox_sim_path', 'g_input_json_path', 'g_output_json_path', 'g_download_script_diffon', 'g_download_script_diffoff',
-           'TBoxCanException', 'set_tbox_sim_path', 'float_to_hex', 'hex_to_float', 'float_array_to_buffer',
-           'parse_arg', 'write_json', 'send_float_array']
+           'kvaser_send_float_array', 'TBoxCanException', 'set_tbox_sim_path', 'float_to_hex', 'hex_to_float',
+           'float_array_to_buffer', 'parse_arg', 'write_json', 'send_float_array']
 
 # %% ../../nbs/04.conn.tbox.ipynb 3
 import argparse
@@ -14,6 +14,7 @@ import pandas as pd
 from collections import UserDict
 from dataclasses import dataclass, field
 from typing import Optional
+from pathlib import Path
 
 # %% ../../nbs/04.conn.tbox.ipynb 4
 from ..system.decorator import prepend_string_arg
@@ -185,3 +186,7 @@ def send_float_array(
     #         err_code=1,
     #         extra_msg="xcp download failed",
     #     )
+
+# %% ../../nbs/04.conn.tbox.ipynb 18
+set_tbox_sim_path(str(Path(__file__).parent) + "/tbox")
+kvaser_send_float_array = send_float_array
