@@ -3,7 +3,7 @@
 d = { 'settings': { 'branch': 'main',
                 'doc_baseurl': '/',
                 'doc_host': '/',
-                'git_url': 'https://github.com/Binjian/data-io-nbdev/tree/main/',
+                'git_url': 'https://gitlab.com/Binjian/data-io-nbdev/tree/main/',
                 'lib_path': 'data_io_nbdev'},
   'syms': { 'data_io_nbdev.agent.ddpg': { 'data_io_nbdev.agent.ddpg.DDPG': ('07.agent.ddpg.html#ddpg', 'data_io_nbdev/agent/ddpg.py'),
                                           'data_io_nbdev.agent.ddpg.DDPG.__hash__': ( '07.agent.ddpg.html#ddpg.__hash__',
