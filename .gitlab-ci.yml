@@ -1,4 +1,4 @@
-image: robtheoceanographer/nbdev2:2.3.12
+image: robtheoceanographer/nbdev2:2.3.13
 
 # Cache modules in between jobs
 cache:
@@ -7,7 +7,6 @@ cache:
 clean:
   stage: build
   script:
-    - pip3 install nbdev
     - echo "Check we are starting with clean git checkout"
     - if [ -n "$(git status -uno -s)" ]; then echo "git status is not clean"; false; fi
     - echo "Trying to strip out notebooks"
