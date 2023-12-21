@@ -29,7 +29,7 @@ from data_io_nbdev.data.external.pandas_utils import (
     assemble_state_ser,
 )
 from ..system.plot import plot_3d_figure, plot_to_image
-from eos.agent import DPG
+from ..agent.dpg import DPG
 
 # %% ../../nbs/06.dataflow.cruncher.ipynb 6
 @dataclass
