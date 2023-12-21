@@ -159,8 +159,7 @@ cython_debug/
 #  option (not recommended) you can uncomment the following to ignore the entire idea folder.
 #.idea/
 /.python-version
-/_proc/02_numerics.ipynb
-/_docs/
 /_proc/
 /nbs/data/
 /data
+/_docs/
