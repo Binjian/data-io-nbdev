@@ -42,7 +42,6 @@ dependencies:
   - reportlab
   - pymongo
   - fastavro
-  - fastavro
   - gitpython
   - jupytext
   - tqdm
