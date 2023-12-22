@@ -164,7 +164,7 @@ db_config_list = [
     ),
 ]
 
-# %% ../../nbs/03.config.db.ipynb 7
+# %% ../../nbs/03.config.db.ipynb 8
 db_config_servers_by_name = dict(
     zip([db_config.server_name for db_config in db_config_list], db_config_list)
 )
@@ -172,7 +172,7 @@ db_config_servers_by_host = dict(
     zip([db_config.host for db_config in db_config_list], db_config_list)
 )
 
-# %% ../../nbs/03.config.db.ipynb 10
+# %% ../../nbs/03.config.db.ipynb 11
 def get_db_config(
     db_key: str,  # string for db server name or format "usr:password@host:port"
 ) -> DBConfig:  # DBConfig object
