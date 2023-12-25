@@ -17,6 +17,13 @@ from .pipeline.deque import PipelineDQ  # type: ignore
 from .producer import Producer  # type: ignore
 from .vehicle_interface import VehicleInterface  # type: ignore
 
+# %% ../../nbs/06.dataflow.kvaser.ipynb 5
+from ..conn.tbox import TBoxCanException, kvaser_send_float_array
+from ..conn.udp import udp_context
+from ..data.core import MotionPower, RawType, KvaserType
+from ..config.messengers import CANMessenger, can_servers_by_name
+from ..config.vehicles import TruckInField
+
 # %% ../../nbs/06.dataflow.kvaser.ipynb 6
 @dataclass
 class Kvaser(VehicleInterface):

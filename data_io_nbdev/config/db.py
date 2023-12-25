@@ -43,7 +43,7 @@ db_config_list = [
     ),
     DBConfig(
         server_name="mongo_local",  # name of the database
-        database_name="eos",  # name of the database
+        database_name="eos_dill",  # name of the database
         collection_name="coll_episodes",  # name of the collection
         host="127.0.0.1",  # url for the database server
         port="27017",  # port for the database server
@@ -54,7 +54,7 @@ db_config_list = [
     ),
     DBConfig(
         server_name="mongo_record",  # name of the database
-        database_name="eos",  # name of the database
+        database_name="eos_dill",  # name of the database
         collection_name="coll_record_zone2",  # name of the collection
         host="127.0.0.1",  # url for the database server
         port="27017",  # port for the database server
@@ -100,7 +100,7 @@ db_config_list = [
         server_name="mongo_dill",  # name of the database
         database_name="eos",  # name of the database
         collection_name="collection",  # name of the collection
-        host="10.10.10.13",  # url for the database server
+        host="10.10.10.23",  # url for the database server
         port="27017",  # port for the database server
         user_name="",  # username for the database server
         password="",  # password for the database server

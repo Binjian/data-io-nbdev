@@ -121,17 +121,17 @@ class MongoBuffer(Buffer[pd.DataFrame]):
             batch_1 = self.pool.sample(size=1, query=self.query)
             if type(self.meta) is ObservationMetaCloud:
                 meta_in_db = ObservationMetaCloud(
-                    state_specs=batch_1.loc["meta"].iloc[0]["state_specs"],
-                    action_specs=batch_1.loc["meta"].iloc[0]["action_specs"],
-                    reward_specs=batch_1.loc["meta"].iloc[0]["reward_specs"],
-                    site=locations_by_abbr[batch_1.loc["meta"].iloc[0]["site"]["abbr"]],
+                    state_specs=batch_1["meta"].iloc[0]["state_specs"],
+                    action_specs=batch_1["meta"].iloc[0]["action_specs"],
+                    reward_specs=batch_1["meta"].iloc[0]["reward_specs"],
+                    site=locations_by_abbr[batch_1["meta"].iloc[0]["site"]["abbr"]],
                 )
             elif type(self.meta) is ObservationMetaECU:
                 meta_in_db = ObservationMetaECU(
-                    state_specs=batch_1.loc["meta"].iloc[0]["state_specs"],
-                    action_specs=batch_1.loc["meta"].iloc[0]["action_specs"],
-                    reward_specs=batch_1.loc["meta"].iloc[0]["reward_specs"],
-                    site=locations_by_abbr[batch_1.loc["meta"].iloc[0]["site"]["abbr"]],
+                    state_specs=batch_1["meta"].iloc[0]["state_specs"],
+                    action_specs=batch_1["meta"].iloc[0]["action_specs"],
+                    reward_specs=batch_1["meta"].iloc[0]["reward_specs"],
+                    site=locations_by_abbr[batch_1["meta"].iloc[0]["site"]["abbr"]],
                 )
             else:
                 raise NotImplementedError(
