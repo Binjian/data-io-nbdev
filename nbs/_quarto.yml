@@ -1,3 +1,5 @@
+ipynb-filters: [nbdev_filter]
+
 project:
   type: website
   output-dir: _docs
@@ -14,19 +16,19 @@ format:
 
 website:
   title: "data-io-nbdev"
-  site-url: "//data-io-nbdev"
+  site-url: "https://Binjian.gitlab.io/data-io-nbdev"
   description: "io interface"
   twitter-card: true
   open-graph: true
   repo-branch: main
-  repo-url: "https://github.com/Binjian/data-io-nbdev/tree/main/"
+  repo-url: "https://gitlab.com/Binjian/data-io-nbdev"
   repo-actions: [issue]
   navbar:
     background: primary
     search: true
     right:
       - icon: github
-        href: "https://github.com/Binjian/data-io-nbdev/tree/main/"
+        href: "https://gitlab.com/Binjian/data-io-nbdev"
   sidebar:
     style: "floating"
 

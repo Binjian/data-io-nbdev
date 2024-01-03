@@ -19,6 +19,11 @@ Fill me in please! Don’t forget code examples:
 1+1
 ```
 
+    2
+
 ``` python
-say_hi("world")
+# say_hi("world")
+foo()
 ```
+
+    'foo'
