@@ -14,19 +14,19 @@ format:
 
 website:
   title: "tspace"
-  site-url: "https://Binjian.gitlab.io/tspace"
+  site-url: "https://Binjian.github.io/tspace"
   description: "io interface"
   twitter-card: true
   open-graph: true
   repo-branch: main
-  repo-url: "https://gitlab.com/Binjian/tspace"
+  repo-url: "https://github.com/Binjian/tspace"
   repo-actions: [issue]
   navbar:
     background: primary
     search: true
     right:
-      - icon: gitlab
-        href: "https://gitlab.com/Binjian/tspace"
+      - icon: github
+        href: "https://github.com/Binjian/tspace"
   sidebar:
     style: "floating"
 
