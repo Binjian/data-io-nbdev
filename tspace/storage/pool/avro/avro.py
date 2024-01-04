@@ -14,7 +14,7 @@ from dask.diagnostics import ProgressBar  # type: ignore
 __all__ = ['AvroPool']
 
 # %% ../../../../nbs/05.storage.pool.avro.avro.ipynb 5
-from data_io_nbdev.data.core import (
+from tspace.data.core import (
     ObservationMeta,
     PoolQuery,
     veos_lifetime_end_date,

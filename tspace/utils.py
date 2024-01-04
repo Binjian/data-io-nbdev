@@ -228,7 +228,7 @@ def generate_eos_df(tz: ZoneInfo) -> pd.DataFrame:
 
 # %% ../nbs/98_utils.ipynb 33
 from .data.location import EosLocation, locations_by_abbr
-from data_io_nbdev.data.core import (
+from tspace.data.core import (
     configparser_as_dict,
     get_filemeta_config,
     ObservationMetaECU,

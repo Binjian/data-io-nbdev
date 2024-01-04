@@ -7,7 +7,7 @@
 # the pyproject.toml file and then use poetry2conda again to update this file.
 # Alternatively, stop using (ana)conda.
 ###############################################################################
-name: meos-nbd
+name: tspace
 channels:
   - conda-forge
   - defaults

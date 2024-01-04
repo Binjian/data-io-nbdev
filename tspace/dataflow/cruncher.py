@@ -22,7 +22,7 @@ from .pipeline.queue import Pipeline  # type: ignore
 from .producer import Producer  # type: ignore
 from ..config.drivers import Driver
 from ..config.vehicles import Truck
-from data_io_nbdev.data.external.pandas_utils import (
+from tspace.data.external.pandas_utils import (
     assemble_action_ser,
     assemble_flash_table,
     assemble_reward_ser,

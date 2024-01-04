@@ -13,23 +13,23 @@ format:
     toc-depth: 4
 
 website:
-  title: "data-io-nbdev"
-  site-url: "https://Binjian.gitlab.io/data-io-nbdev"
+  title: "tspace"
+  site-url: "https://Binjian.gitlab.io/tspace"
   description: "io interface"
   twitter-card: true
   open-graph: true
   repo-branch: main
-  repo-url: "https://gitlab.com/Binjian/data-io-nbdev"
+  repo-url: "https://gitlab.com/Binjian/tspace"
   repo-actions: [issue]
   navbar:
     background: primary
     search: true
     right:
-      - icon: github
-        href: "https://gitlab.com/Binjian/data-io-nbdev"
+      - icon: gitlab
+        href: "https://gitlab.com/Binjian/tspace"
   sidebar:
     style: "floating"
 
-metadata-files: 
+metadata-files:
   - sidebar.yml
   - custom.yml

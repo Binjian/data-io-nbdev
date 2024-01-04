@@ -33,11 +33,9 @@ from ..data.core import RawType
 from ..conn.tbox import TBoxCanException
 
 # %% ../../nbs/06.dataflow.vehicle_interface.ipynb 6
-repo = git.Repo(
-    "./", search_parent_directories=True
-)  # get the Repo object of data-io-nbdev
-if os.path.basename(repo.working_dir) != "data-io-nbdev":  # I'm in the parent repo!
-    repo = repo.submodule("data-io-nbdev").module()
+repo = git.Repo("./", search_parent_directories=True)  # get the Repo object of tspace
+if os.path.basename(repo.working_dir) != "tspace":  # I'm in the parent repo!
+    repo = repo.submodule("tspace").module()
 print(repo.working_dir)
 
 # %% ../../nbs/06.dataflow.vehicle_interface.ipynb 7

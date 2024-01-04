@@ -2,8 +2,8 @@ project:
   output-dir: _docs
 
 website:
-  title: "data-io-nbdev"
-  site-url: "https://Binjian.github.io/data-io-nbdev/"
+  title: "tspace"
+  site-url: "https://Binjian.gitlab.io/tspace"
   description: "io interface"
   repo-branch: main
-  repo-url: "https://github.com/Binjian/data-io-nbdev"
+  repo-url: "https://gitlab.com/Binjian/tspace"

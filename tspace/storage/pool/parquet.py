@@ -17,7 +17,7 @@ __all__ = ['ParquetPool']
 
 # %% ../../../nbs/05.storage.pool.parquet.ipynb 5
 from .dask import DaskPool
-from data_io_nbdev.data.core import (
+from tspace.data.core import (
     ObservationMeta,
     PoolQuery,
     veos_lifetime_end_date,

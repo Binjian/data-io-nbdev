@@ -19,7 +19,7 @@ from ...config.drivers import Driver
 from ...config.vehicles import Truck
 from ..pool.mongo import MongoPool
 from ...data.location import locations_by_abbr
-from data_io_nbdev.data.core import (
+from tspace.data.core import (
     ObservationMeta,
     ObservationMetaCloud,
     ObservationMetaECU,
@@ -27,7 +27,7 @@ from data_io_nbdev.data.core import (
     veos_lifetime_end_date,
     veos_lifetime_start_date,
 )
-from data_io_nbdev.data.external.pandas_utils import (
+from tspace.data.external.pandas_utils import (
     decode_episode_batch_to_padded_arrays,
     decode_mongo_episodes,
     decode_mongo_records,

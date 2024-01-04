@@ -17,13 +17,13 @@ from ...config.drivers import Driver
 from ...config.vehicles import Truck
 from ..pool.avro.avro import AvroPool
 from ..pool.parquet import ParquetPool
-from data_io_nbdev.data.core import (
+from tspace.data.core import (
     ObservationMeta,
     PoolQuery,
     veos_lifetime_end_date,
     veos_lifetime_start_date,
 )
-from data_io_nbdev.data.external.pandas_utils import (
+from tspace.data.external.pandas_utils import (
     decode_episode_batch_to_padded_arrays,
 )
 

@@ -9,7 +9,7 @@ from typing import Union
 
 # %% ../../nbs/03.config.utils.ipynb 3
 from .drivers import RE_DRIVER, Driver, drivers_by_id  # type: ignore
-from data_io_nbdev.config.messengers import (
+from tspace.config.messengers import (
     CANMessenger,
     TripMessenger,  # type: ignore
     can_servers_by_host,
@@ -17,7 +17,7 @@ from data_io_nbdev.config.messengers import (
     trip_servers_by_host,
     trip_servers_by_name,
 )
-from data_io_nbdev.config.vehicles import (
+from tspace.config.vehicles import (
     RE_VIN,
     TruckInCloud,
     TruckInField,  # type: ignore

@@ -16,7 +16,7 @@ __all__ = ['MongoPool']
 
 # %% ../../../nbs/05.storage.pool.mongo.ipynb 4
 from ...config.db import DBConfig
-from data_io_nbdev.data.core import (
+from tspace.data.core import (
     DataFrameDoc,
     ObservationMeta,
     PoolQuery,

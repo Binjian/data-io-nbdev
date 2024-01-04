@@ -29,7 +29,7 @@ from ..conn.remote_can_client import RemoteCanClient, RemoteCanException
 from ..config.messengers import CANMessenger, TripMessenger
 from ..config.vehicles import TruckInCloud
 from ..conn.udp import udp_context
-from data_io_nbdev.data.external.numpy_utils import (
+from tspace.data.external.numpy_utils import (
     ragged_nparray_list_interp,
     timestamps_from_can_strings,
 )

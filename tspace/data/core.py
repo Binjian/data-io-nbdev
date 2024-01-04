@@ -22,7 +22,7 @@ from typing_extensions import TypedDict
 from .location import EosLocation
 
 # %% ../../nbs/01.data.core.ipynb 5
-from data_io_nbdev.data.time import (
+from tspace.data.time import (
     veos_lifetime_end_date,
     veos_lifetime_start_date,
 )

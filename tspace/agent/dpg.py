@@ -19,7 +19,7 @@ from ..storage.buffer.mongo import MongoBuffer
 from ..config.db import RE_DB_KEY, get_db_config
 from ..config.drivers import Driver
 from ..config.vehicles import Truck, TruckInCloud, trucks_by_id
-from data_io_nbdev.data.core import (
+from tspace.data.core import (
     RE_RECIPEKEY,
     ActionSpecs,
     ObservationMetaCloud,
@@ -29,7 +29,7 @@ from data_io_nbdev.data.core import (
     StateSpecsECU,
     get_filemeta_config,
 )
-from data_io_nbdev.data.external.pandas_utils import (
+from tspace.data.external.pandas_utils import (
     encode_episode_dataframe_from_series,
 )
 
