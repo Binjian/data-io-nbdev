@@ -22,9 +22,11 @@ from pathlib import Path
 from ..system.decorator import prepend_string_arg
 
 # %% ../../nbs/04.conn.tbox.ipynb 5
-repo = git.Repo('./', search_parent_directories=True)  # get the Repo object of data-io-nbdev 
-if os.path.basename(repo.working_dir) != 'data-io-nbdev':  # I'm in the parent repo!
-	repo = repo.submodule('data-io-nbdev').module()
+repo = git.Repo(
+    "./", search_parent_directories=True
+)  # get the Repo object of data-io-nbdev
+if os.path.basename(repo.working_dir) != "data-io-nbdev":  # I'm in the parent repo!
+    repo = repo.submodule("data-io-nbdev").module()
 print(repo.working_dir)
 
 # %% ../../nbs/04.conn.tbox.ipynb 6
@@ -66,7 +68,6 @@ g_input_json_path = g_tbox_sim_path / "xcp_driver/json/example.json"
 g_output_json_path = g_tbox_sim_path / "xcp_driver/json/download.json"
 g_download_script_diffon = g_tbox_sim_path / "xcp_driver/scripts/download_diffon.sh"
 g_download_script_diffoff = g_tbox_sim_path / "xcp_driver/scripts/download_diffoff.sh"
-
 
 # %% ../../nbs/04.conn.tbox.ipynb 8
 def float_to_hex(value):

@@ -8,7 +8,7 @@ from pathlib import Path
 import os
 
 # %% ../nbs/00.core.ipynb 4
-proj_root =  Path(os.getcwd()).parent
+proj_root = Path(os.getcwd()).parent
 
 # %% ../nbs/00.core.ipynb 6
 def foo():

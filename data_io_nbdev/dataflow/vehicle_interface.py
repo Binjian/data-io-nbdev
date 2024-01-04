@@ -32,11 +32,12 @@ from ..config.messengers import CANMessenger
 from ..data.core import RawType
 from ..conn.tbox import TBoxCanException
 
-
 # %% ../../nbs/06.dataflow.vehicle_interface.ipynb 6
-repo = git.Repo('./', search_parent_directories=True)  # get the Repo object of data-io-nbdev 
-if os.path.basename(repo.working_dir) != 'data-io-nbdev':  # I'm in the parent repo!
-	repo = repo.submodule('data-io-nbdev').module()
+repo = git.Repo(
+    "./", search_parent_directories=True
+)  # get the Repo object of data-io-nbdev
+if os.path.basename(repo.working_dir) != "data-io-nbdev":  # I'm in the parent repo!
+    repo = repo.submodule("data-io-nbdev").module()
 print(repo.working_dir)
 
 # %% ../../nbs/06.dataflow.vehicle_interface.ipynb 7
@@ -102,9 +103,7 @@ class VehicleInterface(
                     f"{{'header': 'No last table found, start from default calibration table'}}",
                     extra=self.dict_logger,
                 )
-                latest_file = (
-                    proj_root / "default_config" / "vb7_init_table.csv"
-                )
+                latest_file = proj_root / "default_config" / "vb7_init_table.csv"
             else:
                 self.logger.info(
                     f"{{'header': 'Resume last table'}}", extra=self.dict_logger
@@ -116,9 +115,7 @@ class VehicleInterface(
                 f"{{'header': 'Use default calibration table'}}",
                 extra=self.dict_logger,
             )
-            latest_file = (
-                proj_root / "default_config" / "vb7_init_table.csv"
-            )
+            latest_file = proj_root / "default_config" / "vb7_init_table.csv"
 
         self.torque_table_default = pd.read_csv(latest_file, index_col=0)
         self.torque_table_default.columns = self.torque_table_default.columns.astype(
