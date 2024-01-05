@@ -56,7 +56,11 @@ class Kvaser(VehicleInterface):
         try:
             kvaser_send_float_array(torque_table, sw_diff=True)
         except TBoxCanException as exc:
-            raise exc
+            self.logger.warning(
+                f"{{'header': 'TBox CAN error', 'TBoxCanException': '{exc}'}}",
+                extra=self.dict_logger,
+            )
+            self.flash_failure_count += 1
         except Exception as exc:
             raise exc
 
@@ -97,13 +101,19 @@ class Kvaser(VehicleInterface):
                 try:
                     can_data, addr = s.recvfrom(2048)
                     pop_data = json.loads(can_data)
-                except TypeError:
-                    raise TypeError("udp sending wrong data type!")
+                except TypeError as exc:
+                    logger_kvaser_get.warning(
+                        f"{{'header': 'udp reception type error', "
+                        f"'exception': '{exc}'}}"
+                    )
+                    self.capture_failure_count += 1
+                    continue
                 except Exception as exc:
-                    logger_kvaser_get.error(
+                    logger_kvaser_get.warning(
                         f"{{'header': 'udp reception error', " f"'exception': '{exc}'}}"
                     )
-                    raise exc
+                    self.capture_failure_count += 1
+                    continue
                 for key, value in pop_data.items():
                     if key == "status":  # state machine chores
                         assert (

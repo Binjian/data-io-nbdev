@@ -61,6 +61,8 @@ class VehicleInterface(
         torque_table_default: default torque table
         torque_table_live: live torque table
         epi_countdown_time: episode countdown time
+        capture_failure_count: count of caputure failure
+        flash_failure_count: count of flash failure
         logger: logger
         dict_logger: dict logger
     """
@@ -76,6 +78,8 @@ class VehicleInterface(
     torque_table_default: Optional[pd.DataFrame] = None
     torque_table_live: Optional[pd.DataFrame] = None
     epi_countdown_time: float = 3.0
+    capture_failure_count: int = 0
+    flash_failure_count: int = 0
     logger: Optional[logging.Logger] = None
     dict_logger: Optional[dict] = None
 
@@ -254,6 +258,9 @@ class VehicleInterface(
         interrupt_event: Event,  # input event interrupt
         flash_event: Event,  # input event flash
         exit_event: Event,  # input event exit
+        watchdog_nap_time: float,  # watch dog nap time in seconds
+        watchdog_capture_error_upper_bound: int,  # capture error limit to exit for watch dog
+        watchdog_flash_error_upper_bound: int,  # flash error limit to exit for watch dog
     ):
         """
         creating the ThreadPool for handing the hmi, data capturing and data processing
@@ -279,7 +286,7 @@ class VehicleInterface(
         )
 
         with concurrent.futures.ThreadPoolExecutor(
-            max_workers=5, thread_name_prefix="Vehicle_Interface"
+            max_workers=6, thread_name_prefix="Vehicle_Interface"
         ) as executor:
             executor.submit(
                 self.produce,
@@ -330,6 +337,14 @@ class VehicleInterface(
                 flash_event,
             )
 
+            executor.submit(
+                self.watch_dog,  # observe thread (spawns 4 threads for input, HMI and output)
+                countdown_event=countdown_event,
+                exit_event=exit_event,
+                watchdog_nap_time=watchdog_nap_time,  # watch dog will kick in after t seconds and send out exit signal.
+                watchdog_capture_error_upper_bound=watchdog_capture_error_upper_bound,
+                watchdog_flash_error_upper_bound=watchdog_flash_error_upper_bound,
+            )
         # exit the thread
         self.logger.info(
             f"{{'header': 'ignite Thread Pool dies!'}}", extra=self.dict_logger
@@ -400,6 +415,60 @@ class VehicleInterface(
         logger_countdown.info(
             f"{{'header': 'Coutndown dies!!!'}}", extra=self.dict_logger
         )
+
+    def watch_dog(
+        self,
+        countdown_event: Event,  # watch dog need to send trigger signal to end count down thread
+        exit_event: Event,  # input event
+        watchdog_nap_time: float,  # nap time for watch dog
+        watchdog_capture_error_upper_bound: int,  # upperbound for capture failure
+        watchdog_flash_error_upper_bound: int,  # upperbound for flash failure
+    ):
+        """watch dog callback for the watch dog thread, after"""
+        thread = current_thread()
+        thread.name = "watch_dog"
+        logger_wdog = self.logger.getChild("watch_dog")
+        logger_wdog.propagate = True
+        logger_wdog.info(
+            f"{{'header': 'watch dog thread start!'}}", extra=self.dict_logger
+        )
+
+        while not exit_event.is_set():
+            logger_wdog.info(
+                f"{{'header': 'wait for watch dog timeout'}}", extra=self.dict_logger
+            )
+
+            # if episode done is triggered, sleep for the extension time
+            time.sleep(watchdog_nap_time)
+            # cancel wait as soon as waking up
+            logger_wdog.info(
+                f"{{'header': 'Watch dog time out！'}}", extra=self.dict_logger
+            )
+            if (
+                self.capture_failure_count >= watchdog_capture_error_upper_bound
+                or self.flash_failure_count >= watchdog_flash_error_upper_bound
+            ):
+                exit_event.set()  # set valid stop signal only after countdown
+                countdown_event.set()
+
+                logger_wdog.warning(
+                    f"{{'header': 'watch dog kicks in!', "
+                    f"'capture failure count': '{self.capture_failure_count}', "
+                    f"'flash failure count': '{self.flash_failure_count}', "
+                    f"'tail': 'system exit!'}}",
+                    extra=self.dict_logger,
+                )
+            else:
+                logger_wdog.info(
+                    f"{{'header': 'watch dog kicks in!', "
+                    f"'capture failure count': '{self.capture_failure_count}', "
+                    f"'flash failure count': '{self.flash_failure_count}', "
+                    f"'tail': 'system ok!'}}",
+                    extra=self.dict_logger,
+                )
+
+        # exit countdown thread
+        logger_wdog.info(f"{{'header': 'watch dog dies!!!'}}", extra=self.dict_logger)
 
     def consume(
         self,

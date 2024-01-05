@@ -130,15 +130,16 @@ class Cloud(VehicleInterface):
             try:
                 self.remotecan.send_torque_map(pedal_map=torque_table, swap=True)  # 14
             except RemoteCanException as exc:
-                self.logger.error(
+                self.logger.warning(
                     f"{{'header': 'remotecan send_torque_map failed: {exc}'}}",
                     extra=self.dict_logger,
                 )
                 if exc.err_code in (1, 1000, 1002):
                     self.cloud_ping()
                     # self.cloud_telnet_test()
-                else:
-                    raise exc
+                # else:
+                # raise exc
+                self.flash_failure_count += 1
             except Exception as exc:
                 self.logger.error(
                     f"{{'header': 'remote get_signals failed: {exc}'}}",
@@ -242,20 +243,21 @@ class Cloud(VehicleInterface):
                         duration=self.truck.tbox_unit_number, timeout=timeout
                     )  # timeout is 1 second longer than duration
                 except RemoteCanException as exc:
-                    logger_remote_get.error(
+                    logger_remote_get.warning(
                         f"{{'header': 'remote get_signals failed and retry', "
                         f"'ret_code': '{exc.err_code}', "
                         f"'ret_str': '{exc.codes[exc.err_code]}', "
                         f"'extra_str': '{exc.extra_msg}'}}",
                         extra=self.dict_logger,
                     )
+                    self.capture_failure_count += 1
                     # if the exception is connection related, ping the server to get further information.
                     if exc.err_code in (1, 1000, 1002):
                         self.cloud_ping()
                         # self.cloud_telnet_test()
                         continue
-                    else:
-                        raise exc
+                    # else:
+                    #     raise exc
                 except Exception as exc:
                     logger_remote_get.error(
                         f"{{'header': 'remote get_signals failed: {exc}'}}",
@@ -341,8 +343,19 @@ class Cloud(VehicleInterface):
             while True:
                 try:
                     pop_data = json.loads(can_data)
-                except TypeError:
-                    raise TypeError("udp sending wrong data type!")
+                except TypeError as exc:
+                    logger_hmi_capture_udp.warning(
+                        f"{{'header': 'udp reception type error', "
+                        f"'exception': '{exc}'}}"
+                    )
+                    self.capture_failure_count += 1
+                    continue
+                except Exception as exc:
+                    logger_hmi_capture_udp.warning(
+                        f"{{'header': 'udp reception error', " f"'exception': '{exc}'}}"
+                    )
+                    self.capture_failure_count += 1
+                    continue
 
                 for key, value in pop_data.items():
                     if key == "status":  # state machine chores
@@ -465,6 +478,19 @@ class Cloud(VehicleInterface):
             for msg in msgs:
                 try:
                     msg_body = json.loads(msg.body)
+                except TypeError as exc:
+                    logger_rmq.warning(
+                        f"{{'header': 'udp reception type error', "
+                        f"'exception': '{exc}'}}"
+                    )
+                    self.capture_failure_count += 1
+                    continue
+                except Exception as exc:
+                    logger_rmq.warning(
+                        f"{{'header': 'udp reception error', " f"'exception': '{exc}'}}"
+                    )
+                    self.capture_failure_count += 1
+                    continue
                 except TypeError:
                     raise TypeError("rocketmq server sending wrong data type!")
                 logger_rmq.info(f"Get message {msg_body}!", extra=self.dict_logger)
