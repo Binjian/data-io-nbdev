@@ -12,7 +12,7 @@ import git
 import queue
 import time
 from pathlib import Path
-from threading import Event, current_thread
+from threading import Event, current_thread, Lock
 from typing import Optional, Tuple
 from dataclasses import dataclass
 import numpy as np
@@ -61,6 +61,7 @@ class VehicleInterface(
         torque_table_default: default torque table
         torque_table_live: live torque table
         epi_countdown_time: episode countdown time
+        lock_watchdog: lock for the following two watchdog variables
         capture_failure_count: count of caputure failure
         flash_failure_count: count of flash failure
         logger: logger
@@ -78,6 +79,7 @@ class VehicleInterface(
     torque_table_default: Optional[pd.DataFrame] = None
     torque_table_live: Optional[pd.DataFrame] = None
     epi_countdown_time: float = 3.0
+    lock_watchdog: Lock = Lock()
     capture_failure_count: int = 0
     flash_failure_count: int = 0
     logger: Optional[logging.Logger] = None
@@ -424,7 +426,7 @@ class VehicleInterface(
         watchdog_capture_error_upper_bound: int,  # upperbound for capture failure
         watchdog_flash_error_upper_bound: int,  # upperbound for flash failure
     ):
-        """watch dog callback for the watch dog thread, after"""
+        """watch dog callback for the watch dog thread"""
         thread = current_thread()
         thread.name = "watch_dog"
         logger_wdog = self.logger.getChild("watch_dog")
@@ -444,9 +446,12 @@ class VehicleInterface(
             logger_wdog.info(
                 f"{{'header': 'Watch dog time out！'}}", extra=self.dict_logger
             )
+            with self.lock_watchdog:
+                capture_failure_count = self.capture_failure_count
+                flash_failure_count = self.flash_failure_count
             if (
-                self.capture_failure_count >= watchdog_capture_error_upper_bound
-                or self.flash_failure_count >= watchdog_flash_error_upper_bound
+                capture_failure_count >= watchdog_capture_error_upper_bound
+                or flash_failure_count >= watchdog_flash_error_upper_bound
             ):
                 exit_event.set()  # set valid stop signal only after countdown
                 countdown_event.set()
@@ -466,6 +471,9 @@ class VehicleInterface(
                     f"'tail': 'system ok!'}}",
                     extra=self.dict_logger,
                 )
+                with self.lock_watchdog:
+                    self.capture_failure_count = 0
+                    self.flash_failure_count = 0
 
         # exit countdown thread
         logger_wdog.info(f"{{'header': 'watch dog dies!!!'}}", extra=self.dict_logger)

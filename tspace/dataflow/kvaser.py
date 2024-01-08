@@ -60,7 +60,8 @@ class Kvaser(VehicleInterface):
                 f"{{'header': 'TBox CAN error', 'TBoxCanException': '{exc}'}}",
                 extra=self.dict_logger,
             )
-            self.flash_failure_count += 1
+            with self.lock_watchdog:
+                self.flash_failure_count += 1
         except Exception as exc:
             raise exc
 
@@ -106,13 +107,15 @@ class Kvaser(VehicleInterface):
                         f"{{'header': 'udp reception type error', "
                         f"'exception': '{exc}'}}"
                     )
-                    self.capture_failure_count += 1
+                    with self.lock_watchdog:
+                        self.capture_failure_count += 1
                     continue
                 except Exception as exc:
                     logger_kvaser_get.warning(
                         f"{{'header': 'udp reception error', " f"'exception': '{exc}'}}"
                     )
-                    self.capture_failure_count += 1
+                    with self.lock_watchdog:
+                        self.capture_failure_count += 1
                     continue
                 for key, value in pop_data.items():
                     if key == "status":  # state machine chores

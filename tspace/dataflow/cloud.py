@@ -139,7 +139,8 @@ class Cloud(VehicleInterface):
                     # self.cloud_telnet_test()
                 # else:
                 # raise exc
-                self.flash_failure_count += 1
+                with self.lock_watchdog:
+                    self.flash_failure_count += 1
             except Exception as exc:
                 self.logger.error(
                     f"{{'header': 'remote get_signals failed: {exc}'}}",
@@ -250,12 +251,13 @@ class Cloud(VehicleInterface):
                         f"'extra_str': '{exc.extra_msg}'}}",
                         extra=self.dict_logger,
                     )
-                    self.capture_failure_count += 1
+                    with self.lock_watchdog:
+                        self.capture_failure_count += 1
                     # if the exception is connection related, ping the server to get further information.
                     if exc.err_code in (1, 1000, 1002):
                         self.cloud_ping()
                         # self.cloud_telnet_test()
-                        continue
+                    continue
                     # else:
                     #     raise exc
                 except Exception as exc:
@@ -348,7 +350,8 @@ class Cloud(VehicleInterface):
                         f"{{'header': 'udp reception type error', "
                         f"'exception': '{exc}'}}"
                     )
-                    self.capture_failure_count += 1
+                    with self.lock_watchdog:
+                        self.capture_failure_count += 1
                     continue
                 except Exception as exc:
                     logger_hmi_capture_udp.warning(
@@ -483,7 +486,8 @@ class Cloud(VehicleInterface):
                         f"{{'header': 'udp reception type error', "
                         f"'exception': '{exc}'}}"
                     )
-                    self.capture_failure_count += 1
+                    with self.lock_watchdog:
+                        self.capture_failure_count += 1
                     continue
                 except Exception as exc:
                     logger_rmq.warning(
