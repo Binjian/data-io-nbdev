@@ -10,6 +10,7 @@
 name: tspace
 channels:
   - conda-forge
+  - fastai
   - defaults
 dependencies:
   - python <=3.11.7
@@ -48,7 +49,6 @@ dependencies:
   - pandas-stubs
   - nbstripout
   - pip
-  - nbdev
   - pip:
     - matplotlib-stubs
     - pyarrow
@@ -64,3 +64,4 @@ dependencies:
     - pdoc3
     - black[jupyter]
     - ruff
+    - nbdev
