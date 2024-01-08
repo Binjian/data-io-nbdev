@@ -25,7 +25,7 @@ from ..system.decorator import prepend_string_arg
 repo = git.Repo("./", search_parent_directories=True)  # get the Repo object of tspace
 if os.path.basename(repo.working_dir) != "tspace":  # I'm in the parent repo!
     repo = repo.submodule("tspace").module()
-print(repo.working_dir)
+# print(repo.working_dir)
 
 # %% ../../nbs/04.conn.tbox.ipynb 6
 @dataclass(kw_only=True)

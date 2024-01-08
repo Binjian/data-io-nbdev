@@ -36,7 +36,7 @@ from ..conn.tbox import TBoxCanException
 repo = git.Repo("./", search_parent_directories=True)  # get the Repo object of tspace
 if os.path.basename(repo.working_dir) != "tspace":  # I'm in the parent repo!
     repo = repo.submodule("tspace").module()
-print(repo.working_dir)
+# print(repo.working_dir)
 
 # %% ../../nbs/06.dataflow.vehicle_interface.ipynb 7
 @dataclass(kw_only=True)
