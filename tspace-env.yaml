@@ -13,14 +13,14 @@ channels:
   - fastai
   - defaults
 dependencies:
-  - python <=3.11.7
+  - python <=3.11.9
   - mypy
   - pylint
   - typing_inspect
   - typeguard
   - dacite  # for dataclass from_dict
   - poetry
-  - tensorflow=2.14.0=cuda118py311heb1bdc4_0
+  - tensorflow=2.14.0
   - tensorflow-estimator
   - tensorflow-probability
   - tensorboard
@@ -54,14 +54,14 @@ dependencies:
     - pyarrow
     - dask
     - types-tensorflow
-    - pydantic==2.1.1
+    - pydantic
     - typeguard
     - poetry2conda
     - jupyterlab-quarto
     - rocketmq
-    - cutelog
-    - pyqt5==5.15.3  # cutelog has to have xcb and abi <12.13
     - pdoc3
     - black[jupyter]
     - ruff
     - nbdev
+    - cutelog
+    #- pyqt5==5.15.3  # cutelog has to have xcb and abi <12.13

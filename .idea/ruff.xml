@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="RuffConfigService">
-    <option name="projectRuffExecutablePath" value="/dpt/.pyenv/versions/miniforge3-latest/envs/meos-nbd/bin/ruff" />
+    <option name="globalRuffExecutablePath" value="$USER_HOME$/.pyenv/shims/ruff" />
     <option name="projectRuffLspExecutablePath" value="/dpt/.pyenv/versions/miniforge3-latest/envs/meos-nbd/bin/ruff-lsp" />
     <option name="ruffConfigPath" value="$PROJECT_DIR$/ruff.toml" />
     <option name="runRuffOnSave" value="true" />
