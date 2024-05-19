@@ -50,9 +50,9 @@ class AvroPool(DaskPool):  # type: ignore   # pycharm bug
     """
 
     dbg: Optional[db.Bag] = None  # db.from_sequence([])  # dask DataFrame
-    dbg_schema: Optional[
-        dict
-    ] = None  # field(default_factory=dict)  # schema for avro file decoding
+    dbg_schema: Optional[dict] = (
+        None  # field(default_factory=dict)  # schema for avro file decoding
+    )
 
     def __post_init__(self):
         """Set up logger, post init of DaskPool and load the pool."""

@@ -55,9 +55,9 @@ class DaskBuffer(Buffer[pd.DataFrame]):
     truck: Truck  # field(default_factory=Truck)
     meta: ObservationMeta  # field(default_factory=ObservationMeta)
     torque_table_row_names: list[str]  # field(default_factory=list)
-    pool: Optional[
-        Union[ParquetPool, AvroPool]
-    ] = None  # field(default_factory=ParquetPool)  # cannot initialize an ABC of DaskPool
+    pool: Optional[Union[ParquetPool, AvroPool]] = (
+        None  # field(default_factory=ParquetPool)  # cannot initialize an ABC of DaskPool
+    )
     query: Optional[PoolQuery] = None  # field(default_factory=PoolQuery)
     logger: Optional[logging.Logger] = None
     dict_logger: Optional[dict] = None

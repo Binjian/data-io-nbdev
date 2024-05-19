@@ -73,7 +73,9 @@ class DPG(Hashable):
     _driver: Driver
     _resume: bool  # True
     # as last of non-default parameters, so that derived class can override with default
-    _coll_type: str  # "RECORD"  # or 'EPISODE', used for create different buffer and pool
+    _coll_type: (
+        str  # "RECORD"  # or 'EPISODE', used for create different buffer and pool
+    )
     _hyper_param: Union[
         HyperParamDDPG, HyperParamRDPG
     ]  # field(default_factory=HyperParamDDPG)
@@ -83,19 +85,19 @@ class DPG(Hashable):
     _data_folder: str  # "./"
     _infer_mode: bool  # False
     # Following are derived from above
-    _buffer: Optional[
-        Union[MongoBuffer, DaskBuffer]
-    ] = None  # field(default_factory=MongoBuffer)
+    _buffer: Optional[Union[MongoBuffer, DaskBuffer]] = (
+        None  # field(default_factory=MongoBuffer)
+    )
     _episode_start_dt: Optional[pd.Timestamp] = None  # datetime.now()
-    _observation_meta: Optional[
-        Union[ObservationMetaCloud, ObservationMetaECU]
-    ] = None  # field(default_factory=ObservationMetaCloud)
-    _torque_table_row_names: Optional[
-        list[str]
-    ] = None  # field(default_factory=list[str])
-    _observations: Optional[
-        list[pd.Series]
-    ] = None  # field(default_factory=list[pd.Series])
+    _observation_meta: Optional[Union[ObservationMetaCloud, ObservationMetaECU]] = (
+        None  # field(default_factory=ObservationMetaCloud)
+    )
+    _torque_table_row_names: Optional[list[str]] = (
+        None  # field(default_factory=list[str])
+    )
+    _observations: Optional[list[pd.Series]] = (
+        None  # field(default_factory=list[pd.Series])
+    )
     _epi_no: Optional[int] = None
     logger: Optional[logging.Logger] = None  # logging.Logger("eos.agent.ddpg.ddpg")
     dict_logger: Optional[dict] = None  # dict_logger
@@ -231,9 +233,9 @@ class DPG(Hashable):
         # self.episode_start_dt = ts.replace(microsecond=ts_milliseconds)
         self.episode_start_dt = ts
 
-        self.observations: list[
-            pd.Series
-        ] = []  # create a new empty list for each episode
+        self.observations: list[pd.Series] = (
+            []
+        )  # create a new empty list for each episode
 
     # @abc.abstractmethod
     def deposit(

@@ -43,9 +43,9 @@ class DaskPool(Pool[pd.DataFrame]):
     recipe: ConfigParser  # field(default_factory=get_filemeta_config)
     query: PoolQuery  # field(default_factory=PoolQuery)  # search record based on query in arrays is very inefficient
     meta: ObservationMeta  # field(default_factory=ObservationMeta)  # meta information for the data collection
-    pl_path: Optional[
-        Path
-    ] = None  # Path('.')  # path to parquet file for RECORD, to avro file for EPISODE
+    pl_path: Optional[Path] = (
+        None  # Path('.')  # path to parquet file for RECORD, to avro file for EPISODE
+    )
     # in record file pool, query is mostly ignored for sample, only for checking.
     # list of dask DataFrame with the target vehicle and driver
     logger: Optional[logging.Logger] = None

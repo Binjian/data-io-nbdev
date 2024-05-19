@@ -223,8 +223,12 @@ class ActionSpecs(BaseModel):
     """
 
     action_unit_code: str = "nm"  # unit of action, default "nm"
-    action_row_number: int = 4  # trucks_by_id["default"].torque_table_row_num_flash  # 4  # number of rows, default 4
-    action_column_number: int = 17  # trucks_by_id["default"].torque_table_col_num  # 17  # number of columns, default 17 len(PEDAL_SCALE)
+    action_row_number: int = (
+        4  # trucks_by_id["default"].torque_table_row_num_flash  # 4  # number of rows, default 4
+    )
+    action_column_number: int = (
+        17  # trucks_by_id["default"].torque_table_col_num  # 17  # number of columns, default 17 len(PEDAL_SCALE)
+    )
 
 # %% ../../nbs/01.data.core.ipynb 20
 class RewardSpecs(BaseModel):
@@ -238,7 +242,9 @@ class RewardSpecs(BaseModel):
     """
 
     reward_unit_code: str = "wh"  # unit of reward, default "wh"
-    reward_number: int = 1  # number of rewards, default 1, current reward, can be extended to multiple past rewards
+    reward_number: int = (
+        1  # number of rewards, default 1, current reward, can be extended to multiple past rewards
+    )
 
 # %% ../../nbs/01.data.core.ipynb 21
 class ObservationMeta(BaseModel):
@@ -387,12 +393,12 @@ class PoolQuery(BaseModel):
     )  # timezone aware
     timestamp_start: Optional[datetime] = None  # for episode query should be None
     timestamp_end: Optional[datetime] = None  # for episode query should be None
-    seq_len_from: Optional[
-        int
-    ] = None  # default for record query, for episode query should be sequence length, default to around 200, like 160
-    seq_len_to: Optional[
-        int
-    ] = None  # default for record query, for episode query should be > 200, like 240
+    seq_len_from: Optional[int] = (
+        None  # default for record query, for episode query should be sequence length, default to around 200, like 160
+    )
+    seq_len_to: Optional[int] = (
+        None  # default for record query, for episode query should be > 200, like 240
+    )
 
 # %% ../../nbs/01.data.core.ipynb 32
 RE_RECIPEKEY = re.compile(r"^[A-Za-z]\w*\.ini$")

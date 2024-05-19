@@ -41,7 +41,9 @@ class Pool(abc.ABC, Generic[ItemT]):
     """
 
     _type_T: ClassVar[str] = ""
-    _cnt: int = 0  # number of records in the pool. Calling count() is expensive and it will update this.
+    _cnt: int = (
+        0  # number of records in the pool. Calling count() is expensive and it will update this.
+    )
 
     def __init_subclass__(cls):
         """get the concrete type in derived class"""

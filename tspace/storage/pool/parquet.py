@@ -49,9 +49,9 @@ class ParquetPool(  # type: ignore
         ddf: dask DataFrame object
     """
 
-    ddf: Optional[
-        dd.DataFrame
-    ] = None  # dd.from_pandas(pd.DataFrame(), npartitions=1)  # dask DataFrame
+    ddf: Optional[dd.DataFrame] = (
+        None  # dd.from_pandas(pd.DataFrame(), npartitions=1)  # dask DataFrame
+    )
 
     def __post_init__(self):
         """load parquet pool from parquet files in folder specified by the recipe and validate meta information"""
@@ -76,7 +76,7 @@ class ParquetPool(  # type: ignore
                     engine="pyarrow",
                     compression="snappy",
                     ignore_metadata_file=False,
-                    split_row_groups="infer"
+                    split_row_groups="infer",
                     # infer_division=True,
                 )
                 # parquet file which is partitioned by a timestamp was converted to category,
@@ -175,13 +175,19 @@ class ParquetPool(  # type: ignore
         # encoding MultiIndex columns index to string
         episode_flat.columns = pd.Index(
             [
-                f"{x[0]}_{x[1]}_{x[2]}"
-                if (x[1] != "" and x[2] != "")
-                else f"{x[0]}_{x[1]}_"
-                if (x[1] != "" and x[2] == "")
-                else f"{x[0]}__{x[2]}"  # !!! dunder!!!
-                if (x[2] != "")
-                else f"{x[0]}__"
+                (
+                    f"{x[0]}_{x[1]}_{x[2]}"
+                    if (x[1] != "" and x[2] != "")
+                    else (
+                        f"{x[0]}_{x[1]}_"
+                        if (x[1] != "" and x[2] == "")
+                        else (
+                            f"{x[0]}__{x[2]}"  # !!! dunder!!!
+                            if (x[2] != "")
+                            else f"{x[0]}__"
+                        )
+                    )
+                )
                 for x in episode_flat.columns.to_flat_index()
             ]
         )
@@ -224,7 +230,7 @@ class ParquetPool(  # type: ignore
                     engine="pyarrow",
                     compression="snappy",
                     ignore_metadata_file=False,
-                    split_row_groups="infer"
+                    split_row_groups="infer",
                     # infer_division=True,
                 )
                 # parquet file which is partitioned by a timestamp was converted to category,

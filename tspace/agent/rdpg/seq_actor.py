@@ -29,9 +29,9 @@ class SeqActor:
         - ckpt_dir (str): Directory to restore the checkpoint from.
     """
 
-    _hyperparams: ClassVar[
-        HyperParamRDPG
-    ] = HyperParamRDPG()  # for tf.function to get some of the default hyperparameters
+    _hyperparams: ClassVar[HyperParamRDPG] = (
+        HyperParamRDPG()
+    )  # for tf.function to get some of the default hyperparameters
 
     def __init__(
         self,

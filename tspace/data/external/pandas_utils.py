@@ -359,9 +359,11 @@ def avro_ep_decoding(episodes: list[Dict], tz_info: Optional[ZoneInfo]) -> pd.Da
                     qtuple,
                     rows,
                     idx,
-                ): item
-                if rows != "timestep"
-                else pd.to_datetime(item, utc=True).tz_convert(tz_info)
+                ): (
+                    item
+                    if rows != "timestep"
+                    else pd.to_datetime(item, utc=True).tz_convert(tz_info)
+                )
                 for qtuple, obs in step.items()
                 if qtuple
                 != "timestamp"  # "timestamp" is not a real valid qtuple, although it is in this level

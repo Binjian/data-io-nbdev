@@ -3,7 +3,7 @@ project:
 
 website:
   title: "tspace"
-  site-url: "https://Binjian.gitlab.io/tspace"
+  site-url: "https://Binjian.github.io/tspace/"
   description: "io interface"
   repo-branch: main
-  repo-url: "https://gitlab.com/Binjian/tspace"
+  repo-url: "https://github.com/Binjian/tspace"

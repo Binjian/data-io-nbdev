@@ -163,15 +163,15 @@ class KvaserMixin:
     """
 
     # optional: can be adjusted by developer
-    kvaser_observation_number: ClassVar[
-        int
-    ] = 30  # Kvaser number of one observation unit: 30 as count number,
-    kvaser_observation_frequency: ClassVar[
-        int
-    ] = 20  # Kvaser observation frequency: 20 Hz, fixed by hardware setting
-    kvaser_countdown: ClassVar[
-        int
-    ] = 3  # Kvaser countdown time: 3 seconds, optional: can be adjusted by developer
+    kvaser_observation_number: ClassVar[int] = (
+        30  # Kvaser number of one observation unit: 30 as count number,
+    )
+    kvaser_observation_frequency: ClassVar[int] = (
+        20  # Kvaser observation frequency: 20 Hz, fixed by hardware setting
+    )
+    kvaser_countdown: ClassVar[int] = (
+        3  # Kvaser countdown time: 3 seconds, optional: can be adjusted by developer
+    )
 
 # %% ../../nbs/03.config.vehicles.ipynb 20
 @dataclass
@@ -242,22 +242,26 @@ class Truck:
     pedal_scale: tuple = field(
         default_factory=tuple
     )  # percentage of pedal opening [0, 100]
-    _torque_table_col_num: Optional[
-        int
-    ] = None  # number of columns/pedal_scales in the torque map
+    _torque_table_col_num: Optional[int] = (
+        None  # number of columns/pedal_scales in the torque map
+    )
     speed_scale: tuple = field(
         default_factory=tuple
     )  # range of velocity [0, 100] in km/h
-    _torque_table_row_num: Optional[
-        int
-    ] = None  # number of rows/speed_scales in the torque map
+    _torque_table_row_num: Optional[int] = (
+        None  # number of rows/speed_scales in the torque map
+    )
     observation_number: int = 3  # number of observation, 3: velocity, throttle, brake
     torque_budget: int = (
         250  # maximal delta torque to be overlapped on the torque map 250 in Nm
     )
     # optionally use torque_lower_bound, torque_upper_bound, torque_bias
-    torque_lower_bound: float = 0.8  # minimal percentage of delta torque to be overlapped on the torque map: 0.8
-    torque_upper_bound: float = 1.0  # maximal percentage of delta torque to be overlapped on the torque map: 1.0
+    torque_lower_bound: float = (
+        0.8  # minimal percentage of delta torque to be overlapped on the torque map: 0.8
+    )
+    torque_upper_bound: float = (
+        1.0  # maximal percentage of delta torque to be overlapped on the torque map: 1.0
+    )
     torque_bias: float = (
         0.0  # bias of delta torque to be overlapped on the torque map: 0.0
     )
@@ -265,21 +269,21 @@ class Truck:
         4  # number of rows to be flashed in the torque map: 4
     )
     cat: OrderedSet = field(default_factory=OrderedSet)  # category of the truck
-    _torque_flash_numel: Optional[
-        int
-    ] = None  # actually flashed number of torque items in the torque map
-    _torque_full_numel: Optional[
-        int
-    ] = None  # number of full torque items in the torque map
-    _observation_numel: Optional[
-        float
-    ] = None  # number of torque items in the torque map
-    _observation_length: Optional[
-        int
-    ] = None  # number of torque items in the torque map
-    _observation_sampling_rate: Optional[
-        float
-    ] = None  # sampling rate/frequency of the truck
+    _torque_flash_numel: Optional[int] = (
+        None  # actually flashed number of torque items in the torque map
+    )
+    _torque_full_numel: Optional[int] = (
+        None  # number of full torque items in the torque map
+    )
+    _observation_numel: Optional[float] = (
+        None  # number of torque items in the torque map
+    )
+    _observation_length: Optional[int] = (
+        None  # number of torque items in the torque map
+    )
+    _observation_sampling_rate: Optional[float] = (
+        None  # sampling rate/frequency of the truck
+    )
     _observation_duration: Optional[float] = None  # sampling rate of the truck
 
     def __post_init__(self):

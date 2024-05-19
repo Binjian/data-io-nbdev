@@ -34,9 +34,9 @@ class SeqCritic:
         dict_logger (dict): Dictionary to log the class.
     """
 
-    _hyperparams: ClassVar[
-        HyperParamRDPG
-    ] = HyperParamRDPG()  # for tf.function to get truck signal properties
+    _hyperparams: ClassVar[HyperParamRDPG] = (
+        HyperParamRDPG()
+    )  # for tf.function to get truck signal properties
 
     def __init__(
         self,

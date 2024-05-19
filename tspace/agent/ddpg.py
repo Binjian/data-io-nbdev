@@ -66,24 +66,24 @@ class DDPG(DPG):
     """
 
     # Following are derived
-    _buffer: Optional[
-        Union[MongoBuffer, DaskBuffer]
-    ] = None  # cannot have default value, because it precedes _plot in base class DPG
-    _actor_model: Optional[
-        tf.keras.Model
-    ] = None  # field(default_factory=tf.keras.Model)
-    _critic_model: Optional[
-        tf.keras.Model
-    ] = None  # field(default_factory=tf.keras.Model)
-    _target_actor_model: Optional[
-        tf.keras.Model
-    ] = None  # field(default_factory=tf.keras.Model)
-    _target_critic_model: Optional[
-        tf.keras.Model
-    ] = None  # field(default_factory=tf.keras.Model)
-    manager_critic: Optional[
-        tf.train.CheckpointManager
-    ] = None  # manager_critic_default
+    _buffer: Optional[Union[MongoBuffer, DaskBuffer]] = (
+        None  # cannot have default value, because it precedes _plot in base class DPG
+    )
+    _actor_model: Optional[tf.keras.Model] = (
+        None  # field(default_factory=tf.keras.Model)
+    )
+    _critic_model: Optional[tf.keras.Model] = (
+        None  # field(default_factory=tf.keras.Model)
+    )
+    _target_actor_model: Optional[tf.keras.Model] = (
+        None  # field(default_factory=tf.keras.Model)
+    )
+    _target_critic_model: Optional[tf.keras.Model] = (
+        None  # field(default_factory=tf.keras.Model)
+    )
+    manager_critic: Optional[tf.train.CheckpointManager] = (
+        None  # manager_critic_default
+    )
     ckpt_critic: Optional[tf.train.Checkpoint] = None  # ckpt_critic_default
     manager_actor: Optional[tf.train.CheckpointManager] = None  # manager_actor_default
     ckpt_actor: Optional[tf.train.Checkpoint] = None  # ckpt_actor_default
