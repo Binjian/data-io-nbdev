@@ -15,7 +15,8 @@ from typing import Callable, Optional, Tuple, cast
 from dataclasses import dataclass
 import numpy as np
 import pandas as pd
-from rocketmq.client import Message, Producer  # type: ignore
+
+# from rocketmq.client import Message, Producer  # type: ignore
 
 # %% ../../nbs/06.dataflow.cloud.ipynb 4
 from .pipeline.queue import Pipeline  # type: ignore
@@ -23,7 +24,7 @@ from .pipeline.deque import PipelineDQ  # type: ignore
 from .vehicle_interface import VehicleInterface  # type: ignore
 
 # %% ../../nbs/06.dataflow.cloud.ipynb 5
-from ..conn.clearable_pull_consumer import ClearablePullConsumer
+# from tspace.conn.clearable_pull_consumer import ClearablePullConsumer
 
 from ..conn.remote_can_client import RemoteCanClient, RemoteCanException
 from ..config.messengers import CANMessenger, TripMessenger
@@ -74,9 +75,9 @@ class Cloud(VehicleInterface):
     web_srv = ("rocket_intra",)
     epi_countdown_time: float = 3.0
     remotecan: Optional[RemoteCanClient] = None
-    rmq_consumer: Optional[ClearablePullConsumer] = None
-    rmq_message_ready: Optional[Message] = None
-    rmq_producer: Optional[Producer] = None
+    # rmq_consumer: Optional[ClearablePullConsumer] = None
+    # rmq_message_ready: Optional[Message] = None
+    # rmq_producer: Optional[Producer] = None
     remoteClient_lock: Optional[Lock] = None
 
     def __post_init__(self):
@@ -389,175 +390,175 @@ class Cloud(VehicleInterface):
             extra=self.dict_logger,
         )
 
-    def hmi_capture_from_rmq(
-        self,
-        hmi_pipeline: Pipeline[str],
-        exit_event: Optional[Event] = None,
-    ):
-        """
-        Get the hmi message from RocketMQ
-        """
-        logger_rmq = self.logger.getChild("hmi_capture_rmq")
-        logger_rmq.propagate = True
-
-        logger_rmq.info(
-            "{'header': 'cloud hmi_capture_rmq thread starts!'}",
-            extra=self.dict_logger,
-        )
-        # Create RocketMQ consumer
-        rmq_consumer = ClearablePullConsumer("CID_EPI_ROCKET")
-        rmq_consumer.set_namesrv_addr(
-            self.trip_server.host + ":" + self.trip_server.port
-        )
-
-        # Create RocketMQ producer
-        rmq_message_ready = Message("update_ready_state")
-        rmq_message_ready.set_keys("what is keys mean")
-        rmq_message_ready.set_tags("tags ------")
-        rmq_message_ready.set_body(
-            json.dumps({"vin": self.truck.vid, "is_ready": True})
-        )
-        # self.rmq_message_ready.set_keys('trip_server')
-        # self.rmq_message_ready.set_tags('tags')
-        rmq_producer = Producer("PID-EPI_ROCKET")
-        assert rmq_producer is not None, "rmq_producer is None"
-        rmq_producer.set_namesrv_addr(
-            self.trip_server.host + ":" + self.trip_server.port
-        )
-
-        try:
-            rmq_consumer.start()
-            rmq_producer.start()
-            logger_rmq.info(
-                f"Start RocketMQ client on {self.trip_server.host}!",
-                extra=self.dict_logger,
-            )
-
-            msg_topic = self.driver.pid + "_" + self.truck.vin
-
-            broker_msgs = rmq_consumer.pull(msg_topic)
-            logger_rmq.info(
-                f"Before clearing history: Pull {len(list(broker_msgs))} history messages of {msg_topic}!",
-                extra=self.dict_logger,
-            )
-            rmq_consumer.clear_history(msg_topic)
-            broker_msgs = rmq_consumer.pull(msg_topic)
-            logger_rmq.info(
-                f"After clearing history: Pull {len(list(broker_msgs))} history messages of {msg_topic}!",
-                extra=self.dict_logger,
-            )
-            all(broker_msgs)  # exhaust history messages
-
-        except Exception as e:
-            logger_rmq.error(
-                f"send_sync failed: {e}",
-                extra=self.dict_logger,
-            )
-            raise e
-        try:
-            # send ready signal to trip server
-            ret = rmq_producer.send_sync(rmq_message_ready)
-            logger_rmq.info(
-                f"Sending ready signal to trip server:"
-                f"status={ret.status};"
-                f"msg-id={ret.msg_id};"
-                f"offset={ret.offset}.",
-                extra=self.dict_logger,
-            )
-
-            logger_rmq.info(
-                "RocketMQ client Initialization Done!", extra=self.dict_logger
-            )
-        except Exception as e:
-            logger_rmq.error(
-                f"Fatal Failure!: {e}",
-                extra=self.dict_logger,
-            )
-            raise e
-
-        msg_body = {}
-        while True:  # th_exit is local; program_exit is global
-            msgs = rmq_consumer.pull(msg_topic)
-            for msg in msgs:
-                try:
-                    msg_body = json.loads(msg.body)
-                except TypeError as exc:
-                    logger_rmq.warning(
-                        f"{{'header': 'udp reception type error', "
-                        f"'exception': '{exc}'}}"
-                    )
-                    with self.lock_watchdog:
-                        self.capture_failure_count += 1
-                    continue
-                except Exception as exc:
-                    logger_rmq.warning(
-                        f"{{'header': 'udp reception error', " f"'exception': '{exc}'}}"
-                    )
-                    self.capture_failure_count += 1
-                    continue
-                except TypeError:
-                    raise TypeError("rocketmq server sending wrong data type!")
-                logger_rmq.info(f"Get message {msg_body}!", extra=self.dict_logger)
-                if msg_body["vin"] != self.truck.vin:
-                    continue
-
-                if msg_body["code"] == 5:  # "config/start testing"
-                    logger_rmq.info(
-                        f"Restart/Reconfigure message VIN: {msg_body['vin']}; driver {msg_body['name']}!",
-                        extra=self.dict_logger,
-                    )
-
-                    # send ready signal to trip server
-                    ret = self.rmq_producer.send_sync(self.rmq_message_ready)
-                    logger_rmq.info(
-                        f"Sending ready signal to trip server:"
-                        f"status={ret.status};"
-                        f"msg-id={ret.msg_id};"
-                        f"offset={ret.offset}.",
-                        extra=self.dict_logger,
-                    )
-                    # hmi_pipeline.put_data("begin")
-
-                elif msg_body["code"] == 1:  # start episode
-                    logger_rmq.info(
-                        "%s", "Episode will start!!!", extra=self.dict_logger
-                    )
-                    hmi_pipeline.put_data("begin")
-
-                elif msg_body["code"] == 2:  # valid stop
-                    # DONE for valid end wait for another 2 queue objects (3 seconds) to get the last reward!
-                    # cannot sleep the thread since data capturing in the same thread, use signal alarm instead
-
-                    logger_rmq.info("End Valid!!!!!!", extra=self.dict_logger)
-                    hmi_pipeline.put_data("end_valid")
-                elif msg_body["code"] == 3:  # invalid stop
-                    logger_rmq.info("Episode is interrupted!!!", extra=self.dict_logger)
-                    hmi_pipeline.put_data("end_invalid")
-
-                elif msg_body["code"] == 4:  # "exit"
-                    logger_rmq.info(
-                        "Program exit!!!! free remote_flash and remote_get!",
-                        extra=self.dict_logger,
-                    )
-                    hmi_pipeline.put_data("exit")
-                    if not exit_event.is_set():
-                        exit_event.set()
-                    # exit_event.set()  # exit_event will be set from hmi_control()
-                    break
-                else:
-                    logger_rmq.warning(
-                        f"Unknown message {msg_body}!", extra=self.dict_logger
-                    )
-            try:
-                if msg_body["code"] == 4:  # "exit"
-                    break
-            except KeyError:
-                raise KeyError(f"msg_body {msg_body} of RMQ has no defined code!")
-
-        rmq_consumer.shutdown()
-        rmq_producer.shutdown()
-        logger_rmq.info("hmi_capture_from_rmq dies!!!", extra=self.dict_logger)
-
+    #    def hmi_capture_from_rmq(
+    #        self,
+    #        hmi_pipeline: Pipeline[str],
+    #        exit_event: Optional[Event] = None,
+    #    ):
+    #        """
+    #        Get the hmi message from RocketMQ
+    #        """
+    #        logger_rmq = self.logger.getChild("hmi_capture_rmq")
+    #        logger_rmq.propagate = True
+    #
+    #        logger_rmq.info(
+    #            "{'header': 'cloud hmi_capture_rmq thread starts!'}",
+    #            extra=self.dict_logger,
+    #        )
+    #        # Create RocketMQ consumer
+    #        rmq_consumer = ClearablePullConsumer("CID_EPI_ROCKET")
+    #        rmq_consumer.set_namesrv_addr(
+    #            self.trip_server.host + ":" + self.trip_server.port
+    #        )
+    #
+    #        # Create RocketMQ producer
+    #        rmq_message_ready = Message("update_ready_state")
+    #        rmq_message_ready.set_keys("what is keys mean")
+    #        rmq_message_ready.set_tags("tags ------")
+    #        rmq_message_ready.set_body(
+    #            json.dumps({"vin": self.truck.vid, "is_ready": True})
+    #        )
+    #        # self.rmq_message_ready.set_keys('trip_server')
+    #        # self.rmq_message_ready.set_tags('tags')
+    #        rmq_producer = Producer("PID-EPI_ROCKET")
+    #        assert rmq_producer is not None, "rmq_producer is None"
+    #        rmq_producer.set_namesrv_addr(
+    #            self.trip_server.host + ":" + self.trip_server.port
+    #        )
+    #
+    #        try:
+    #            rmq_consumer.start()
+    #            rmq_producer.start()
+    #            logger_rmq.info(
+    #                f"Start RocketMQ client on {self.trip_server.host}!",
+    #                extra=self.dict_logger,
+    #            )
+    #
+    #            msg_topic = self.driver.pid + "_" + self.truck.vin
+    #
+    #            broker_msgs = rmq_consumer.pull(msg_topic)
+    #            logger_rmq.info(
+    #                f"Before clearing history: Pull {len(list(broker_msgs))} history messages of {msg_topic}!",
+    #                extra=self.dict_logger,
+    #            )
+    #            rmq_consumer.clear_history(msg_topic)
+    #            broker_msgs = rmq_consumer.pull(msg_topic)
+    #            logger_rmq.info(
+    #                f"After clearing history: Pull {len(list(broker_msgs))} history messages of {msg_topic}!",
+    #                extra=self.dict_logger,
+    #            )
+    #            all(broker_msgs)  # exhaust history messages
+    #
+    #        except Exception as e:
+    #            logger_rmq.error(
+    #                f"send_sync failed: {e}",
+    #                extra=self.dict_logger,
+    #            )
+    #            raise e
+    #        try:
+    #            # send ready signal to trip server
+    #            ret = rmq_producer.send_sync(rmq_message_ready)
+    #            logger_rmq.info(
+    #                f"Sending ready signal to trip server:"
+    #                f"status={ret.status};"
+    #                f"msg-id={ret.msg_id};"
+    #                f"offset={ret.offset}.",
+    #                extra=self.dict_logger,
+    #            )
+    #
+    #            logger_rmq.info(
+    #                "RocketMQ client Initialization Done!", extra=self.dict_logger
+    #            )
+    #        except Exception as e:
+    #            logger_rmq.error(
+    #                f"Fatal Failure!: {e}",
+    #                extra=self.dict_logger,
+    #            )
+    #            raise e
+    #
+    #        msg_body = {}
+    #        while True:  # th_exit is local; program_exit is global
+    #            msgs = rmq_consumer.pull(msg_topic)
+    #            for msg in msgs:
+    #                try:
+    #                    msg_body = json.loads(msg.body)
+    #                except TypeError as exc:
+    #                    logger_rmq.warning(
+    #                        f"{{'header': 'udp reception type error', "
+    #                        f"'exception': '{exc}'}}"
+    #                    )
+    #                    with self.lock_watchdog:
+    #                        self.capture_failure_count += 1
+    #                    continue
+    #                except Exception as exc:
+    #                    logger_rmq.warning(
+    #                        f"{{'header': 'udp reception error', " f"'exception': '{exc}'}}"
+    #                    )
+    #                    self.capture_failure_count += 1
+    #                    continue
+    #                except TypeError:
+    #                    raise TypeError("rocketmq server sending wrong data type!")
+    #                logger_rmq.info(f"Get message {msg_body}!", extra=self.dict_logger)
+    #                if msg_body["vin"] != self.truck.vin:
+    #                    continue
+    #
+    #                if msg_body["code"] == 5:  # "config/start testing"
+    #                    logger_rmq.info(
+    #                        f"Restart/Reconfigure message VIN: {msg_body['vin']}; driver {msg_body['name']}!",
+    #                        extra=self.dict_logger,
+    #                    )
+    #
+    #                    # send ready signal to trip server
+    #                    ret = self.rmq_producer.send_sync(self.rmq_message_ready)
+    #                    logger_rmq.info(
+    #                        f"Sending ready signal to trip server:"
+    #                        f"status={ret.status};"
+    #                        f"msg-id={ret.msg_id};"
+    #                        f"offset={ret.offset}.",
+    #                        extra=self.dict_logger,
+    #                    )
+    #                    # hmi_pipeline.put_data("begin")
+    #
+    #                elif msg_body["code"] == 1:  # start episode
+    #                    logger_rmq.info(
+    #                        "%s", "Episode will start!!!", extra=self.dict_logger
+    #                    )
+    #                    hmi_pipeline.put_data("begin")
+    #
+    #                elif msg_body["code"] == 2:  # valid stop
+    #                    # DONE for valid end wait for another 2 queue objects (3 seconds) to get the last reward!
+    #                    # cannot sleep the thread since data capturing in the same thread, use signal alarm instead
+    #
+    #                    logger_rmq.info("End Valid!!!!!!", extra=self.dict_logger)
+    #                    hmi_pipeline.put_data("end_valid")
+    #                elif msg_body["code"] == 3:  # invalid stop
+    #                    logger_rmq.info("Episode is interrupted!!!", extra=self.dict_logger)
+    #                    hmi_pipeline.put_data("end_invalid")
+    #
+    #                elif msg_body["code"] == 4:  # "exit"
+    #                    logger_rmq.info(
+    #                        "Program exit!!!! free remote_flash and remote_get!",
+    #                        extra=self.dict_logger,
+    #                    )
+    #                    hmi_pipeline.put_data("exit")
+    #                    if not exit_event.is_set():
+    #                        exit_event.set()
+    #                    # exit_event.set()  # exit_event will be set from hmi_control()
+    #                    break
+    #                else:
+    #                    logger_rmq.warning(
+    #                        f"Unknown message {msg_body}!", extra=self.dict_logger
+    #                    )
+    #            try:
+    #                if msg_body["code"] == 4:  # "exit"
+    #                    break
+    #            except KeyError:
+    #                raise KeyError(f"msg_body {msg_body} of RMQ has no defined code!")
+    #
+    #        rmq_consumer.shutdown()
+    #        rmq_producer.shutdown()
+    #        logger_rmq.info("hmi_capture_from_rmq dies!!!", extra=self.dict_logger)
+    #
     def hmi_capture_from_dummy(
         self,
         hmi_pipeline: Pipeline[str],

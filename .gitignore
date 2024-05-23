@@ -164,3 +164,7 @@ cython_debug/
 /data
 /_docs/
 /nbs/_docs/
+/nbs/.DS_Store
+/.DS_Store
+/index_files/figure-commonmark/cell-4-output-1.svg
+/index_files/

@@ -58,10 +58,10 @@ dependencies:
     - typeguard
     - poetry2conda
     - jupyterlab-quarto
-    - rocketmq
     - pdoc3
     - black[jupyter]
     - ruff
     - nbdev
     - cutelog
+    - itikz
     #- pyqt5==5.15.3  # cutelog has to have xcb and abi <12.13

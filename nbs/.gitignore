@@ -1,2 +1,5 @@
 /.quarto/
 /nbs/_docs/00_core_files/figure-html/cell-9-output-1.svg
+*.svg
+*.tex
+*.aux
