@@ -2,6 +2,7 @@ website:
   sidebar:
     contents:
       - index.ipynb
+      - 00.avatar.ipynb
       - 00.core.ipynb
       - section: <b style="color:DodgerBlue;">Data</b>
         contents:
@@ -31,7 +32,6 @@ website:
         contents:
         - 04.conn.remote_can_client.ipynb
         - 04.conn.remote_can_exceptions.ipynb
-        - 04.conn.clearable_pull_consumer.ipynb
         - 04.conn.tcp.ipynb
         - 04.conn.udp.ipynb
         - 04.conn.tbox.ipynb
