@@ -3,7 +3,6 @@ website:
     contents:
       - index.ipynb
       - 00.avatar.ipynb
-      - 00.core.ipynb
       - section: <b style="color:DodgerBlue;">Data</b>
         contents:
         - 01.data.core.ipynb
