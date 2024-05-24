@@ -62,6 +62,7 @@ class Avatar(abc.ABC):
     Description: Implement realtime reinforcement learning algorithm for     training and inference convergence of ddpg and rdpg agent
 
     Args:
+
         _truck: TruckInField or TruckInCloud
         _driver: Driver
         _agent: DDPG or RDPG

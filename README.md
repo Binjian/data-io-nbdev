@@ -6,7 +6,7 @@
 # Overview
 
 tspace is an data pipleline framework for deep reinforcement learning
-with IO interface, processing and configuration
+with IO interface, processing and configuration. The main features are:
 
 - Working in training and inferrence mode
   - logging and monitoring with cutelog or TUI interface
@@ -40,30 +40,36 @@ with IO interface, processing and configuration
 The diagram shows the basic architure of tspace. The main components
 are:
 
-- **Avatar**: orchestrates the whole ETL and ML workflow.
+- ## **Avatar**: orchestrates the whole ETL and ML workflow
+
 - **Data Object**: The data object is a container for the data. It
   contains the raw data, the metainfo and the configuration. The data
   object is passed through the data pipeline and can be modified by the
   processing components.
+
 - **Data Pipeline**: The data pipeline is a sequence of processing
   components. Each processing component takes a data object as input and
   returns a data object as output. The data pipeline is responsible for
   transforming the data object into a format that can be used by the
   machine learning model.
+
 - **Machine Learning Model**: The machine learning model is responsible
   for training and inferencing. It takes the data object as input and
   returns a prediction as output. The machine learning model can be a
   reinforcement learning model, a time sequence model or any other type
   of model.
+
 - **Configuration System**: The configuration system is responsible for
   storing and managing the configuration of the data pipeline, the
   machine learning model and other components. The configuration system
   is used to configure the data pipeline, the machine learning model and
   other components.
+
 - **Logging and Monitoring**: The logging and monitoring component is
   responsible for logging and monitoring the data pipeline, the machine
   learning model and other components. It provides real-time feedback on
   the performance of the data pipeline and the machine learning model.
+
 - **Exception Handling**: The exception handling component is
   responsible for handling exceptions that occur during the execution of
   the data pipeline, the machine learning model and other components. It
@@ -84,18 +90,3 @@ are:
 ``` sh
 pip install tspace
 ```
-
-Fill me in please! Don’t forget code examples:
-
-``` python
-1+1
-```
-
-    2
-
-``` python
-# say_hi("world")
-foo()
-```
-
-    'foo'
