@@ -6,75 +6,61 @@
 # Overview
 
 tspace is an data pipleline framework for deep reinforcement learning
-with IO interface, processing and configuration. The main features are:
+with IO interface, processing and configuration. The current code base
+depicts an automotive implementation. The main features are:
 
-- Working in training and inferrence mode
-  - logging and monitoring with cutelog or TUI interface
-  - cascaded threading pool for well-structured Scheduling of
+- working both training and inferrence mode
+  - cascaded threading pools for scheduling of
     [ETL](https://en.wikipedia.org/wiki/Extract,_transform,_load) and ML
     pipelines
-  - Customized Exception handling
-  - Graceful shutdown
   - online and offline training
   - local and distributed training
-- Support for multiple models
+- supporting for multiple models
   - reinforcement learning models with DDPG
-  - time sequence models with LSTM and Transformer
-- Data pipeline compatible to both ETL and ML dataflow
+  - time sequence processing with recurrent models
+- data pipelines compatible to both ETL and ML dataflow
   - Support for multiple data sources (local CAN or remote cloud object
     storage)
-  - Support both NoSQL database and local or cloud data storage through
-    Dask with Parquet and Avro interface
-  - Full Pandas DataFrame support with raw json codecs
-  - Configuration system for vehicles, drivers, data sites, neural
-    network hyperparameters, database, HMI types, etc
-  - Timezone aware time sequence data processing
-  - Data object meta-info processing and storage linked to configuration
-    system
   - Stateful time sequence processing with sequential model
-  - Type hint for data processing and configuration
-  - Pydantic integration
+  - Support both NoSQL database, local and cloud data storage
 
 <img src="res/tspace_overview.svg" alt="Overview of tspace architecture" width="80%">
 
 The diagram shows the basic architure of tspace. The main components
 are:
 
-- ## **Avatar**: orchestrates the whole ETL and ML workflow
+- **[`Avatar`](https://Binjian.github.io/tspace/00.avatar.html#avatar)**:
+  orchestrates the whole ETL and ML workflow.
+  - It configure RemoteCAN, Cruncher, Agent, Model, Database, Pipeline.
+  - It also manages the scheduling of the workflow threads.
 
-- **Data Object**: The data object is a container for the data. It
-  contains the raw data, the metainfo and the configuration. The data
-  object is passed through the data pipeline and can be modified by the
-  processing components.
+- **KvaserCAN** composes of
+  - [`Kvaser`](https://Binjian.github.io/tspace/06.dataflow.kvaser.html#kvaser):
+  - [`send_float_array`](https://Binjian.github.io/tspace/04.conn.tbox.html#send_float_array):
+  - [`udp_context`](https://Binjian.github.io/tspace/04.conn.udp.html#udp_context):
 
-- **Data Pipeline**: The data pipeline is a sequence of processing
-  components. Each processing component takes a data object as input and
-  returns a data object as output. The data pipeline is responsible for
-  transforming the data object into a format that can be used by the
-  machine learning model.
+- **RemoteCAN**:
+  - [`Cloud`](https://Binjian.github.io/tspace/06.dataflow.cloud.html#cloud)
+    select local udp with
+    [`Cloud.hmi_capture_from_udp`](https://Binjian.github.io/tspace/06.dataflow.cloud.html#cloud.hmi_capture_from_udp)
+    or remote hmi with `Cloud.hmi_capture_from_rmq` or none in pure
+    inference mode with
+    [`Cloud.hmi_capture_from_dummy`](https://Binjian.github.io/tspace/06.dataflow.cloud.html#cloud.hmi_capture_from_dummy)
+  - [`RemoteCanClient`](https://Binjian.github.io/tspace/04.conn.remote_can_client.html#remotecanclient)
 
-- **Machine Learning Model**: The machine learning model is responsible
-  for training and inferencing. It takes the data object as input and
-  returns a prediction as output. The machine learning model can be a
-  reinforcement learning model, a time sequence model or any other type
-  of model.
+- ## **Cruncher**:
 
-- **Configuration System**: The configuration system is responsible for
-  storing and managing the configuration of the data pipeline, the
-  machine learning model and other components. The configuration system
-  is used to configure the data pipeline, the machine learning model and
-  other components.
+- **Agent**:
 
-- **Logging and Monitoring**: The logging and monitoring component is
-  responsible for logging and monitoring the data pipeline, the machine
-  learning model and other components. It provides real-time feedback on
-  the performance of the data pipeline and the machine learning model.
+- **Model**:
 
-- **Exception Handling**: The exception handling component is
-  responsible for handling exceptions that occur during the execution of
-  the data pipeline, the machine learning model and other components. It
-  provides a mechanism for gracefully handling errors and recovering
-  from failures.
+- **Database**:
+
+- **Pipeline**:
+
+- **Config**:
+
+- **Sched**
 
 ## TODO
 
