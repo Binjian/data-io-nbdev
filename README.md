@@ -9,20 +9,20 @@ tspace is an data pipleline framework for deep reinforcement learning
 with IO interface, processing and configuration. The current code base
 depicts an automotive implementation. The main features are:
 
-- working both training and inferrence mode
-  - cascaded threading pools for scheduling of
+- working both training and inferrence mode, supporting
+  - coordinated
     [ETL](https://en.wikipedia.org/wiki/Extract,_transform,_load) and ML
-    pipelines
-  - online and offline training
-  - local and distributed training
-- supporting for multiple models
-  - reinforcement learning models with DDPG
-  - time sequence processing with recurrent models
-- data pipelines compatible to both ETL and ML dataflow
-  - Support for multiple data sources (local CAN or remote cloud object
-    storage)
-  - Stateful time sequence processing with sequential model
-  - Support both NoSQL database, local and cloud data storage
+    pipelines,
+  - online and offline training,
+  - local and distributed training;
+- multiple models of
+  - reinforcement learning models with DDPG and
+  - time sequence processing with recurrent models;
+- data pipelines compatible to both ETL and ML dataflow with
+  - support of multiple data sources (local CAN or remote cloud object
+    storage),
+  - stateful time sequence processing with sequential model and
+  - support of both NoSQL database, local and cloud data storage
 
 <img src="res/tspace_overview.svg" alt="Overview of tspace architecture" width="80%">
 
@@ -30,36 +30,98 @@ The diagram shows the basic architure of tspace. The main components
 are:
 
 - **[`Avatar`](https://Binjian.github.io/tspace/00.avatar.html#avatar)**:
-  orchestrates the whole ETL and ML workflow.
-  - It configure RemoteCAN, Cruncher, Agent, Model, Database, Pipeline.
+  orchestrates the whole ETL and ML workflow
+  - It configure KvaserCAN, RemoteCAN, Cruncher, Agent, Model, Database,
+    Pipeline.
   - It also manages the scheduling of the workflow threads.
-
-- **KvaserCAN** composes of
-  - [`Kvaser`](https://Binjian.github.io/tspace/06.dataflow.kvaser.html#kvaser):
-  - [`send_float_array`](https://Binjian.github.io/tspace/04.conn.tbox.html#send_float_array):
-  - [`udp_context`](https://Binjian.github.io/tspace/04.conn.udp.html#udp_context):
-
-- **RemoteCAN**:
-  - [`Cloud`](https://Binjian.github.io/tspace/06.dataflow.cloud.html#cloud)
-    select local udp with
+  - It select the either **KvaserCAN** or **RemoteCAN** as the vehicle
+    interface for reading the observation and applying the action.
+- **KvaserCAN** is implemented with
+  [`Kvaser`](https://Binjian.github.io/tspace/06.dataflow.kvaser.html#kvaser)
+  which provides
+  - a local interface for reading the observation (CAN messages of
+    vehicle states) via Kvaser using
+    [`udp_context`](https://Binjian.github.io/tspace/04.conn.udp.html#udp_context)
+    to get CAN messages as json data from a local udp server. Then it
+    encodes the raw json data into a
+    [pandas.DataFrame](https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.html)
+    for forwarding through the data pipeline to
+    [`Cruncher`](https://Binjian.github.io/tspace/06.dataflow.cruncher.html#cruncher).
+  - It provides a local interface for applying the action (flashing
+    parameters) onto the vehicle ECU (VCU). Before sending the action,
+    it decodes the action from the
+    [pandas.DataFrame](https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.html)
+    into packed string buffer and then sends it to the ECU by calling
+    [`send_float_array`](https://Binjian.github.io/tspace/04.conn.tbox.html#send_float_array)
+    from
+    [`VehicleInterface.consume`](https://Binjian.github.io/tspace/06.dataflow.vehicle_interface.html#vehicleinterface.consume).
+  - The control messages for training HMI go through the same UDP port.
+    They are used to modify the threading events to control the episodic
+    training process with
+    [`VehicleInterface.hmi_control`](https://Binjian.github.io/tspace/06.dataflow.vehicle_interface.html#vehicleinterface.hmi_control).
+- **RemoteCAN** provides a remote interface to the vehicle via the
+  object storage system on the cloud sent by the onboard TBox. It’s
+  implemented with
+  [`Cloud`](https://Binjian.github.io/tspace/06.dataflow.cloud.html#cloud):
+  - It reads the observation (CAN messages of vehicle states) from the
+    cloud object storage system through
+    [`RemoteCanClient.get_signals`](https://Binjian.github.io/tspace/04.conn.remote_can_client.html#remotecanclient.get_signals).
+    It then encodes the raw json data into a
+    [pandas.DataFrame](https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.html)
+    and forward it to
+    [`Cruncher`](https://Binjian.github.io/tspace/06.dataflow.cruncher.html#cruncher)
+    through the data pipeline.
+  - It sends the action (flashing parameters) to the vehicle ECU (VCU)
+    in the shared
+    [`VehicleInterface.consume`](https://Binjian.github.io/tspace/06.dataflow.vehicle_interface.html#vehicleinterface.consume)
+    by calling
+    [`RemoteCanClient.send_torque_map`](https://Binjian.github.io/tspace/04.conn.remote_can_client.html#remotecanclient.send_torque_map),
+    which decodes the action from the
+    [pandas.DataFrame](https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.html)
+    into raw json string.
+  - It selects the training HMI to get the vehicle and driver
+    information as configuration with
     [`Cloud.hmi_capture_from_udp`](https://Binjian.github.io/tspace/06.dataflow.cloud.html#cloud.hmi_capture_from_udp)
-    or remote hmi with `Cloud.hmi_capture_from_rmq` or none in pure
-    inference mode with
+    for local udp server, with
+    [`Cloud.hmi_capture_from_rmq`](https://Binjian.github.io/tspace/06.dataflow.cloud.html#cloud.hmi_capture_from_rmq)
+    for remote RocketMQ server, with
     [`Cloud.hmi_capture_from_dummy`](https://Binjian.github.io/tspace/06.dataflow.cloud.html#cloud.hmi_capture_from_dummy)
-  - [`RemoteCanClient`](https://Binjian.github.io/tspace/04.conn.remote_can_client.html#remotecanclient)
-
-- ## **Cruncher**:
-
-- **Agent**:
-
+    for pure inference mode without training or updating models. It
+    shares the same control logic
+    [`VehicleInterface.hmi_control`](https://Binjian.github.io/tspace/06.dataflow.vehicle_interface.html#vehicleinterface.hmi_control)
+    with **KvaserCAN**.
+- **Cruncher**:
+  - The
+    [`Cruncher.filter`](https://Binjian.github.io/tspace/06.dataflow.cruncher.html#cruncher.filter)
+    reveives the observation through the data pipeline from
+    **KvaserCAN** or **RemoteCAN**. It pre-processes the input data into
+    the quadruple with a timestamp
+    $(timestamp, state, action, reward, state')$ and give it to the
+    reinforcement agent
+    [`DPG`](https://Binjian.github.io/tspace/07.agent.dpg.html#dpg) for
+    inferring an optimal action determined by its current policy. After
+    getting the predict of the agent, it encode the prediction result
+    into an action object and forward it to
+    [`VehicleInterface.consume`](https://Binjian.github.io/tspace/06.dataflow.vehicle_interface.html#vehicleinterface.consume)
+    to be flashed onto VCU.
+  - It collects the critic, actor loss, the total reward for each
+    episode, the running reward and the action at the end of the
+    episode. It also saves the model checkpoint and the training log to
+    the database.  
+- **Agent** provides a wrapper for the reinforcement learning model with
+  [`DPG`](https://Binjian.github.io/tspace/07.agent.dpg.html#dpg):
+  - It initializes the actor and critic networks with the `Actor` and
+    `Critic` classes. It also initializes the target actor and target
+    critic networks with the `Actor` and `Critic` classes.
+  - It trains the actor and critic networks with the `train` method. It
+    also updates the target actor and target critic networks with the
+    `update_target` method.
+  - It predicts the action with the `predict` method. It also predicts
+    the target action with the `predict_target` method.
 - **Model**:
-
 - **Database**:
-
 - **Pipeline**:
-
 - **Config**:
-
 - **Sched**
 
 ## TODO
