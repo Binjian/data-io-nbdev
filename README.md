@@ -240,10 +240,10 @@ It is the actor network with two recurrent LSTM layers, two dense layers
 and a Masking layer for handling ragged input sequence.
 
 - [`SeqActor.predict`](https://Binjian.github.io/tspace/07.agent.rdpg.actor.html#seqactor.predict)
-  gives the action given the state for inference, thus the batch
+  outputs the action given the state for inference, thus the batch
   dimension has to be one.
 - [`SeqActor.evaluate_actions`](https://Binjian.github.io/tspace/07.agent.rdpg.actor.html#seqactor.evaluate_actions)
-  gives the action given a batch of states for training. It’s used in
+  outputs the action given a batch of states for training. It’s used in
   the training loop to get the prediction of the target actor network to
   calculate the critic loss.
 - It handles the ragged input sequences with Masking layer and the
@@ -432,11 +432,105 @@ as backend storage.
   [`AvroPool.sample`](https://Binjian.github.io/tspace/05.storage.pool.avro.avro.html#avropool.sample)
   method.
 
-## Pipeline
-
 ## Configuration
 
+provides all classes for the configuration of the **tspace** framework.
+Most of them serve as meta information for the observation data and used
+in later indexing or grouping for efficient sampling. It includes
+
+- [`Truck`](https://Binjian.github.io/tspace/03.config.vehicles.html#truck)
+  with children
+  [`TruckInCloud`](https://Binjian.github.io/tspace/03.config.vehicles.html#truckincloud)
+  and
+  [`TruckInField`](https://Binjian.github.io/tspace/03.config.vehicles.html#truckinfield)
+  with different interfaces using mixins
+  [`TboxMixin`](https://Binjian.github.io/tspace/03.config.vehicles.html#tboxmixin)
+  and
+  [`KvaserMixin`](https://Binjian.github.io/tspace/03.config.vehicles.html#kvasermixin).
+  It provides a managed truck list and two dictionaries for quick access
+  to the truck configuration;
+- [`Driver`](https://Binjian.github.io/tspace/03.config.drivers.html#driver)
+  with properties to be store in the meta information of the observation
+  data;
+- `TripMessenger` for different the HMI input source;
+- `CANMessenger` for different CAN message source;
+- `DBConfig` for management of the database configuration;
+
 ## Scheduling
+
+The schduling of ETL and ML training and inference is carried out as two
+level of cascaded threading pools.
+
+### Primary threading pool
+
+is managed by
+[`Avatar`](https://Binjian.github.io/tspace/00.avatar.html#avatar) with
+two primary threads in
+[`tspace.avatar.main`](https://Binjian.github.io/tspace/00.avatar.html#main):
+
+- The first primary thread is for data caputring
+- The second primary thread is for training and inference
+
+### Data capturing thread
+
+calls
+[`VehicleInterface.ignite`](https://Binjian.github.io/tspace/06.dataflow.vehicle_interface.html#vehicleinterface.ignite),
+which is shared by
+[`Kvaser`](https://Binjian.github.io/tspace/06.dataflow.kvaser.html#kvaser)
+and
+[`Cloud`](https://Binjian.github.io/tspace/06.dataflow.cloud.html#cloud).
+It just starts a secondary threading pool containing six threads
+
+- [`VehicleInterface.produce`](https://Binjian.github.io/tspace/06.dataflow.vehicle_interface.html#vehicleinterface.produce)
+  get the raw data either from the local UDP server as in
+  [`Kvaser`](https://Binjian.github.io/tspace/06.dataflow.kvaser.html#kvaser)
+  or the remote cloud object storage as in
+  [`Cloud`](https://Binjian.github.io/tspace/06.dataflow.cloud.html#cloud)
+  and forward it to the raw data pipeline. In case of
+  [`Kvaser`](https://Binjian.github.io/tspace/06.dataflow.kvaser.html#kvaser),
+  it also gets the training HMI control messages from the same UDP
+  server and put them in the HMI data pipeline.
+- [`VehicleInterface.hmi_control`](https://Binjian.github.io/tspace/06.dataflow.vehicle_interface.html#vehicleinterface.hmi_control)
+  manages the episodic state machine to control the training and
+  inference process.
+- [`VehicleInterface.countdown`](https://Binjian.github.io/tspace/06.dataflow.vehicle_interface.html#vehicleinterface.countdown)
+  handles the episode end with a countdown timer to synchronize the data
+  caputring is aligned with the episode end event.
+- [`VehicleInterface.filter`](https://Binjian.github.io/tspace/06.dataflow.vehicle_interface.html#vehicleinterface.filter)
+  transforms the raw input json object into pandas.DataFrame and forward
+  it to the input data pipeline of
+  [`Cruncher.filter`](https://Binjian.github.io/tspace/06.dataflow.cruncher.html#cruncher.filter)
+  thread.
+- [`VehicleInterface.consume`](https://Binjian.github.io/tspace/06.dataflow.vehicle_interface.html#vehicleinterface.consume)
+  is responsible for fetching the action object from the output data
+  pipeline of
+  [`Cruncher.filter`](https://Binjian.github.io/tspace/06.dataflow.cruncher.html#cruncher.filter)
+  thread and having it flashed on the vehicle ECU (VCU).
+- [`VehicleInterface.watch_dog`](https://Binjian.github.io/tspace/06.dataflow.vehicle_interface.html#vehicleinterface.watch_dog)
+  provides a watchdog to monitor the health of the data capturing
+  process and the training process. It triggers the system stop if the
+  observation or action quality is below a threshold.
+
+### Model training and inference thread
+
+call
+[`Cruncher.filter`](https://Binjian.github.io/tspace/06.dataflow.cruncher.html#cruncher.filter).
+**Importantly, all processing in this thread is done synchronously in
+order to preserve the order of the time sequence, thus the causality of
+the oberservation and action.**
+
+- It gets the data through the input pipeline and delegates the data to
+  the agent for training or inference.
+- After getting the prediction from the agent, it encodes the prediction
+  result into an action object and forwards it through the output
+  pipeline to
+  [`VehicleInterface.consume`](https://Binjian.github.io/tspace/06.dataflow.vehicle_interface.html#vehicleinterface.consume)
+  to have it flashed on VCU.
+- It also controls the training loop, the inference loop and manage the
+  training log and model checkpoint.
+- This thread is synchronized with the threads in the secondary
+  threading pool with pre-defined `threading.Event`: `start_event`,
+  `stop_event`, `flash_event`, `interrupt_event` and `exit_event`.
 
 ## TODO
 
