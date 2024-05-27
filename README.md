@@ -265,13 +265,178 @@ layer and a Masking layer for handling ragged input sequence.
   [`RDPG.train_step`](https://Binjian.github.io/tspace/07.agent.rdpg.rdpg.html#rdpg.train_step)
   to calculate the critic and actor loss.
 
-## Database
+## Storage
+
+represents the data storage in the repository pattern with two
+polymorphic abstraction layers
+[`Buffer`](https://Binjian.github.io/tspace/05.storage.buffer.buffer.html#buffer)
+and
+[`Pool`](https://Binjian.github.io/tspace/05.storage.pool.pool.html#pool).
+
+### [`Buffer`](https://Binjian.github.io/tspace/05.storage.buffer.buffer.html#buffer)
+
+is an abstract class. It provides a view of data storage to the agent:
+
+- **Agent** uses the abstract methods
+  [`Buffer.load`](https://Binjian.github.io/tspace/05.storage.buffer.buffer.html#buffer.load),
+  `Buffer.save` and
+  [`Buffer.close`](https://Binjian.github.io/tspace/05.storage.buffer.buffer.html#buffer.close)
+  loads or saves data from or to the
+  [`Pool`](https://Binjian.github.io/tspace/05.storage.pool.pool.html#pool),
+  and closes the connection to the
+  [`Pool`](https://Binjian.github.io/tspace/05.storage.pool.pool.html#pool).
+- The abstract
+  [`Buffer.sample`](https://Binjian.github.io/tspace/05.storage.buffer.buffer.html#buffer.sample)
+  samples a minibatch from the
+  [`Pool`](https://Binjian.github.io/tspace/05.storage.pool.pool.html#pool).
+  It needs the child of
+  [`Buffer`](https://Binjian.github.io/tspace/05.storage.buffer.buffer.html#buffer)
+  to implement the concrete efficient sampling method, which depends on
+  the underlying data storage system.
+- The concrete methode
+  [`Buffer.store`](https://Binjian.github.io/tspace/05.storage.buffer.buffer.html#buffer.store)
+  store the whole episode data into the
+  [`Pool`](https://Binjian.github.io/tspace/05.storage.pool.pool.html#pool)
+- The concrete methode
+  [`Buffer.find`](https://Binjian.github.io/tspace/05.storage.buffer.buffer.html#buffer.find)
+  simply calls
+  [`Pool.find`](https://Binjian.github.io/tspace/05.storage.pool.pool.html#pool.find)
+  to find the data with the given query.
+
+#### [`MongoBuffer`](https://Binjian.github.io/tspace/05.storage.buffer.mongo.html#mongobuffer)
+
+It’s a concrete class for the underlying NoSQL database MongoDB.
+
+- It implements the abstract methods required by the
+  [`Buffer`](https://Binjian.github.io/tspace/05.storage.buffer.buffer.html#buffer)
+  interface.
+- [`MongoBuffer.decode_batch_records`](https://Binjian.github.io/tspace/05.storage.buffer.mongo.html#mongobuffer.decode_batch_records)
+  prepare the sample batch data from
+  [`MongoPool`](https://Binjian.github.io/tspace/05.storage.pool.mongo.html#mongopool)
+  into a compliant format for agent training.
+- It can handle both DDPG record data type and RDPG episode data type.
+
+#### [`DaskBuffer`](https://Binjian.github.io/tspace/05.storage.buffer.dask.html#daskbuffer)
+
+It’s a concrete class for the distributed data storage system Dask.
+
+- It implements the abstract methods required by the
+  [`Buffer`](https://Binjian.github.io/tspace/05.storage.buffer.buffer.html#buffer)
+  interface.
+- [`DaskBuffer.decode_batch_records`](https://Binjian.github.io/tspace/05.storage.buffer.dask.html#daskbuffer.decode_batch_records)
+  prepare the sample batch data from
+  [`DaskPool`](https://Binjian.github.io/tspace/05.storage.pool.dask.html#daskpool)
+  into a compliant format for agent training.
+- It can handle both DDPG record data type and RDPG episode data type.
+
+### [`Pool`](https://Binjian.github.io/tspace/05.storage.pool.pool.html#pool)
+
+is an abstract class. It’s the interface for the underlying data
+storage. For the moment, it’s implemented with
+[`MongoPool`](https://Binjian.github.io/tspace/05.storage.pool.mongo.html#mongopool)
+and
+[`DaskPool`](https://Binjian.github.io/tspace/05.storage.pool.dask.html#daskpool).
+
+- It defines the abstract methods
+  [`Pool.load`](https://Binjian.github.io/tspace/05.storage.pool.pool.html#pool.load),
+  [`Pool.close`](https://Binjian.github.io/tspace/05.storage.pool.pool.html#pool.close),
+  [`Pool.store`](https://Binjian.github.io/tspace/05.storage.pool.pool.html#pool.store),
+  [`Pool.delete`](https://Binjian.github.io/tspace/05.storage.pool.pool.html#pool.delete),
+  [`Pool.find`](https://Binjian.github.io/tspace/05.storage.pool.pool.html#pool.find),
+  [`Pool.sample`](https://Binjian.github.io/tspace/05.storage.pool.pool.html#pool.sample)
+  and
+  [`Pool._count`](https://Binjian.github.io/tspace/05.storage.pool.pool.html#pool._count)
+  for the concrete classes to implement.
+- It defines
+  [`PoolQuery`](https://Binjian.github.io/tspace/01.data.core.html#poolquery)
+  as the query object for
+  [`Pool.sample`](https://Binjian.github.io/tspace/05.storage.pool.pool.html#pool.sample),
+  [`Pool.find`](https://Binjian.github.io/tspace/05.storage.pool.pool.html#pool.find)
+  and
+  [`Pool._count`](https://Binjian.github.io/tspace/05.storage.pool.pool.html#pool._count)
+  method.
+- It implements the iterable protocol with
+  [`Pool.__iter__`](https://Binjian.github.io/tspace/05.storage.pool.pool.html#pool.__iter__)
+  and
+  [`Pool.__getitem__`](https://Binjian.github.io/tspace/05.storage.pool.pool.html#pool.__getitem__)
+  for the concrete classes to implement an efficient indexing method.
+
+#### [`MongoPool`](https://Binjian.github.io/tspace/05.storage.pool.mongo.html#mongopool)
+
+It’s a concrete class for the underlying NoSQL database MongoDB with
+time series support. It handles both record data type and episode data
+type with MongoDB collection features.
+
+- It provides the interface to the MongoDB database with the
+  [pymongo](https://pymongo.readthedocs.io/en/stable) library.
+- It implements the abstract methods required by the
+  [`Pool`](https://Binjian.github.io/tspace/05.storage.pool.pool.html#pool)
+  interface.
+- [`MongoPool.store_record`](https://Binjian.github.io/tspace/05.storage.pool.mongo.html#mongopool.store_record)
+  stores the record data into the MongoDB database for
+  [`DDPG`](https://Binjian.github.io/tspace/07.agent.ddpg.html#ddpg)
+  agent.
+- [`MongoPool.store_episode`](https://Binjian.github.io/tspace/05.storage.pool.mongo.html#mongopool.store_episode)
+  stores the episode data into the MongoDB database for
+  [`RDPG`](https://Binjian.github.io/tspace/07.agent.rdpg.rdpg.html#rdpg)
+  agent.
+
+#### [`DaskPool`](https://Binjian.github.io/tspace/05.storage.pool.dask.html#daskpool)
+
+It’s an abstract class for the distributed data storage system Dask,
+since we have to use different backends: Parquet for record data type
+and avro for episode data type.
+
+- It supports both local file storage and remote object storage with the
+  [dask](https://dask.org) library.
+- It defines the generic data type for the abstract method required by
+  the
+  [`Pool`](https://Binjian.github.io/tspace/05.storage.pool.pool.html#pool)
+  interface. The generic data type can then be specialized by the
+  concrete classes either as dask.DataFrame for record data type or
+  dask.Bag for episode data type.
+
+##### [`ParquetPool`](https://Binjian.github.io/tspace/05.storage.pool.parquet.html#parquetpool)
+
+is a concrete class for the record data type with the Parquet file
+format as backend storage.
+
+- It implements the abstract methods required by the
+  [`DaskPool`](https://Binjian.github.io/tspace/05.storage.pool.dask.html#daskpool)
+  interface and
+  [`Pool`](https://Binjian.github.io/tspace/05.storage.pool.pool.html#pool)
+  subsequently.
+- [`ParquetPool.sample`](https://Binjian.github.io/tspace/05.storage.pool.parquet.html#parquetpool.sample)
+  provides an efficient unified sampling interface via Dask.DataFrame to
+  a Parquet storage either locally or remotely.
+- [`ParquetPool.get_query`](https://Binjian.github.io/tspace/05.storage.pool.parquet.html#parquetpool.get_query)
+  provides the query object through Dask indexing for the
+  [`ParquetPool.sample`](https://Binjian.github.io/tspace/05.storage.pool.parquet.html#parquetpool.sample)
+  method.
+
+##### [`AvroPool`](https://Binjian.github.io/tspace/05.storage.pool.avro.avro.html#avropool)
+
+is a concrete class for the episode data type with the avro file format
+as backend storage.
+
+- It implements the abstract methods required by the
+  [`DaskPool`](https://Binjian.github.io/tspace/05.storage.pool.dask.html#daskpool)
+  interface and
+  [`Pool`](https://Binjian.github.io/tspace/05.storage.pool.pool.html#pool)
+  subsequently.
+- [`AvroPool.sample`](https://Binjian.github.io/tspace/05.storage.pool.avro.avro.html#avropool.sample)
+  provides an efficient unified sampling interface via Dask.Bag to a
+  avro storage either locally or remotely.
+- [`AvroPool.get_query`](https://Binjian.github.io/tspace/05.storage.pool.avro.avro.html#avropool.get_query)
+  provides the query object through Dask indexing for the
+  [`AvroPool.sample`](https://Binjian.github.io/tspace/05.storage.pool.avro.avro.html#avropool.sample)
+  method.
 
 ## Pipeline
 
-## Config
+## Configuration
 
-## Sched
+## Scheduling
 
 ## TODO
 
