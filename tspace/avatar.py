@@ -59,7 +59,7 @@ proj_root
 @dataclass(kw_only=True)
 class Avatar(abc.ABC):
     """
-    Description: Implement realtime reinforcement learning algorithm for     training and inference convergence of ddpg and rdpg agent
+    Description: Implement realtime reinforcement learning algorithm for training and inference convergence of ddpg and rdpg agent
 
     Args:
 
@@ -365,7 +365,11 @@ parser.add_argument(
 # %% ../nbs/00.avatar.ipynb 29
 def main(args: argparse.Namespace) -> None:
     """
-    Description: main function to start the Avatar
+    Description: main function to start the Avatar.
+
+    Initialize the Avatar with truck, driver, can server, trip server, and agent for input arguments.
+    Create the first tier of the cascaded threading pools for vehicle interface and crucher.
+
     """
     # set up logging
     # set up data folder (logging, checkpoint, table)
@@ -523,7 +527,7 @@ def main(args: argparse.Namespace) -> None:
     # default behavior is "observe" will start and send out all the events to orchestrate other three threads.
     logger.info("Program exit!")
 
-# %% ../nbs/00.avatar.ipynb 33
+# %% ../nbs/00.avatar.ipynb 34
 if (
     __name__ == "__main__" and "__file__" in globals()
 ):  # in order to be compatible for both script and notebnook

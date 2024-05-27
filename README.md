@@ -5,9 +5,9 @@
 
 # Overview
 
-tspace is an data pipleline framework for deep reinforcement learning
-with IO interface, processing and configuration. The current code base
-depicts an automotive implementation. The main features are:
+**tspace** is an data pipleline framework for deep reinforcement
+learning with IO interface, processing and configuration. The current
+code base depicts an automotive implementation. The main features are:
 
 - working both training and inferrence mode, supporting
   - coordinated
@@ -26,103 +26,252 @@ depicts an automotive implementation. The main features are:
 
 <img src="res/tspace_overview.svg" alt="Overview of tspace architecture" width="80%">
 
-The diagram shows the basic architure of tspace. The main components
-are:
+The diagram shows the basic architecture of **tspace**.
 
-- **[`Avatar`](https://Binjian.github.io/tspace/00.avatar.html#avatar)**:
-  orchestrates the whole ETL and ML workflow
-  - It configure KvaserCAN, RemoteCAN, Cruncher, Agent, Model, Database,
-    Pipeline.
-  - It also manages the scheduling of the workflow threads.
-  - It select the either **KvaserCAN** or **RemoteCAN** as the vehicle
-    interface for reading the observation and applying the action.
-- **KvaserCAN** is implemented with
-  [`Kvaser`](https://Binjian.github.io/tspace/06.dataflow.kvaser.html#kvaser)
-  which provides
-  - a local interface for reading the observation (CAN messages of
-    vehicle states) via Kvaser using
-    [`udp_context`](https://Binjian.github.io/tspace/04.conn.udp.html#udp_context)
-    to get CAN messages as json data from a local udp server. Then it
-    encodes the raw json data into a
-    [pandas.DataFrame](https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.html)
-    for forwarding through the data pipeline to
-    [`Cruncher`](https://Binjian.github.io/tspace/06.dataflow.cruncher.html#cruncher).
-  - It provides a local interface for applying the action (flashing
-    parameters) onto the vehicle ECU (VCU). Before sending the action,
-    it decodes the action from the
-    [pandas.DataFrame](https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.html)
-    into packed string buffer and then sends it to the ECU by calling
-    [`send_float_array`](https://Binjian.github.io/tspace/04.conn.tbox.html#send_float_array)
-    from
-    [`VehicleInterface.consume`](https://Binjian.github.io/tspace/06.dataflow.vehicle_interface.html#vehicleinterface.consume).
-  - The control messages for training HMI go through the same UDP port.
-    They are used to modify the threading events to control the episodic
-    training process with
-    [`VehicleInterface.hmi_control`](https://Binjian.github.io/tspace/06.dataflow.vehicle_interface.html#vehicleinterface.hmi_control).
-- **RemoteCAN** provides a remote interface to the vehicle via the
-  object storage system on the cloud sent by the onboard TBox. It’s
-  implemented with
-  [`Cloud`](https://Binjian.github.io/tspace/06.dataflow.cloud.html#cloud):
-  - It reads the observation (CAN messages of vehicle states) from the
-    cloud object storage system through
-    [`RemoteCanClient.get_signals`](https://Binjian.github.io/tspace/04.conn.remote_can_client.html#remotecanclient.get_signals).
-    It then encodes the raw json data into a
-    [pandas.DataFrame](https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.html)
-    and forward it to
-    [`Cruncher`](https://Binjian.github.io/tspace/06.dataflow.cruncher.html#cruncher)
-    through the data pipeline.
-  - It sends the action (flashing parameters) to the vehicle ECU (VCU)
-    in the shared
-    [`VehicleInterface.consume`](https://Binjian.github.io/tspace/06.dataflow.vehicle_interface.html#vehicleinterface.consume)
-    by calling
-    [`RemoteCanClient.send_torque_map`](https://Binjian.github.io/tspace/04.conn.remote_can_client.html#remotecanclient.send_torque_map),
-    which decodes the action from the
-    [pandas.DataFrame](https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.html)
-    into raw json string.
-  - It selects the training HMI to get the vehicle and driver
-    information as configuration with
-    [`Cloud.hmi_capture_from_udp`](https://Binjian.github.io/tspace/06.dataflow.cloud.html#cloud.hmi_capture_from_udp)
-    for local udp server, with
-    [`Cloud.hmi_capture_from_rmq`](https://Binjian.github.io/tspace/06.dataflow.cloud.html#cloud.hmi_capture_from_rmq)
-    for remote RocketMQ server, with
-    [`Cloud.hmi_capture_from_dummy`](https://Binjian.github.io/tspace/06.dataflow.cloud.html#cloud.hmi_capture_from_dummy)
-    for pure inference mode without training or updating models. It
-    shares the same control logic
-    [`VehicleInterface.hmi_control`](https://Binjian.github.io/tspace/06.dataflow.vehicle_interface.html#vehicleinterface.hmi_control)
-    with **KvaserCAN**.
-- **Cruncher**:
-  - The
-    [`Cruncher.filter`](https://Binjian.github.io/tspace/06.dataflow.cruncher.html#cruncher.filter)
-    reveives the observation through the data pipeline from
-    **KvaserCAN** or **RemoteCAN**. It pre-processes the input data into
-    the quadruple with a timestamp
-    $(timestamp, state, action, reward, state')$ and give it to the
-    reinforcement agent
-    [`DPG`](https://Binjian.github.io/tspace/07.agent.dpg.html#dpg) for
-    inferring an optimal action determined by its current policy. After
-    getting the predict of the agent, it encode the prediction result
-    into an action object and forward it to
-    [`VehicleInterface.consume`](https://Binjian.github.io/tspace/06.dataflow.vehicle_interface.html#vehicleinterface.consume)
-    to be flashed onto VCU.
-  - It collects the critic, actor loss, the total reward for each
-    episode, the running reward and the action at the end of the
-    episode. It also saves the model checkpoint and the training log to
-    the database.  
-- **Agent** provides a wrapper for the reinforcement learning model with
-  [`DPG`](https://Binjian.github.io/tspace/07.agent.dpg.html#dpg):
-  - It initializes the actor and critic networks with the `Actor` and
-    `Critic` classes. It also initializes the target actor and target
-    critic networks with the `Actor` and `Critic` classes.
-  - It trains the actor and critic networks with the `train` method. It
-    also updates the target actor and target critic networks with the
-    `update_target` method.
-  - It predicts the action with the `predict` method. It also predicts
-    the target action with the `predict_target` method.
-- **Model**:
-- **Database**:
-- **Pipeline**:
-- **Config**:
-- **Sched**
+## [`Avatar`](https://Binjian.github.io/tspace/00.avatar.html#avatar)
+
+It is the entry point of the `tspace`. It orchestrates the whole ETL and
+ML workflow.
+
+- It configures KvaserCAN, RemoteCAN, Cruncher, Agent, Model, Database,
+  Pipeline.
+- It manages the scheduling of two primary threads in the first tier of
+  cascaded threading pools in
+  [`tspace.avatar.main`](https://Binjian.github.io/tspace/00.avatar.html#main).
+- It selects the either **KvaserCAN** or **RemoteCAN** as the vehicle
+  interface for reading the observation and applying the action.
+
+## KvaserCAN
+
+It is implemented with
+[`Kvaser`](https://Binjian.github.io/tspace/06.dataflow.kvaser.html#kvaser)
+which provides
+
+- a local interface for reading the observation (CAN messages of vehicle
+  states) via Kvaser using
+  [`udp_context`](https://Binjian.github.io/tspace/04.conn.udp.html#udp_context)
+  to get CAN messages as json data from a local udp server. Then it
+  encodes the raw json data into a
+  [pandas.DataFrame](https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.html)
+  for forwarding through the data pipeline to
+  [`Cruncher`](https://Binjian.github.io/tspace/06.dataflow.cruncher.html#cruncher).
+
+- It provides a local interface for applying the action (flashing
+  parameters) onto the vehicle ECU (VCU). Before sending the action, it
+  decodes the action from the
+  [pandas.DataFrame](https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.html)
+  into packed string buffer and then sends it to the ECU by calling
+  [`send_float_array`](https://Binjian.github.io/tspace/04.conn.tbox.html#send_float_array)
+  from
+  [`VehicleInterface.consume`](https://Binjian.github.io/tspace/06.dataflow.vehicle_interface.html#vehicleinterface.consume).
+
+- The control messages for training HMI go through the same UDP port.
+  They are used to modify the threading events to control the episodic
+  training process with
+  [`VehicleInterface.hmi_control`](https://Binjian.github.io/tspace/06.dataflow.vehicle_interface.html#vehicleinterface.hmi_control).
+
+## RemoteCAN
+
+It provides a remote interface to the vehicle via the object storage
+system on the cloud sent by the onboard TBox. It’s implemented with
+[`Cloud`](https://Binjian.github.io/tspace/06.dataflow.cloud.html#cloud):
+
+- It reads the observation (CAN messages of vehicle states) from the
+  cloud object storage system through
+  [`RemoteCanClient.get_signals`](https://Binjian.github.io/tspace/04.conn.remote_can_client.html#remotecanclient.get_signals).
+  It then encodes the raw json data into a
+  [pandas.DataFrame](https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.html)
+  and forward it to
+  [`Cruncher`](https://Binjian.github.io/tspace/06.dataflow.cruncher.html#cruncher)
+  through the data pipeline.
+
+- It sends the action (flashing parameters) to the vehicle ECU (VCU) in
+  the shared
+  [`VehicleInterface.consume`](https://Binjian.github.io/tspace/06.dataflow.vehicle_interface.html#vehicleinterface.consume)
+  by calling
+  [`RemoteCanClient.send_torque_map`](https://Binjian.github.io/tspace/04.conn.remote_can_client.html#remotecanclient.send_torque_map),
+  which decodes the action from the
+  [pandas.DataFrame](https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.html)
+  into raw json string.
+
+- It selects the training HMI to get the vehicle and driver information
+  as configuration with
+  [`Cloud.hmi_capture_from_udp`](https://Binjian.github.io/tspace/06.dataflow.cloud.html#cloud.hmi_capture_from_udp)
+  for local udp server, with
+  [`Cloud.hmi_capture_from_rmq`](https://Binjian.github.io/tspace/06.dataflow.cloud.html#cloud.hmi_capture_from_rmq)
+  for remote RocketMQ server, with
+  [`Cloud.hmi_capture_from_dummy`](https://Binjian.github.io/tspace/06.dataflow.cloud.html#cloud.hmi_capture_from_dummy)
+  for pure inference mode without training or updating models. It shares
+  the same control logic
+  [`VehicleInterface.hmi_control`](https://Binjian.github.io/tspace/06.dataflow.vehicle_interface.html#vehicleinterface.hmi_control)
+  with **KvaserCAN**.
+
+## Cruncher
+
+It is main pivot of the data pipeline for pre-processing the observation
+and post-processing the action:
+
+- The
+  [`Cruncher.filter`](https://Binjian.github.io/tspace/06.dataflow.cruncher.html#cruncher.filter)
+  reveives the observation through the data pipeline from **KvaserCAN**
+  or **RemoteCAN**. It pre-processes the input data into the quadruple
+  with a timestamp $(timestamp, state, action, reward, state')$ and give
+  it to the reinforcement **Agent**
+  [`DPG`](https://Binjian.github.io/tspace/07.agent.dpg.html#dpg),
+  subsequently its child
+  [`DDPG`](https://Binjian.github.io/tspace/07.agent.ddpg.html#ddpg) or
+  [`RDPG`](https://Binjian.github.io/tspace/07.agent.rdpg.rdpg.html#rdpg),
+  for inferring an optimal action determined by its current policy.
+  After getting the prediction of the agent, it encodes the prediction
+  result into an action object and forwards it to
+  [`VehicleInterface.consume`](https://Binjian.github.io/tspace/06.dataflow.vehicle_interface.html#vehicleinterface.consume)
+  to be flashed onto VCU.
+
+- It collects the critic, actor loss, the total reward for each episode,
+  the running reward and the action at the end of the episode. It also
+  saves the model checkpoint and the training log locally.
+
+## Agent
+
+It provides a wrapper for the reinforcement learning model with
+[`DPG`](https://Binjian.github.io/tspace/07.agent.dpg.html#dpg):
+
+- It has an interface to data storage:
+
+  - retrieves the observation meta information and database
+    configuration from
+    [`Avatar`](https://Binjian.github.io/tspace/00.avatar.html#avatar),
+
+  - initializes repo interface
+    [`Buffer`](https://Binjian.github.io/tspace/05.storage.buffer.buffer.html#buffer),
+    subsequently
+    [`MongoBuffer`](https://Binjian.github.io/tspace/05.storage.buffer.mongo.html#mongobuffer)
+    or
+    [`DaskBuffer`](https://Binjian.github.io/tspace/05.storage.buffer.dask.html#daskbuffer)
+    which then initializes the database connection with
+    [`MongoPool`](https://Binjian.github.io/tspace/05.storage.pool.mongo.html#mongopool)
+    or
+    [`DaskPool`](https://Binjian.github.io/tspace/05.storage.pool.dask.html#daskpool)
+    respectively.
+
+- It transfers observation data to the neural network:
+
+  - initializes the episode states,
+
+  - defines abstract methods
+    [`DPG.actor_predict`](https://Binjian.github.io/tspace/07.agent.dpg.html#dpg.actor_predict),
+    [`DPG.train`](https://Binjian.github.io/tspace/07.agent.dpg.html#dpg.train),
+    [`DPG.get_losses`](https://Binjian.github.io/tspace/07.agent.dpg.html#dpg.get_losses),
+    [`DPG.soft_update_target`](https://Binjian.github.io/tspace/07.agent.dpg.html#dpg.soft_update_target),
+    [`DPG.init_checkpoint`](https://Binjian.github.io/tspace/07.agent.dpg.html#dpg.init_checkpoint),
+    [`DPG.save_ckpt`](https://Binjian.github.io/tspace/07.agent.dpg.html#dpg.save_ckpt),
+    [`DPG.touch_gpu`](https://Binjian.github.io/tspace/07.agent.dpg.html#dpg.touch_gpu)
+    for concrete implementations in child classes
+    [`DDPG`](https://Binjian.github.io/tspace/07.agent.ddpg.html#ddpg)
+    and
+    [`RDPG`](https://Binjian.github.io/tspace/07.agent.rdpg.rdpg.html#rdpg),
+
+  - provides the concrete methods
+    [`DPG.start_episode`](https://Binjian.github.io/tspace/07.agent.dpg.html#dpg.start_episode),
+    [`DPG.end_episode`](https://Binjian.github.io/tspace/07.agent.dpg.html#dpg.end_episode),
+    [`DPG.deposit`](https://Binjian.github.io/tspace/07.agent.dpg.html#dpg.deposit),
+    [`DPG.deposit_episode`](https://Binjian.github.io/tspace/07.agent.dpg.html#dpg.deposit_episode).
+
+  - [`DPG.touch_gpu`](https://Binjian.github.io/tspace/07.agent.dpg.html#dpg.touch_gpu)
+    is used to warm up the GPU before starting inference.
+
+### [`DDPG`](https://Binjian.github.io/tspace/07.agent.ddpg.html#ddpg)
+
+- provides methods to create, load or initialize the [Recurrent
+  Deterministic Policy Gradient](https://arxiv.org/abs/1512.04455)
+  **Model**, or restore checkpoints to it. It also exports the tflite
+  model.
+- It provides the concrete methods for the abstract ones in the
+  [`DPG`](https://Binjian.github.io/tspace/07.agent.dpg.html#dpg)
+  interface.
+- [`DDPG.infer_single_sample`](https://Binjian.github.io/tspace/07.agent.ddpg.html#ddpg.infer_single_sample)
+  is the inference method with graph optimization via
+  [tf.function](https://www.tensorflow.org/guide/function).
+- [`DDPG.sample_minibatch`](https://Binjian.github.io/tspace/07.agent.ddpg.html#ddpg.sample_minibatch)
+  provides a minibatch sampled from the buffer. It handles the bootstrap
+  when the buffer is empty thus there is no samples in the
+  [`Buffer`](https://Binjian.github.io/tspace/05.storage.buffer.buffer.html#buffer)
+  when the first episode has not ended.
+- [`DDPG.update_with_batch`](https://Binjian.github.io/tspace/07.agent.ddpg.html#ddpg.update_with_batch)
+  enforces the back propagation and applies the weight update to the
+  actor and critic network during
+  [`DDPG.train`](https://Binjian.github.io/tspace/07.agent.ddpg.html#ddpg.train).
+
+### [`RDPG`](https://Binjian.github.io/tspace/07.agent.rdpg.rdpg.html#rdpg)
+
+- provides methods to create, load or initialize the [Deep Deterministic
+  Policy Gradient](https://arxiv.org/abs/1509.02971) **Model**, or
+  restore checkpoints to it.
+- It provides the concrete methods for the abstract ones in the
+  [`DPG`](https://Binjian.github.io/tspace/07.agent.dpg.html#dpg)
+  interface.
+- [`RDPG.actor_predict_step`](https://Binjian.github.io/tspace/07.agent.rdpg.rdpg.html#rdpg.actor_predict_step)
+  is the inference method with graph optimization via
+  [tf.function](https://www.tensorflow.org/guide/function).
+- [`RDPG.train_step`](https://Binjian.github.io/tspace/07.agent.rdpg.rdpg.html#rdpg.train_step)
+  is the training method with graph optimization via
+  [tf.function](https://www.tensorflow.org/guide/function). It also
+  applies the weight update to the actor and critic network
+- [`RDPG.train`](https://Binjian.github.io/tspace/07.agent.rdpg.rdpg.html#rdpg.train)
+  samples a ragged minibatch of episodes with different lengths from the
+  buffer. It handles the truncated back propagation through time (TBPTT)
+  by splitting the episodes and looping over the subsequences with
+  Masking layers to update the weights by
+  [`RDPG.train_step`](https://Binjian.github.io/tspace/07.agent.rdpg.rdpg.html#rdpg.train_step).
+
+## Model
+
+It’s the neural network model for the reinforcement learning agent. For
+now it’s only implemented for
+[`RDPG`](https://Binjian.github.io/tspace/07.agent.rdpg.rdpg.html#rdpg)
+in
+[`SeqActor`](https://Binjian.github.io/tspace/07.agent.rdpg.actor.html#seqactor)
+and
+[`SeqCritic`](https://Binjian.github.io/tspace/07.agent.rdpg.critic.html#seqcritic).
+
+### [`SeqActor`](https://Binjian.github.io/tspace/07.agent.rdpg.actor.html#seqactor)
+
+It is the actor network with two recurrent LSTM layers, two dense layers
+and a Masking layer for handling ragged input sequence.
+
+- [`SeqActor.predict`](https://Binjian.github.io/tspace/07.agent.rdpg.actor.html#seqactor.predict)
+  gives the action given the state for inference, thus the batch
+  dimension has to be one.
+- [`SeqActor.evaluate_actions`](https://Binjian.github.io/tspace/07.agent.rdpg.actor.html#seqactor.evaluate_actions)
+  gives the action given a batch of states for training. It’s used in
+  the training loop to get the prediction of the target actor network to
+  calculate the critic loss.
+- It handles the ragged input sequences with Masking layer and the
+  stateful recurrent layers for TBPTT
+- For inference,
+  [`SeqCritic`](https://Binjian.github.io/tspace/07.agent.rdpg.critic.html#seqcritic)
+  is not used and only
+  [`SeqActor`](https://Binjian.github.io/tspace/07.agent.rdpg.actor.html#seqactor)
+  is required.
+
+### [`SeqCritic`](https://Binjian.github.io/tspace/07.agent.rdpg.critic.html#seqcritic)
+
+It is the critic network with two recurrent LSTM layers and two dense
+layer and a Masking layer for handling ragged input sequence.
+
+- [`SeqCritic.evaluate_q`](https://Binjian.github.io/tspace/07.agent.rdpg.critic.html#seqcritic.evaluate_q)
+  gives the Q-value given a batch of the state and action. It’s used in
+  the training loop
+  [`RDPG.train_step`](https://Binjian.github.io/tspace/07.agent.rdpg.rdpg.html#rdpg.train_step)
+  to calculate the critic and actor loss.
+
+## Database
+
+## Pipeline
+
+## Config
+
+## Sched
 
 ## TODO
 
