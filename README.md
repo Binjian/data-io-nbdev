@@ -7,22 +7,27 @@
 
 **tspace** is an data pipleline framework for deep reinforcement
 learning with IO interface, processing and configuration. The current
-code base depicts an automotive implementation. The main features are:
+code base depicts an automotive implementation. The target of the
+sysmtem is to increase the energy efficiency (reward) of a BEV by
+imposing modification on parameters (action) of powertrain controller,
+the VCU, based on observations of the vehicle (state), i.e. speed,
+acceleration, electric engine current, voltage etc. The main features
+are:
 
-- working both training and inferrence mode, supporting
+- works in both training and inferrence mode, supporting
   - coordinated
     [ETL](https://en.wikipedia.org/wiki/Extract,_transform,_load) and ML
     pipelines,
   - online and offline training,
   - local and distributed training;
-- multiple models of
+- supports multiple models of
   - reinforcement learning models with DDPG and
   - time sequence processing with recurrent models;
-- data pipelines compatible to both ETL and ML dataflow with
+- the data pipelines are compatible to both ETL and ML dataflow with
   - support of multiple data sources (local CAN or remote cloud object
     storage),
   - stateful time sequence processing with sequential model and
-  - support of both NoSQL database, local and cloud data storage
+  - support of both NoSQL database, local and cloud data storage.
 
 <img src="res/tspace_overview.svg" alt="Overview of tspace architecture" width="80%">
 
