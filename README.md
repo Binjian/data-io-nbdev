@@ -33,7 +33,7 @@ are:
 
 The diagram shows the basic architecture of **tspace**.
 
-## [`Avatar`](https://Binjian.github.io/tspace/00.avatar.html#avatar)
+# [`Avatar`](https://Binjian.github.io/tspace/00.avatar.html#avatar)
 
 It is the entry point of the `tspace`. It orchestrates the whole ETL and
 ML workflow.
@@ -46,7 +46,7 @@ ML workflow.
 - It selects the either **KvaserCAN** or **RemoteCAN** as the vehicle
   interface for reading the observation and applying the action.
 
-## KvaserCAN
+# KvaserCAN
 
 It is implemented with
 [`Kvaser`](https://Binjian.github.io/tspace/06.dataflow.kvaser.html#kvaser)
@@ -75,7 +75,7 @@ which provides
   training process with
   [`VehicleInterface.hmi_control`](https://Binjian.github.io/tspace/06.dataflow.vehicle_interface.html#vehicleinterface.hmi_control).
 
-## RemoteCAN
+# RemoteCAN
 
 It provides a remote interface to the vehicle via the object storage
 system on the cloud sent by the onboard TBox. It’s implemented with
@@ -111,7 +111,7 @@ system on the cloud sent by the onboard TBox. It’s implemented with
   [`VehicleInterface.hmi_control`](https://Binjian.github.io/tspace/06.dataflow.vehicle_interface.html#vehicleinterface.hmi_control)
   with **KvaserCAN**.
 
-## Cruncher
+# Cruncher
 
 It is main pivot of the data pipeline for pre-processing the observation
 and post-processing the action:
@@ -136,7 +136,7 @@ and post-processing the action:
   the running reward and the action at the end of the episode. It also
   saves the model checkpoint and the training log locally.
 
-## Agent
+# Agent
 
 It provides a wrapper for the reinforcement learning model with
 [`DPG`](https://Binjian.github.io/tspace/07.agent.dpg.html#dpg):
@@ -185,7 +185,7 @@ It provides a wrapper for the reinforcement learning model with
   - [`DPG.touch_gpu`](https://Binjian.github.io/tspace/07.agent.dpg.html#dpg.touch_gpu)
     is used to warm up the GPU before starting inference.
 
-### [`DDPG`](https://Binjian.github.io/tspace/07.agent.ddpg.html#ddpg)
+## [`DDPG`](https://Binjian.github.io/tspace/07.agent.ddpg.html#ddpg)
 
 - provides methods to create, load or initialize the [Recurrent
   Deterministic Policy Gradient](https://arxiv.org/abs/1512.04455)
@@ -207,7 +207,7 @@ It provides a wrapper for the reinforcement learning model with
   actor and critic network during
   [`DDPG.train`](https://Binjian.github.io/tspace/07.agent.ddpg.html#ddpg.train).
 
-### [`RDPG`](https://Binjian.github.io/tspace/07.agent.rdpg.rdpg.html#rdpg)
+## [`RDPG`](https://Binjian.github.io/tspace/07.agent.rdpg.rdpg.html#rdpg)
 
 - provides methods to create, load or initialize the [Deep Deterministic
   Policy Gradient](https://arxiv.org/abs/1509.02971) **Model**, or
@@ -229,7 +229,7 @@ It provides a wrapper for the reinforcement learning model with
   Masking layers to update the weights by
   [`RDPG.train_step`](https://Binjian.github.io/tspace/07.agent.rdpg.rdpg.html#rdpg.train_step).
 
-## Model
+# Model
 
 It’s the neural network model for the reinforcement learning agent. For
 now it’s only implemented for
@@ -239,7 +239,7 @@ in
 and
 [`SeqCritic`](https://Binjian.github.io/tspace/07.agent.rdpg.critic.html#seqcritic).
 
-### [`SeqActor`](https://Binjian.github.io/tspace/07.agent.rdpg.actor.html#seqactor)
+## [`SeqActor`](https://Binjian.github.io/tspace/07.agent.rdpg.actor.html#seqactor)
 
 It is the actor network with two recurrent LSTM layers, two dense layers
 and a Masking layer for handling ragged input sequence.
@@ -259,7 +259,7 @@ and a Masking layer for handling ragged input sequence.
   [`SeqActor`](https://Binjian.github.io/tspace/07.agent.rdpg.actor.html#seqactor)
   is required.
 
-### [`SeqCritic`](https://Binjian.github.io/tspace/07.agent.rdpg.critic.html#seqcritic)
+## [`SeqCritic`](https://Binjian.github.io/tspace/07.agent.rdpg.critic.html#seqcritic)
 
 It is the critic network with two recurrent LSTM layers and two dense
 layer and a Masking layer for handling ragged input sequence.
@@ -270,7 +270,7 @@ layer and a Masking layer for handling ragged input sequence.
   [`RDPG.train_step`](https://Binjian.github.io/tspace/07.agent.rdpg.rdpg.html#rdpg.train_step)
   to calculate the critic and actor loss.
 
-## Storage
+# Storage
 
 represents the data storage in the repository pattern with two
 polymorphic abstraction layers
@@ -278,7 +278,7 @@ polymorphic abstraction layers
 and
 [`Pool`](https://Binjian.github.io/tspace/05.storage.pool.pool.html#pool).
 
-### [`Buffer`](https://Binjian.github.io/tspace/05.storage.buffer.buffer.html#buffer)
+## [`Buffer`](https://Binjian.github.io/tspace/05.storage.buffer.buffer.html#buffer)
 
 is an abstract class. It provides a view of data storage to the agent:
 
@@ -308,7 +308,7 @@ is an abstract class. It provides a view of data storage to the agent:
   [`Pool.find`](https://Binjian.github.io/tspace/05.storage.pool.pool.html#pool.find)
   to find the data with the given query.
 
-#### [`MongoBuffer`](https://Binjian.github.io/tspace/05.storage.buffer.mongo.html#mongobuffer)
+### [`MongoBuffer`](https://Binjian.github.io/tspace/05.storage.buffer.mongo.html#mongobuffer)
 
 It’s a concrete class for the underlying NoSQL database MongoDB.
 
@@ -321,7 +321,7 @@ It’s a concrete class for the underlying NoSQL database MongoDB.
   into a compliant format for agent training.
 - It can handle both DDPG record data type and RDPG episode data type.
 
-#### [`DaskBuffer`](https://Binjian.github.io/tspace/05.storage.buffer.dask.html#daskbuffer)
+### [`DaskBuffer`](https://Binjian.github.io/tspace/05.storage.buffer.dask.html#daskbuffer)
 
 It’s a concrete class for the distributed data storage system Dask.
 
@@ -334,7 +334,7 @@ It’s a concrete class for the distributed data storage system Dask.
   into a compliant format for agent training.
 - It can handle both DDPG record data type and RDPG episode data type.
 
-### [`Pool`](https://Binjian.github.io/tspace/05.storage.pool.pool.html#pool)
+## [`Pool`](https://Binjian.github.io/tspace/05.storage.pool.pool.html#pool)
 
 is an abstract class. It’s the interface for the underlying data
 storage. For the moment, it’s implemented with
@@ -366,7 +366,7 @@ and
   [`Pool.__getitem__`](https://Binjian.github.io/tspace/05.storage.pool.pool.html#pool.__getitem__)
   for the concrete classes to implement an efficient indexing method.
 
-#### [`MongoPool`](https://Binjian.github.io/tspace/05.storage.pool.mongo.html#mongopool)
+### [`MongoPool`](https://Binjian.github.io/tspace/05.storage.pool.mongo.html#mongopool)
 
 It’s a concrete class for the underlying NoSQL database MongoDB with
 time series support. It handles both record data type and episode data
@@ -386,7 +386,7 @@ type with MongoDB collection features.
   [`RDPG`](https://Binjian.github.io/tspace/07.agent.rdpg.rdpg.html#rdpg)
   agent.
 
-#### [`DaskPool`](https://Binjian.github.io/tspace/05.storage.pool.dask.html#daskpool)
+### [`DaskPool`](https://Binjian.github.io/tspace/05.storage.pool.dask.html#daskpool)
 
 It’s an abstract class for the distributed data storage system Dask,
 since we have to use different backends: Parquet for record data type
@@ -401,7 +401,7 @@ and avro for episode data type.
   concrete classes either as dask.DataFrame for record data type or
   dask.Bag for episode data type.
 
-##### [`ParquetPool`](https://Binjian.github.io/tspace/05.storage.pool.parquet.html#parquetpool)
+#### [`ParquetPool`](https://Binjian.github.io/tspace/05.storage.pool.parquet.html#parquetpool)
 
 is a concrete class for the record data type with the Parquet file
 format as backend storage.
@@ -419,7 +419,7 @@ format as backend storage.
   [`ParquetPool.sample`](https://Binjian.github.io/tspace/05.storage.pool.parquet.html#parquetpool.sample)
   method.
 
-##### [`AvroPool`](https://Binjian.github.io/tspace/05.storage.pool.avro.avro.html#avropool)
+#### [`AvroPool`](https://Binjian.github.io/tspace/05.storage.pool.avro.avro.html#avropool)
 
 is a concrete class for the episode data type with the avro file format
 as backend storage.
@@ -437,7 +437,7 @@ as backend storage.
   [`AvroPool.sample`](https://Binjian.github.io/tspace/05.storage.pool.avro.avro.html#avropool.sample)
   method.
 
-## Configuration
+# Configuration
 
 provides all classes for the configuration of the **tspace** framework.
 Most of them serve as meta information for the observation data and used
@@ -461,12 +461,12 @@ in later indexing or grouping for efficient sampling. It includes
 - `CANMessenger` for different CAN message source;
 - `DBConfig` for management of the database configuration;
 
-## Scheduling
+# Scheduling
 
 The schduling of ETL and ML training and inference is carried out as two
 level of cascaded threading pools.
 
-### Primary threading pool
+## Primary threading pool
 
 is managed by
 [`Avatar`](https://Binjian.github.io/tspace/00.avatar.html#avatar) with
@@ -476,7 +476,7 @@ two primary threads in
 - The first primary thread is for data caputring
 - The second primary thread is for training and inference
 
-### Data capturing thread
+## Data capturing thread
 
 calls
 [`VehicleInterface.ignite`](https://Binjian.github.io/tspace/06.dataflow.vehicle_interface.html#vehicleinterface.ignite),
@@ -516,7 +516,7 @@ It just starts a secondary threading pool containing six threads
   process and the training process. It triggers the system stop if the
   observation or action quality is below a threshold.
 
-### Model training and inference thread
+## Model training and inference thread
 
 call
 [`Cruncher.filter`](https://Binjian.github.io/tspace/06.dataflow.cruncher.html#cruncher.filter).
@@ -537,7 +537,7 @@ the oberservation and action.**
   threading pool with pre-defined `threading.Event`: `start_event`,
   `stop_event`, `flash_event`, `interrupt_event` and `exit_event`.
 
-## TODO
+# TODO
 
 1.  Add time sequence embedding database support with LanceDB for
     TimeGPT
