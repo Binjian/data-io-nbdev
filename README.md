@@ -7,12 +7,11 @@
 
 **tspace** is an data pipleline framework for deep reinforcement
 learning with IO interface, processing and configuration. The current
-code base depicts an automotive implementation. The target of the
-sysmtem is to increase the energy efficiency (reward) of a BEV by
-imposing modification on parameters (action) of powertrain controller,
-the VCU, based on observations of the vehicle (state), i.e. speed,
-acceleration, electric engine current, voltage etc. The main features
-are:
+code base depicts an automotive implementation. The goal of the system
+is to increase the energy efficiency (reward) of a BEV by imposing
+modification on parameters (action) of powertrain controller, the VCU,
+based on observations of the vehicle (state), i.e. speed, acceleration,
+electric engine current, voltage etc. The main features are:
 
 - works in both training and inferrence mode, supporting
   - coordinated
@@ -20,9 +19,9 @@ are:
     pipelines,
   - online and offline training,
   - local and distributed training;
-- supports multiple models of
+- supports multiple models:
   - reinforcement learning models with DDPG and
-  - time sequence processing with recurrent models;
+  - recurrent models (RDPG) for time sequences with arbitrary length;
 - the data pipelines are compatible to both ETL and ML dataflow with
   - support of multiple data sources (local CAN or remote cloud object
     storage),
@@ -187,10 +186,9 @@ It provides a wrapper for the reinforcement learning model with
 
 ## [`DDPG`](https://Binjian.github.io/tspace/07.agent.ddpg.html#ddpg)
 
-- provides methods to create, load or initialize the [Recurrent
-  Deterministic Policy Gradient](https://arxiv.org/abs/1512.04455)
-  **Model**, or restore checkpoints to it. It also exports the tflite
-  model.
+- provides methods to create, load or initialize the [Deep Deterministic
+  Policy Gradient](https://arxiv.org/abs/1509.02971) **Model**, or
+  restore checkpoints to it. It also exports the tflite model.
 - It provides the concrete methods for the abstract ones in the
   [`DPG`](https://Binjian.github.io/tspace/07.agent.dpg.html#dpg)
   interface.
@@ -209,9 +207,9 @@ It provides a wrapper for the reinforcement learning model with
 
 ## [`RDPG`](https://Binjian.github.io/tspace/07.agent.rdpg.rdpg.html#rdpg)
 
-- provides methods to create, load or initialize the [Deep Deterministic
-  Policy Gradient](https://arxiv.org/abs/1509.02971) **Model**, or
-  restore checkpoints to it.
+- provides methods to create, load or initialize the [Recurrent
+  Deterministic Policy Gradient](https://arxiv.org/abs/1512.04455)
+  **Model**, or restore checkpoints to it.
 - It provides the concrete methods for the abstract ones in the
   [`DPG`](https://Binjian.github.io/tspace/07.agent.dpg.html#dpg)
   interface.
@@ -224,9 +222,10 @@ It provides a wrapper for the reinforcement learning model with
   applies the weight update to the actor and critic network
 - [`RDPG.train`](https://Binjian.github.io/tspace/07.agent.rdpg.rdpg.html#rdpg.train)
   samples a ragged minibatch of episodes with different lengths from the
-  buffer. It handles the truncated back propagation through time (TBPTT)
-  by splitting the episodes and looping over the subsequences with
-  Masking layers to update the weights by
+  buffer. It can handle training of time sequences with arbitrary length
+  by truncated back propagation through time (TBPTT) with splitting the
+  episodes and looping over the subsequences with Masking layers to
+  update the weights by
   [`RDPG.train_step`](https://Binjian.github.io/tspace/07.agent.rdpg.rdpg.html#rdpg.train_step).
 
 # Model
@@ -464,7 +463,7 @@ in later indexing or grouping for efficient sampling. It includes
 # Scheduling
 
 The schduling of ETL and ML training and inference is carried out as two
-level of cascaded threading pools.
+levels of cascaded threading pools.
 
 ## Primary threading pool
 
@@ -543,6 +542,7 @@ the oberservation and action.**
     TimeGPT
 2.  Batch mode for large scale inference and training with Unit of Work
     pattern
+3.  Add schemes for serializing generic time series data
 
 # How to use
 
