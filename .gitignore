@@ -170,3 +170,5 @@ cython_debug/
 /index_files/
 /res/.DS_Store
 /.DS_Store
+*.svg
+*.tex

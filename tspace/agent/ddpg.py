@@ -524,8 +524,8 @@ class DDPG(DPG):
     @classmethod
     def get_critic(
         cls,
-        num_states: int,
-        num_actions: int,
+        num_states: int,   # 600
+        num_actions: int,  # 68
         num_state_input_dense1: int = 16,
         num_state_input_dense2: int = 32,
         num_action_input_dense: int = 32,
