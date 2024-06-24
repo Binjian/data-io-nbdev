@@ -1,8 +1,6 @@
-[submodule "tbox"]
+[submodule "res/candycan"]
+	path = res/candycan
+	url = git@github.com:Binjian/candycan.git
+[submodule "res/tbox"]
 	path = res/tbox
-	url = ssh://git@gitlab.newrizon.work:2222/its/ai/tboxcan.git
-	branch = nbd
-[submodule "can"]
-	path = can
-	url = ssh://git@gitlab.newrizon.work:2222/its/ai/can.git
-	branch = gh-workflow
+	url = git@github.com:Binjian/tbox.git
