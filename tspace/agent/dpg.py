@@ -305,7 +305,7 @@ class DPG(Hashable):
 
         Return:
 
-            tuple: (actor_loss, critic_loss)
+            tuple: (actor_loss, critic_loss, value_loss)
         """
         pass
 

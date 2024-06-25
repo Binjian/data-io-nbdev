@@ -583,6 +583,8 @@ class DDPG(DPG):
         """
         sample actions with additive ou noise
 
+        input: state is a pd.Series of length 3*10*3/4*50*3 (r*c), output numpy array
+
         Action outputs and noise object are all row vectors of length 21*17 (r*c), output numpy array
         """
 
