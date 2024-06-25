@@ -276,7 +276,7 @@ class Truck:
         None  # number of full torque items in the torque map
     )
     _observation_numel: Optional[float] = (
-        None  # number of torque items in the torque map
+        None  # number of observation items in the torque map
     )
     _observation_length: Optional[int] = (
         None  # number of torque items in the torque map

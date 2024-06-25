@@ -64,4 +64,8 @@ dependencies:
     - nbdev
     - cutelog
     - itikz
+    - jax-metal == 0.0.6
+    - jax == 0.4.22
+    - jaxlib == 0.4.22
+    - orbax-checkpoint == 0.5.16
     #- pyqt5==5.15.3  # cutelog has to have xcb and abi <12.13

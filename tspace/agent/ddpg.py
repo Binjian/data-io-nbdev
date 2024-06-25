@@ -524,8 +524,8 @@ class DDPG(DPG):
     @classmethod
     def get_critic(
         cls,
-        num_states: int,   # 600
-        num_actions: int,  # 68
+        num_states: int,
+        num_actions: int,
         num_state_input_dense1: int = 16,
         num_state_input_dense2: int = 32,
         num_action_input_dense: int = 32,
@@ -582,6 +582,8 @@ class DDPG(DPG):
     def policy(self, state: pd.Series):
         """
         sample actions with additive ou noise
+
+        input: state is a pd.Series of length 3*10*3/4*50*3 (r*c), output numpy array
 
         Action outputs and noise object are all row vectors of length 21*17 (r*c), output numpy array
         """

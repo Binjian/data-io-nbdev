@@ -6,7 +6,7 @@ from typing import TypeVar
 from pydantic import BaseModel
 
 # %% auto 0
-__all__ = ['default_truck', 'HyperParam', 'HyperParamDPG', 'HyperParamDDPG', 'HyperParamRDPG']
+__all__ = ['default_truck', 'HyperParam', 'HyperParamDPG', 'HyperParamDDPG', 'HyperParamRDPG', 'HyperParamIDQL']
 
 # %% ../../../nbs/07.agent.utils.hyperparams.ipynb 4
 from ...config.vehicles import trucks_by_id
@@ -135,4 +135,28 @@ class HyperParamRDPG(HyperParamDPG):
     # Note: keras only support k1=k2, ignite support k1!=k2
 
 # %% ../../../nbs/07.agent.utils.hyperparams.ipynb 9
-HyperParam = TypeVar("HyperParam", HyperParamDDPG, HyperParamRDPG)
+class HyperParamIDQL(HyperParamDPG):
+    """
+    Hyperparameters for the IDQL agent
+
+    Attributes:
+
+        - HiddenDimension: int = 256  # hidden unit number for the action input layer
+        - PaddingValue: float = (
+            -10000
+        )  # padding value for the input, impossible value for observation, action or reward
+        - tbptt_k1: int = 200  # truncated backpropagation through time: forward steps,
+        - tbptt_k2: int = 200  # truncated backpropagation through time: backward steps
+    """
+
+    HiddenDimension: int = 256  # hidden unit number for the action input layer
+    PaddingValue: float = (
+        -10000
+    )  # padding value for the input, impossible value for observation, action or reward
+    tbptt_k1: int = 200  # truncated backpropagation through time: forward steps,
+    # example: 100*4s=400s (6min40s), 200*4s=800s (13min20s) 400*4s=1600s (26min40s)
+    tbptt_k2: int = 200  # truncated backpropagation through time: backward steps,
+    # Note: keras only support k1=k2, ignite support k1!=k2
+
+# %% ../../../nbs/07.agent.utils.hyperparams.ipynb 10
+HyperParam = TypeVar("HyperParam", HyperParamDDPG, HyperParamRDPG, HyperParamIDQL)
