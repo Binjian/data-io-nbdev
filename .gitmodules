@@ -4,3 +4,6 @@
 [submodule "res/tbox"]
 	path = res/tbox
 	url = git@github.com:Binjian/tbox.git
+[submodule "res/IDQL"]
+	path = res/IDQL
+	url = git@github.com:Binjian/IDQL.git

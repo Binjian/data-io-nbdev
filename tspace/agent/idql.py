@@ -27,7 +27,7 @@ from .rdpg.seq_actor import SeqActor  # type: ignore
 from .rdpg.seq_critic import SeqCritic  # type: ignore
 from .utils.hyperparams import HyperParamRDPG  # type: ignore
 
-# %% ../../nbs/07.agent.idql.ipynb 7
+# %% ../../nbs/07.agent.idql.ipynb 8
 @dataclass
 class IDQL(DPG):
     """IDQL agent for VEOS.
