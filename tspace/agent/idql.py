@@ -26,6 +26,12 @@ from ..data.time import veos_lifetime_end_date, veos_lifetime_start_date
 # %% ../../nbs/07.agent.idql.ipynb 5
 from .dpg import DPG  # type: ignore
 
+# %% ../../nbs/07.agent.idql.ipynb 7
+from jaxrl5.agents import DDPMIQLLearner
+from jaxrl5.types import DataType
+from flax.core import FrozenDict
+import gymnasium as gym
+
 # %% ../../nbs/07.agent.idql.ipynb 9
 @dataclass
 class IDQL(DPG):
