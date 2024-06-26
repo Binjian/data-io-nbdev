@@ -52,7 +52,7 @@ dependencies:
   - pip:
     - matplotlib-stubs
     - pyarrow
-    - dask
+    - dask[dataframe]
     - types-tensorflow
     - pydantic
     - typeguard
