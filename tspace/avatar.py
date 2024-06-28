@@ -32,6 +32,7 @@ from .agent.dpg import DPG
 from .agent.ddpg import DDPG
 from .agent.rdpg.rdpg import RDPG
 from .agent.idql import IDQL
+
 from tspace.agent.utils.hyperparams import (
     HyperParamDDPG,
     HyperParamRDPG,

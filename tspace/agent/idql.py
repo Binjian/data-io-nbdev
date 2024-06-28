@@ -18,6 +18,7 @@ import jax.numpy as jnp
 
 # %% ../../nbs/07.agent.idql.ipynb 4
 from .utils.hyperparams import HyperParamDDPG, HyperParamRDPG
+from .utils.hyperparams import HyperParamIDQL
 from ..storage.buffer.dask import DaskBuffer
 from ..storage.buffer.mongo import MongoBuffer  # type: ignore
 from ..data.core import PoolQuery  # type: ignore
@@ -42,11 +43,13 @@ from tspace.data.core import (
     get_filemeta_config,
 )
 
+
 # %% ../../nbs/07.agent.idql.ipynb 7
 from jaxrl5.agents import DDPMIQLLearner
 from jaxrl5.types import DataType
 from flax.core import FrozenDict
 import gymnasium as gym
+
 
 # %% ../../nbs/07.agent.idql.ipynb 8
 DatasetDict = dict[str, DataType]
@@ -94,7 +97,7 @@ class IDQL(DPG):
 
         super().__post_init__()  # call DPG post_init for pool init and plot init
         self.coll_type = "EPISODE"
-        self.hyper_param = HyperParamDDPG(
+        self.hyper_param = HyperParamIDQL(
             HiddenDimension=256,
             PaddingValue=-10000,
             tbptt_k1=200,
