@@ -173,4 +173,3 @@ cython_debug/
 *.svg
 *.tex
 /nbs/.last_checked
-/tspace/
