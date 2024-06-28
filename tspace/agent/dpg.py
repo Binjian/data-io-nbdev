@@ -34,7 +34,7 @@ from tspace.data.external.pandas_utils import (
 )
 
 # %% ../../nbs/07.agent.dpg.ipynb 5
-from .utils.hyperparams import HyperParamDDPG, HyperParamRDPG  # type: ignore
+from .utils.hyperparams import HyperParamDDPG, HyperParamRDPG, HyperParamIDQL  # type: ignore
 
 # %% ../../nbs/07.agent.dpg.ipynb 6
 @dataclass(kw_only=True)
@@ -305,7 +305,7 @@ class DPG(Hashable):
 
         Return:
 
-            tuple: (actor_loss, critic_loss, value_loss)
+            tuple: (actor_loss, critic_loss)
         """
         pass
 
@@ -443,5 +443,5 @@ class DPG(Hashable):
         return self._hyper_param
 
     @hyper_param.setter
-    def hyper_param(self, value: Union[HyperParamDDPG, HyperParamRDPG]):
+    def hyper_param(self, value: Union[HyperParamDDPG, HyperParamRDPG, HyperParamIDQL]):
         self._hyper_param = value

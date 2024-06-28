@@ -17,7 +17,7 @@ import jax
 import jax.numpy as jnp
 
 # %% ../../nbs/07.agent.idql.ipynb 4
-from .utils.hyperparams import HyperParamDDPG
+from .utils.hyperparams import HyperParamDDPG, HyperParamRDPG
 from ..storage.buffer.dask import DaskBuffer
 from ..storage.buffer.mongo import MongoBuffer  # type: ignore
 from ..data.core import PoolQuery  # type: ignore

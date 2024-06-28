@@ -18,7 +18,11 @@ __all__ = ['DDPG']
 
 # %% ../../nbs/07.agent.ddpg.ipynb 4
 from .dpg import DPG
-from .utils.hyperparams import HyperParamDDPG
+from tspace.agent.utils.hyperparams import (
+    HyperParamDDPG,
+    HyperParamRDPG,
+    HyperParamIDQL,
+)
 from .utils.ou_action_noise import OUActionNoise
 from ..storage.buffer.dask import DaskBuffer
 from ..storage.buffer.mongo import MongoBuffer
