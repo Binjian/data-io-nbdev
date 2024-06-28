@@ -6,7 +6,11 @@ from typing import TypeVar
 from pydantic import BaseModel
 
 # %% auto 0
+<<<<<<< HEAD
 __all__ = ['default_truck', 'HyperParam', 'HyperParamDPG', 'HyperParamDDPG', 'HyperParamRDPG', 'HyperParamIDQL']
+=======
+__all__ = ['default_truck', 'HyperParam', 'HyperParamDPG', 'HyperParamDDPG', 'HyperParamIDQL', 'HyperParamRDPG']
+>>>>>>> c504c7b ([fix] hyperparam drama)
 
 # %% ../../../nbs/07.agent.utils.hyperparams.ipynb 4
 from ...config.vehicles import trucks_by_id
@@ -111,6 +115,59 @@ class HyperParamDDPG(HyperParamDPG):
     )
 
 # %% ../../../nbs/07.agent.utils.hyperparams.ipynb 8
+class HyperParamIDQL(HyperParamDPG):
+    """
+    Hyperparameters for the DDPG agent
+
+
+    Attributes:
+
+        - CriticStateInputDenseDimension1: int = (
+            16  # output dimension for the state input (first) Dense layer
+        )
+        - CriticStateInputDenseDimension2: int = (
+            32  # output dimension for the state input second Dense layer
+        )
+        - CriticActionInputDenseDimension: int = (
+            32  # output dimension for the action input Dense layer
+        )
+        - CriticOutputDenseDimension1: int = (
+            256  # output dimension for the first critic output Dense layer
+        )
+        - CriticOutputDenseDimension2: int = (
+            256  # output dimension for the second critic output Dense layer
+        )
+        - ActorInputDenseDimension1: int = (
+            256  # output dimension for the first actor input Dense layer
+        )
+        - ActorInputDenseDimension2: int = (
+            256  # output dimension for the second actor input Dense layer
+        )
+    """
+
+    CriticStateInputDenseDimension1: int = (
+        16  # output dimension for the state input (first) Dense layer
+    )
+    CriticStateInputDenseDimension2: int = (
+        32  # output dimension for the state input second Dense layer
+    )
+    CriticActionInputDenseDimension: int = (
+        32  # output dimension for the action input Dense layer
+    )
+    CriticOutputDenseDimension1: int = (
+        256  # output dimension for the first critic output Dense layer
+    )
+    CriticOutputDenseDimension2: int = (
+        256  # output dimension for the second critic output Dense layer
+    )
+    ActorInputDenseDimension1: int = (
+        256  # output dimension for the first actor input Dense layer
+    )
+    ActorInputDenseDimension2: int = (
+        256  # output dimension for the second actor input Dense layer
+    )
+
+# %% ../../../nbs/07.agent.utils.hyperparams.ipynb 9
 class HyperParamRDPG(HyperParamDPG):
     """
     Hyperparameters for the RDPG agent
@@ -134,6 +191,7 @@ class HyperParamRDPG(HyperParamDPG):
     tbptt_k2: int = 200  # truncated backpropagation through time: backward steps,
     # Note: keras only support k1=k2, ignite support k1!=k2
 
+<<<<<<< HEAD
 # %% ../../../nbs/07.agent.utils.hyperparams.ipynb 9
 class HyperParamIDQL(HyperParamDPG):
     """
@@ -158,5 +216,7 @@ class HyperParamIDQL(HyperParamDPG):
     tbptt_k2: int = 200  # truncated backpropagation through time: backward steps,
     # Note: keras only support k1=k2, ignite support k1!=k2
 
+=======
+>>>>>>> c504c7b ([fix] hyperparam drama)
 # %% ../../../nbs/07.agent.utils.hyperparams.ipynb 10
 HyperParam = TypeVar("HyperParam", HyperParamDDPG, HyperParamRDPG, HyperParamIDQL)

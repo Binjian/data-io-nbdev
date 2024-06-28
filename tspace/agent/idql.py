@@ -22,10 +22,14 @@ import jax.numpy as jnp
 
 # %% ../../nbs/07.agent.idql.ipynb 4
 <<<<<<< HEAD
+<<<<<<< HEAD
 from .utils.hyperparams import HyperParamIDQL
 =======
 from .utils.hyperparams import HyperParamDDPG
 >>>>>>> c60d196 ([add] offline rl with IDQL)
+=======
+from .utils.hyperparams import HyperParamDDPG, HyperParamRDPG
+>>>>>>> c504c7b ([fix] hyperparam drama)
 from ..storage.buffer.dask import DaskBuffer
 from ..storage.buffer.mongo import MongoBuffer  # type: ignore
 from ..data.core import PoolQuery  # type: ignore

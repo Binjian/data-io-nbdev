@@ -15,7 +15,11 @@ import tensorflow as tf
 from typeguard import check_type
 
 # %% ../../../nbs/07.agent.rdpg.rdpg.ipynb 5
-from ..utils.hyperparams import HyperParamRDPG
+from tspace.agent.utils.hyperparams import (
+    HyperParamRDPG,
+    HyperParamDDPG,
+    HyperParamIDQL,
+)
 from ...storage.buffer.dask import DaskBuffer
 from ...storage.buffer.mongo import MongoBuffer  # type: ignore
 from ...data.core import PoolQuery  # type: ignore

@@ -33,14 +33,20 @@ from .agent.ddpg import DDPG
 from .agent.rdpg.rdpg import RDPG
 from .agent.idql import IDQL
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> c504c7b ([fix] hyperparam drama)
 from tspace.agent.utils.hyperparams import (
     HyperParamDDPG,
     HyperParamRDPG,
     HyperParamIDQL,
 )
+<<<<<<< HEAD
 =======
 from .agent.utils.hyperparams import HyperParamDDPG, HyperParamRDPG
 >>>>>>> c60d196 ([add] offline rl with IDQL)
+=======
+>>>>>>> c504c7b ([fix] hyperparam drama)
 
 from .config.vehicles import TruckInField, TruckInCloud
 from .config.drivers import Driver
@@ -464,10 +470,14 @@ def main(args: argparse.Namespace) -> None:
         agent: IDQL = IDQL(  # type: ignore
             _coll_type="EPISODE",
 <<<<<<< HEAD
+<<<<<<< HEAD
             _hyper_param=HyperParamIDQL(),
 =======
             _hyper_param=HyperParamDDPG(),
 >>>>>>> c60d196 ([add] offline rl with IDQL)
+=======
+            _hyper_param=HyperParamIDQL(),
+>>>>>>> c504c7b ([fix] hyperparam drama)
             _truck=truck,
             _driver=driver,
             _pool_key=args.output,

@@ -305,7 +305,7 @@ class DPG(Hashable):
 
         Return:
 
-            tuple: (actor_loss, critic_loss, value_loss)
+            tuple: (actor_loss, critic_loss)
         """
         pass
 
@@ -443,5 +443,5 @@ class DPG(Hashable):
         return self._hyper_param
 
     @hyper_param.setter
-    def hyper_param(self, value: Union[HyperParamDDPG, HyperParamRDPG]):
+    def hyper_param(self, value: Union[HyperParamDDPG, HyperParamRDPG, HyperParamIDQL]):
         self._hyper_param = value
