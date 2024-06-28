@@ -72,14 +72,15 @@ website:
         contents:
           - 07.agent.dpg.ipynb
           - 07.agent.ddpg.ipynb
-          - section: <b>utils</b>
-            contents:
-              - 07.agent.utils.hyperparams.ipynb
-              - 07.agent.utils.ou_action_noise.ipynb
           - section: <b>rdpg</b>
             contents:
               - 07.agent.rdpg.actor.ipynb
               - 07.agent.rdpg.critic.ipynb
               - 07.agent.rdpg.rdpg.ipynb
+          - 07.agent.idql.ipynb
+          - section: <b>utils</b>
+            contents:
+              - 07.agent.utils.hyperparams.ipynb
+              - 07.agent.utils.ou_action_noise.ipynb
       - 98_utils.ipynb
       - 99_sandbox.ipynb
