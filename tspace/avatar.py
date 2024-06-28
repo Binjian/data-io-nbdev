@@ -27,26 +27,16 @@ from pythonjsonlogger import jsonlogger  # type: ignore
 from tensorflow.summary import SummaryWriter, create_file_writer, scalar  # type: ignore
 from typeguard import check_type  # type: ignore
 
-# %% ../nbs/00.avatar.ipynb 4
+# %% ../nbs/00.avatar.ipynb 5
 from .agent.dpg import DPG
 from .agent.ddpg import DDPG
 from .agent.rdpg.rdpg import RDPG
 from .agent.idql import IDQL
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> c504c7b ([fix] hyperparam drama)
 from tspace.agent.utils.hyperparams import (
     HyperParamDDPG,
     HyperParamRDPG,
     HyperParamIDQL,
 )
-<<<<<<< HEAD
-=======
-from .agent.utils.hyperparams import HyperParamDDPG, HyperParamRDPG
->>>>>>> c60d196 ([add] offline rl with IDQL)
-=======
->>>>>>> c504c7b ([fix] hyperparam drama)
 
 from .config.vehicles import TruckInField, TruckInCloud
 from .config.drivers import Driver
@@ -65,12 +55,40 @@ from .dataflow.pipeline.queue import Pipeline
 from .system.log import set_root_logger
 from .system.graceful_killer import GracefulKiller
 
-# %% ../nbs/00.avatar.ipynb 5
+# %% ../nbs/00.avatar.ipynb 7
+from .agent.dpg import DPG
+from .agent.ddpg import DDPG
+from .agent.rdpg.rdpg import RDPG
+from .agent.idql import IDQL
+from tspace.agent.utils.hyperparams import (
+    HyperParamDDPG,
+    HyperParamRDPG,
+    HyperParamIDQL,
+)
+
+from .config.vehicles import TruckInField, TruckInCloud
+from .config.drivers import Driver
+from .config.messengers import CANMessenger, TripMessenger
+from tspace.config.utils import (
+    str_to_can_server,
+    str_to_driver,
+    str_to_trip_server,
+    str_to_truck,
+)
+
+from .dataflow.cloud import Cloud
+from .dataflow.cruncher import Cruncher
+from .dataflow.kvaser import Kvaser
+from .dataflow.pipeline.queue import Pipeline
+from .system.log import set_root_logger
+from .system.graceful_killer import GracefulKiller
+
+# %% ../nbs/00.avatar.ipynb 9
 repo = Repo(".", search_parent_directories=True)
 proj_root = Path(repo.working_tree_dir)
 proj_root
 
-# %% ../nbs/00.avatar.ipynb 10
+# %% ../nbs/00.avatar.ipynb 14
 @dataclass(kw_only=True)
 class Avatar(abc.ABC):
     """
@@ -238,13 +256,13 @@ class Avatar(abc.ABC):
     def infer_mode(self, value: bool) -> None:
         self._infer_mode = value
 
-# %% ../nbs/00.avatar.ipynb 12
+# %% ../nbs/00.avatar.ipynb 16
 parser = argparse.ArgumentParser(
     "Use RL agent (DDPG, RDPG or IDQL) with tensorflow/JAX backend for EOS with coast-down activated "
     "and expected velocity in 3 seconds"
 )
 
-# %% ../nbs/00.avatar.ipynb 13
+# %% ../nbs/00.avatar.ipynb 17
 parser.add_argument(
     "-v",
     "--vehicle",
@@ -253,7 +271,7 @@ parser.add_argument(
     help="vehicle ID like 'VB7' or 'MP3' or VIN 'HMZABAAH1MF011055'",
 )
 
-# %% ../nbs/00.avatar.ipynb 14
+# %% ../nbs/00.avatar.ipynb 18
 parser.add_argument(
     "-d",
     "--driver",
@@ -262,7 +280,7 @@ parser.add_argument(
     help="driver ID like 'longfei.zheng' or 'jiangbo.wei'",
 )
 
-# %% ../nbs/00.avatar.ipynb 15
+# %% ../nbs/00.avatar.ipynb 19
 parser.add_argument(
     "-i",
     "--interface",
@@ -271,7 +289,7 @@ parser.add_argument(
     help="url for remote can server, e.g. ",
 )
 
-# %% ../nbs/00.avatar.ipynb 16
+# %% ../nbs/00.avatar.ipynb 20
 parser.add_argument(
     "-t",
     "--trip",
@@ -280,7 +298,7 @@ parser.add_argument(
     help="trip messenger, url or name, e.g. rocket_cloud, local_udp",
 )
 
-# %% ../nbs/00.avatar.ipynb 18
+# %% ../nbs/00.avatar.ipynb 22
 parser.add_argument(
     "-c",
     "--control",
@@ -292,7 +310,7 @@ parser.add_argument(
     "'DUMMY' for non-interaction for inference only and testing purpose",
 )
 
-# %% ../nbs/00.avatar.ipynb 19
+# %% ../nbs/00.avatar.ipynb 23
 parser.add_argument(
     "-a",
     "--agent",
@@ -301,7 +319,7 @@ parser.add_argument(
     help="RL agent choice: 'ddpg' for DDPG; 'rdpg' for Recurrent DPG; 'idql' for IDQL",
 )
 
-# %% ../nbs/00.avatar.ipynb 20
+# %% ../nbs/00.avatar.ipynb 24
 parser.add_argument(
     "-r",
     "--resume",
@@ -310,7 +328,7 @@ parser.add_argument(
     action="store_true",
 )
 
-# %% ../nbs/00.avatar.ipynb 21
+# %% ../nbs/00.avatar.ipynb 25
 parser.add_argument(
     "-l",
     "--learning",
@@ -319,7 +337,7 @@ parser.add_argument(
     action="store_true",
 )
 
-# %% ../nbs/00.avatar.ipynb 22
+# %% ../nbs/00.avatar.ipynb 26
 parser.add_argument(
     "-p",
     "--path",
@@ -328,7 +346,7 @@ parser.add_argument(
     help="relative path to be saved, for create sub-folder for different drivers",
 )
 
-# %% ../nbs/00.avatar.ipynb 23
+# %% ../nbs/00.avatar.ipynb 27
 parser.add_argument(
     "-o",
     "--output",
@@ -340,7 +358,7 @@ parser.add_argument(
     "if specified as path name, use dask local under proj_root/data folder or cluster",
 )
 
-# %% ../nbs/00.avatar.ipynb 24
+# %% ../nbs/00.avatar.ipynb 28
 parser.add_argument(
     "--watchdog_nap_time",
     type=str,
@@ -352,7 +370,7 @@ parser.add_argument(
     "system will exit",
 )
 
-# %% ../nbs/00.avatar.ipynb 25
+# %% ../nbs/00.avatar.ipynb 29
 parser.add_argument(
     "--watchdog_capture_error_upper_bound",
     type=str,
@@ -363,7 +381,7 @@ parser.add_argument(
     "system will exit",
 )
 
-# %% ../nbs/00.avatar.ipynb 26
+# %% ../nbs/00.avatar.ipynb 30
 parser.add_argument(
     "--watchdog_flash_error_upper_bound",
     type=str,
@@ -374,10 +392,10 @@ parser.add_argument(
     "system will exit",
 )
 
-# %% ../nbs/00.avatar.ipynb 28
+# %% ../nbs/00.avatar.ipynb 32
 # | export
 
-# %% ../nbs/00.avatar.ipynb 29
+# %% ../nbs/00.avatar.ipynb 34
 def main(args: argparse.Namespace) -> None:
     """
     Description: main function to start the Avatar.
@@ -469,15 +487,7 @@ def main(args: argparse.Namespace) -> None:
     else:  # args.agent == 'idql'
         agent: IDQL = IDQL(  # type: ignore
             _coll_type="EPISODE",
-<<<<<<< HEAD
-<<<<<<< HEAD
             _hyper_param=HyperParamIDQL(),
-=======
-            _hyper_param=HyperParamDDPG(),
->>>>>>> c60d196 ([add] offline rl with IDQL)
-=======
-            _hyper_param=HyperParamIDQL(),
->>>>>>> c504c7b ([fix] hyperparam drama)
             _truck=truck,
             _driver=driver,
             _pool_key=args.output,
@@ -563,7 +573,185 @@ def main(args: argparse.Namespace) -> None:
     # default behavior is "observe" will start and send out all the events to orchestrate other three threads.
     logger.info("Program exit!")
 
-# %% ../nbs/00.avatar.ipynb 34
+# %% ../nbs/00.avatar.ipynb 36
+def main(args: argparse.Namespace) -> None:
+    """
+    Description: main function to start the Avatar.
+
+    Initialize the Avatar with truck, driver, can server, trip server, and agent for input arguments.
+    Create the first tier of the cascaded threading pools for vehicle interface and crucher.
+
+    """
+    # set up logging
+    # set up data folder (logging, checkpoint, table)
+
+    # set up data folder (logging, checkpoint, table)
+    try:
+        truck: Union[TruckInField, TruckInCloud] = str_to_truck(args.vehicle)
+    except KeyError:
+        raise KeyError(f"vehicle {args.vehicle} not found in config file")
+    else:
+        print(f"Vehicle found. vid:{truck.vid}, vin: {truck.vin}.")
+
+    try:
+        driver: Driver = str_to_driver(args.driver)
+    except KeyError:
+        raise KeyError(f"driver {args.driver} not found in config file")
+    else:
+        print(f"Driver found. pid:{driver.pid}, name: {driver.name}.")
+
+    # remotecan_srv: str = 'can_intra'
+    try:
+        can_server = str_to_can_server(args.interface)
+    except KeyError:
+        raise KeyError(f"can server {args.interface} not found in config file")
+    else:
+        print(f"CAN Server found: {can_server.server_name}")
+
+    try:
+        trip_server = str_to_trip_server(args.trip)
+    except KeyError:
+        raise KeyError(f"trip server {args.web} not found in config file")
+    else:
+        print(f"Trip Server found: {trip_server.server_name}")
+
+    assert args.agent in ["ddpg", "rdpg"], "agent must be either ddpg or rdpg"
+
+    if args.resume:
+        data_root = proj_root.joinpath("data/" + truck.vin + "-" + driver.pid).joinpath(
+            args.path
+        )
+    else:  # from scratch
+        data_root = proj_root.joinpath(
+            "data/scratch/" + truck.vin + "-" + driver.pid
+        ).joinpath(args.path)
+
+    logger, dict_logger = set_root_logger(
+        name="eos",
+        data_root=data_root,
+        agent=args.agent,
+        tz=truck.site.tz,
+        truck=truck.vid,
+        driver=driver.pid,
+    )
+    logger.info(f"{{'header': 'Start Logging'}}", extra=dict_logger)
+
+    if args.agent == "ddpg":
+        agent: DDPG = DDPG(
+            _coll_type="RECORD",
+            _hyper_param=HyperParamDDPG(),
+            _truck=truck,
+            _driver=driver,
+            _pool_key=args.output,
+            _data_folder=str(data_root),
+            _infer_mode=(not args.learning),
+            _resume=args.resume,
+            logger=logger,
+            dict_logger=dict_logger,
+        )
+    elif args.agent == "rdpg":
+        agent: RDPG = RDPG(  # type: ignore
+            _coll_type="EPISODE",
+            _hyper_param=HyperParamRDPG(),
+            _truck=truck,
+            _driver=driver,
+            _pool_key=args.output,
+            _data_folder=str(data_root),
+            _infer_mode=(not args.learning),
+            _resume=args.resume,
+            logger=logger,
+            dict_logger=dict_logger,
+        )
+    else:  # args.agent == 'idql'
+        agent: IDQL = IDQL(  # type: ignore
+            _coll_type="EPISODE",
+            _hyper_param=HyperParamIDQL(),
+            _truck=truck,
+            _driver=driver,
+            _pool_key=args.output,
+            _data_folder=str(data_root),
+            _infer_mode=(not args.learning),
+            _resume=args.resume,
+            logger=logger,
+            dict_logger=dict_logger,
+        )
+
+    try:
+        avatar = Avatar(
+            _truck=truck,
+            _driver=driver,
+            _agent=agent,
+            _can_server=can_server,
+            _trip_server=trip_server,
+            logger=logger,
+            dict_logger=dict_logger,
+            _resume=args.resume,
+            _infer_mode=(not args.learning),
+            data_root=data_root,
+        )
+    except TypeError as e:
+        logger.error(
+            f"{{'header': 'Project Exception TypeError', " f"'exception': '{e}'}}",
+            extra=dict_logger,
+        )
+        sys.exit(1)
+    except Exception as e:
+        logger.error(
+            f"{{'header': 'main Exception', " f"'exception': '{e}'}}",
+            extra=dict_logger,
+        )
+        sys.exit(1)
+
+    # initialize dataflow: pipelines, sync events among the threads
+    observe_pipeline = Pipeline[pd.DataFrame](
+        maxsize=3
+    )  # pipeline for observations (type dataframe)
+    flash_pipeline = Pipeline[pd.DataFrame](
+        maxsize=3
+    )  # pipeline for flashing torque tables (type dataframe)
+    start_event = Event()
+    stop_event = Event()
+    interrupt_event = Event()
+    exit_event = Event()
+    flash_event = Event()
+
+    logger.info(f"{{'header': 'main Thread Pool starts!'}}", extra=dict_logger)
+
+    # Gracefulkiller instance can be created only in the main thread!
+    killer = GracefulKiller(exit_event)
+    with concurrent.futures.ThreadPoolExecutor(
+        max_workers=2, thread_name_prefix="Avatar"
+    ) as executor:
+        executor.submit(
+            avatar.vehicle_interface.ignite,  # observe thread (spawns 4 threads for input, HMI and output)
+            observe_pipeline,  # input port; output
+            flash_pipeline,  # out port; input
+            start_event,
+            stop_event,
+            interrupt_event,
+            flash_event,
+            exit_event,
+            float(args.watchdog_nap_time),
+            int(args.watchdog_capture_error_upper_bound),
+            int(args.watchdog_flash_error_upper_bound),
+        )
+
+        executor.submit(
+            avatar.cruncher.filter,  # data crunch thread
+            observe_pipeline,  # output port; input
+            flash_pipeline,  # input port; output
+            start_event,
+            stop_event,
+            interrupt_event,
+            flash_event,
+            exit_event,
+        )
+
+    logger.info(f"{{'header': 'Start main Thread Pool dies!'}}", extra=dict_logger)
+    # default behavior is "observe" will start and send out all the events to orchestrate other three threads.
+    logger.info("Program exit!")
+
+# %% ../nbs/00.avatar.ipynb 42
 if (
     __name__ == "__main__" and "__file__" in globals()
 ):  # in order to be compatible for both script and notebnook

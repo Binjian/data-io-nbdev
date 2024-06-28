@@ -6,11 +6,7 @@ from typing import TypeVar
 from pydantic import BaseModel
 
 # %% auto 0
-<<<<<<< HEAD
-__all__ = ['default_truck', 'HyperParam', 'HyperParamDPG', 'HyperParamDDPG', 'HyperParamRDPG', 'HyperParamIDQL']
-=======
 __all__ = ['default_truck', 'HyperParam', 'HyperParamDPG', 'HyperParamDDPG', 'HyperParamIDQL', 'HyperParamRDPG']
->>>>>>> c504c7b ([fix] hyperparam drama)
 
 # %% ../../../nbs/07.agent.utils.hyperparams.ipynb 4
 from ...config.vehicles import trucks_by_id
@@ -191,8 +187,7 @@ class HyperParamRDPG(HyperParamDPG):
     tbptt_k2: int = 200  # truncated backpropagation through time: backward steps,
     # Note: keras only support k1=k2, ignite support k1!=k2
 
-<<<<<<< HEAD
-# %% ../../../nbs/07.agent.utils.hyperparams.ipynb 9
+# %% ../../../nbs/07.agent.utils.hyperparams.ipynb 10
 class HyperParamIDQL(HyperParamDPG):
     """
     Hyperparameters for the IDQL agent
@@ -216,7 +211,5 @@ class HyperParamIDQL(HyperParamDPG):
     tbptt_k2: int = 200  # truncated backpropagation through time: backward steps,
     # Note: keras only support k1=k2, ignite support k1!=k2
 
-=======
->>>>>>> c504c7b ([fix] hyperparam drama)
-# %% ../../../nbs/07.agent.utils.hyperparams.ipynb 10
+# %% ../../../nbs/07.agent.utils.hyperparams.ipynb 11
 HyperParam = TypeVar("HyperParam", HyperParamDDPG, HyperParamRDPG, HyperParamIDQL)
