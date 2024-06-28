@@ -7,9 +7,12 @@ jobs:
     steps:
       - name: Upgrade pip
         run: python -m pip install --upgrade pip
+        
+      - name: Install dependencies
+        run: pip install -Uq black[jupyter] gitpython cantools ijson InquirerPy scapy pydantic numpy pandas pyx
 
       - name: Install IDQL 
         run: pip install git+https://github.com/Binjian/IDQL.git  
 
-      - name: Quarto
+      - name: test
         uses: Binjian/workflows/nbdev-ci@master
