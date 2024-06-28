@@ -22,6 +22,8 @@ electric engine current, voltage etc. The main features are:
 - supports multiple models:
   - reinforcement learning models with DDPG and
   - recurrent models (RDPG) for time sequences with arbitrary length;
+  - offline reinforcement learning with “Implict Diffusion Q-Learning”
+    (IDQ)
 - the data pipelines are compatible to both ETL and ML dataflow with
   - support of multiple data sources (local CAN or remote cloud object
     storage),
@@ -227,6 +229,23 @@ It provides a wrapper for the reinforcement learning model with
   episodes and looping over the subsequences with Masking layers to
   update the weights by
   [`RDPG.train_step`](https://Binjian.github.io/tspace/07.agent.rdpg.rdpg.html#rdpg.train_step).
+
+## [`IDQL`](https://Binjian.github.io/tspace/07.agent.idql.html#idql)
+
+- provides methods to create and initialize the [Implicit Diffusion
+  Q-learning](https://arxiv.org/abs/2304.10573) **Model**.
+- The implementation of model is based on the repo
+  [jaxrl5](https://github.com/philippe-eecs/IDQL/blob/main/jaxrl5/agents/ddpm_iql/ddpm_iql_learner.py)
+  with Jax and Flax interface.
+- It provides the concrete methods for the abstract ones in the
+  [`DPG`](https://Binjian.github.io/tspace/07.agent.dpg.html#dpg)
+  interface.
+- [`IDQL.actor_predict`](https://Binjian.github.io/tspace/07.agent.idql.html#idql.actor_predict)
+  is the inference method.
+- [`IDQL.train`](https://Binjian.github.io/tspace/07.agent.idql.html#idql.train)
+  is the training method. Jaxrl5 takes care of the weight update to the
+  actor and critic and the value network. It samples a minibatch of
+  tuples (state, action, reward, next state) from the buffer.
 
 # Model
 

@@ -31,6 +31,7 @@ from typeguard import check_type  # type: ignore
 from .agent.dpg import DPG
 from .agent.ddpg import DDPG
 from .agent.rdpg.rdpg import RDPG
+from .agent.idql import IDQL
 from .agent.utils.hyperparams import HyperParamDDPG, HyperParamRDPG
 
 from .config.vehicles import TruckInField, TruckInCloud
@@ -225,7 +226,7 @@ class Avatar(abc.ABC):
 
 # %% ../nbs/00.avatar.ipynb 12
 parser = argparse.ArgumentParser(
-    "Use RL agent (DDPG or RDPG) with tensorflow backend for EOS with coast-down activated "
+    "Use RL agent (DDPG, RDPG or IDQL) with tensorflow/JAX backend for EOS with coast-down activated "
     "and expected velocity in 3 seconds"
 )
 
@@ -283,7 +284,7 @@ parser.add_argument(
     "--agent",
     type=str,
     default="ddpg",
-    help="RL agent choice: 'ddpg' for DDPG; 'rdpg' for Recurrent DPG",
+    help="RL agent choice: 'ddpg' for DDPG; 'rdpg' for Recurrent DPG; 'idql' for IDQL",
 )
 
 # %% ../nbs/00.avatar.ipynb 20
@@ -438,10 +439,23 @@ def main(args: argparse.Namespace) -> None:
             logger=logger,
             dict_logger=dict_logger,
         )
-    else:  # args.agent == 'rdpg':
+    elif args.agent == "rdpg":
         agent: RDPG = RDPG(  # type: ignore
             _coll_type="EPISODE",
             _hyper_param=HyperParamRDPG(),
+            _truck=truck,
+            _driver=driver,
+            _pool_key=args.output,
+            _data_folder=str(data_root),
+            _infer_mode=(not args.learning),
+            _resume=args.resume,
+            logger=logger,
+            dict_logger=dict_logger,
+        )
+    else:  # args.agent == 'idql'
+        agent: IDQL = IDQL(  # type: ignore
+            _coll_type="EPISODE",
+            _hyper_param=HyperParamDDPG(),
             _truck=truck,
             _driver=driver,
             _pool_key=args.output,

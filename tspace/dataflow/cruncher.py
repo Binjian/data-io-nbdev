@@ -427,7 +427,7 @@ class Cruncher(HomoFilter[pd.DataFrame]):
                 # self.logger.info(f"BP{k} starts.", extra=self.dict_logger)
                 if self.agent.buffer.pool.cnt > 0:
                     for k in range(6):
-                        (critic_loss, actor_loss) = self.agent.train()
+                        (critic_loss, actor_loss, value_loss) = self.agent.train()
                         self.agent.soft_update_target()
                 else:
                     logger_cruncher_consume.info(
