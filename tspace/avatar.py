@@ -27,6 +27,34 @@ from pythonjsonlogger import jsonlogger  # type: ignore
 from tensorflow.summary import SummaryWriter, create_file_writer, scalar  # type: ignore
 from typeguard import check_type  # type: ignore
 
+# %% ../nbs/00.avatar.ipynb 4
+from .agent.dpg import DPG
+from .agent.ddpg import DDPG
+from .agent.rdpg.rdpg import RDPG
+from .agent.idql import IDQL
+from tspace.agent.utils.hyperparams import (
+    HyperParamDDPG,
+    HyperParamRDPG,
+    HyperParamIDQL,
+)
+
+from .config.vehicles import TruckInField, TruckInCloud
+from .config.drivers import Driver
+from .config.messengers import CANMessenger, TripMessenger
+from tspace.config.utils import (
+    str_to_can_server,
+    str_to_driver,
+    str_to_trip_server,
+    str_to_truck,
+)
+
+from .dataflow.cloud import Cloud
+from .dataflow.cruncher import Cruncher
+from .dataflow.kvaser import Kvaser
+from .dataflow.pipeline.queue import Pipeline
+from .system.log import set_root_logger
+from .system.graceful_killer import GracefulKiller
+
 # %% ../nbs/00.avatar.ipynb 5
 from .agent.dpg import DPG
 from .agent.ddpg import DDPG
@@ -55,40 +83,12 @@ from .dataflow.pipeline.queue import Pipeline
 from .system.log import set_root_logger
 from .system.graceful_killer import GracefulKiller
 
-# %% ../nbs/00.avatar.ipynb 7
-from .agent.dpg import DPG
-from .agent.ddpg import DDPG
-from .agent.rdpg.rdpg import RDPG
-from .agent.idql import IDQL
-from tspace.agent.utils.hyperparams import (
-    HyperParamDDPG,
-    HyperParamRDPG,
-    HyperParamIDQL,
-)
-
-from .config.vehicles import TruckInField, TruckInCloud
-from .config.drivers import Driver
-from .config.messengers import CANMessenger, TripMessenger
-from tspace.config.utils import (
-    str_to_can_server,
-    str_to_driver,
-    str_to_trip_server,
-    str_to_truck,
-)
-
-from .dataflow.cloud import Cloud
-from .dataflow.cruncher import Cruncher
-from .dataflow.kvaser import Kvaser
-from .dataflow.pipeline.queue import Pipeline
-from .system.log import set_root_logger
-from .system.graceful_killer import GracefulKiller
-
-# %% ../nbs/00.avatar.ipynb 9
+# %% ../nbs/00.avatar.ipynb 6
 repo = Repo(".", search_parent_directories=True)
 proj_root = Path(repo.working_tree_dir)
 proj_root
 
-# %% ../nbs/00.avatar.ipynb 14
+# %% ../nbs/00.avatar.ipynb 11
 @dataclass(kw_only=True)
 class Avatar(abc.ABC):
     """
@@ -256,13 +256,13 @@ class Avatar(abc.ABC):
     def infer_mode(self, value: bool) -> None:
         self._infer_mode = value
 
-# %% ../nbs/00.avatar.ipynb 16
+# %% ../nbs/00.avatar.ipynb 13
 parser = argparse.ArgumentParser(
     "Use RL agent (DDPG, RDPG or IDQL) with tensorflow/JAX backend for EOS with coast-down activated "
     "and expected velocity in 3 seconds"
 )
 
-# %% ../nbs/00.avatar.ipynb 17
+# %% ../nbs/00.avatar.ipynb 14
 parser.add_argument(
     "-v",
     "--vehicle",
@@ -271,7 +271,7 @@ parser.add_argument(
     help="vehicle ID like 'VB7' or 'MP3' or VIN 'HMZABAAH1MF011055'",
 )
 
-# %% ../nbs/00.avatar.ipynb 18
+# %% ../nbs/00.avatar.ipynb 15
 parser.add_argument(
     "-d",
     "--driver",
@@ -280,7 +280,7 @@ parser.add_argument(
     help="driver ID like 'longfei.zheng' or 'jiangbo.wei'",
 )
 
-# %% ../nbs/00.avatar.ipynb 19
+# %% ../nbs/00.avatar.ipynb 16
 parser.add_argument(
     "-i",
     "--interface",
@@ -289,7 +289,7 @@ parser.add_argument(
     help="url for remote can server, e.g. ",
 )
 
-# %% ../nbs/00.avatar.ipynb 20
+# %% ../nbs/00.avatar.ipynb 17
 parser.add_argument(
     "-t",
     "--trip",
@@ -298,7 +298,7 @@ parser.add_argument(
     help="trip messenger, url or name, e.g. rocket_cloud, local_udp",
 )
 
-# %% ../nbs/00.avatar.ipynb 22
+# %% ../nbs/00.avatar.ipynb 19
 parser.add_argument(
     "-c",
     "--control",
@@ -310,7 +310,7 @@ parser.add_argument(
     "'DUMMY' for non-interaction for inference only and testing purpose",
 )
 
-# %% ../nbs/00.avatar.ipynb 23
+# %% ../nbs/00.avatar.ipynb 20
 parser.add_argument(
     "-a",
     "--agent",
@@ -319,7 +319,7 @@ parser.add_argument(
     help="RL agent choice: 'ddpg' for DDPG; 'rdpg' for Recurrent DPG; 'idql' for IDQL",
 )
 
-# %% ../nbs/00.avatar.ipynb 24
+# %% ../nbs/00.avatar.ipynb 21
 parser.add_argument(
     "-r",
     "--resume",
@@ -328,7 +328,7 @@ parser.add_argument(
     action="store_true",
 )
 
-# %% ../nbs/00.avatar.ipynb 25
+# %% ../nbs/00.avatar.ipynb 22
 parser.add_argument(
     "-l",
     "--learning",
@@ -337,7 +337,7 @@ parser.add_argument(
     action="store_true",
 )
 
-# %% ../nbs/00.avatar.ipynb 26
+# %% ../nbs/00.avatar.ipynb 23
 parser.add_argument(
     "-p",
     "--path",
@@ -346,7 +346,7 @@ parser.add_argument(
     help="relative path to be saved, for create sub-folder for different drivers",
 )
 
-# %% ../nbs/00.avatar.ipynb 27
+# %% ../nbs/00.avatar.ipynb 24
 parser.add_argument(
     "-o",
     "--output",
@@ -358,7 +358,7 @@ parser.add_argument(
     "if specified as path name, use dask local under proj_root/data folder or cluster",
 )
 
-# %% ../nbs/00.avatar.ipynb 28
+# %% ../nbs/00.avatar.ipynb 25
 parser.add_argument(
     "--watchdog_nap_time",
     type=str,
@@ -370,7 +370,7 @@ parser.add_argument(
     "system will exit",
 )
 
-# %% ../nbs/00.avatar.ipynb 29
+# %% ../nbs/00.avatar.ipynb 26
 parser.add_argument(
     "--watchdog_capture_error_upper_bound",
     type=str,
@@ -381,7 +381,7 @@ parser.add_argument(
     "system will exit",
 )
 
-# %% ../nbs/00.avatar.ipynb 30
+# %% ../nbs/00.avatar.ipynb 27
 parser.add_argument(
     "--watchdog_flash_error_upper_bound",
     type=str,
@@ -392,10 +392,7 @@ parser.add_argument(
     "system will exit",
 )
 
-# %% ../nbs/00.avatar.ipynb 32
-# | export
-
-# %% ../nbs/00.avatar.ipynb 34
+# %% ../nbs/00.avatar.ipynb 29
 def main(args: argparse.Namespace) -> None:
     """
     Description: main function to start the Avatar.
@@ -573,7 +570,7 @@ def main(args: argparse.Namespace) -> None:
     # default behavior is "observe" will start and send out all the events to orchestrate other three threads.
     logger.info("Program exit!")
 
-# %% ../nbs/00.avatar.ipynb 36
+# %% ../nbs/00.avatar.ipynb 30
 def main(args: argparse.Namespace) -> None:
     """
     Description: main function to start the Avatar.
@@ -665,7 +662,7 @@ def main(args: argparse.Namespace) -> None:
     else:  # args.agent == 'idql'
         agent: IDQL = IDQL(  # type: ignore
             _coll_type="EPISODE",
-            _hyper_param=HyperParamIDQL(),
+            _hyper_param=HyperParamDDPG(),
             _truck=truck,
             _driver=driver,
             _pool_key=args.output,
@@ -751,7 +748,7 @@ def main(args: argparse.Namespace) -> None:
     # default behavior is "observe" will start and send out all the events to orchestrate other three threads.
     logger.info("Program exit!")
 
-# %% ../nbs/00.avatar.ipynb 42
+# %% ../nbs/00.avatar.ipynb 35
 if (
     __name__ == "__main__" and "__file__" in globals()
 ):  # in order to be compatible for both script and notebnook
