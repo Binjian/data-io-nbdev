@@ -434,7 +434,11 @@ def main(args: argparse.Namespace) -> None:
     else:
         print(f"Trip Server found: {trip_server.server_name}")
 
-    assert args.agent in ["ddpg", "rdpg"], "agent must be either ddpg or rdpg"
+    assert args.agent in [
+        "ddpg",
+        "rdpg",
+        "idql",
+    ], "agent must be either ddpg, rdpg or idql"
 
     if args.resume:
         data_root = proj_root.joinpath("data/" + truck.vin + "-" + driver.pid).joinpath(
@@ -570,185 +574,7 @@ def main(args: argparse.Namespace) -> None:
     # default behavior is "observe" will start and send out all the events to orchestrate other three threads.
     logger.info("Program exit!")
 
-# %% ../nbs/00.avatar.ipynb 30
-def main(args: argparse.Namespace) -> None:
-    """
-    Description: main function to start the Avatar.
-
-    Initialize the Avatar with truck, driver, can server, trip server, and agent for input arguments.
-    Create the first tier of the cascaded threading pools for vehicle interface and crucher.
-
-    """
-    # set up logging
-    # set up data folder (logging, checkpoint, table)
-
-    # set up data folder (logging, checkpoint, table)
-    try:
-        truck: Union[TruckInField, TruckInCloud] = str_to_truck(args.vehicle)
-    except KeyError:
-        raise KeyError(f"vehicle {args.vehicle} not found in config file")
-    else:
-        print(f"Vehicle found. vid:{truck.vid}, vin: {truck.vin}.")
-
-    try:
-        driver: Driver = str_to_driver(args.driver)
-    except KeyError:
-        raise KeyError(f"driver {args.driver} not found in config file")
-    else:
-        print(f"Driver found. pid:{driver.pid}, name: {driver.name}.")
-
-    # remotecan_srv: str = 'can_intra'
-    try:
-        can_server = str_to_can_server(args.interface)
-    except KeyError:
-        raise KeyError(f"can server {args.interface} not found in config file")
-    else:
-        print(f"CAN Server found: {can_server.server_name}")
-
-    try:
-        trip_server = str_to_trip_server(args.trip)
-    except KeyError:
-        raise KeyError(f"trip server {args.web} not found in config file")
-    else:
-        print(f"Trip Server found: {trip_server.server_name}")
-
-    assert args.agent in ["ddpg", "rdpg"], "agent must be either ddpg or rdpg"
-
-    if args.resume:
-        data_root = proj_root.joinpath("data/" + truck.vin + "-" + driver.pid).joinpath(
-            args.path
-        )
-    else:  # from scratch
-        data_root = proj_root.joinpath(
-            "data/scratch/" + truck.vin + "-" + driver.pid
-        ).joinpath(args.path)
-
-    logger, dict_logger = set_root_logger(
-        name="eos",
-        data_root=data_root,
-        agent=args.agent,
-        tz=truck.site.tz,
-        truck=truck.vid,
-        driver=driver.pid,
-    )
-    logger.info(f"{{'header': 'Start Logging'}}", extra=dict_logger)
-
-    if args.agent == "ddpg":
-        agent: DDPG = DDPG(
-            _coll_type="RECORD",
-            _hyper_param=HyperParamDDPG(),
-            _truck=truck,
-            _driver=driver,
-            _pool_key=args.output,
-            _data_folder=str(data_root),
-            _infer_mode=(not args.learning),
-            _resume=args.resume,
-            logger=logger,
-            dict_logger=dict_logger,
-        )
-    elif args.agent == "rdpg":
-        agent: RDPG = RDPG(  # type: ignore
-            _coll_type="EPISODE",
-            _hyper_param=HyperParamRDPG(),
-            _truck=truck,
-            _driver=driver,
-            _pool_key=args.output,
-            _data_folder=str(data_root),
-            _infer_mode=(not args.learning),
-            _resume=args.resume,
-            logger=logger,
-            dict_logger=dict_logger,
-        )
-    else:  # args.agent == 'idql'
-        agent: IDQL = IDQL(  # type: ignore
-            _coll_type="EPISODE",
-            _hyper_param=HyperParamDDPG(),
-            _truck=truck,
-            _driver=driver,
-            _pool_key=args.output,
-            _data_folder=str(data_root),
-            _infer_mode=(not args.learning),
-            _resume=args.resume,
-            logger=logger,
-            dict_logger=dict_logger,
-        )
-
-    try:
-        avatar = Avatar(
-            _truck=truck,
-            _driver=driver,
-            _agent=agent,
-            _can_server=can_server,
-            _trip_server=trip_server,
-            logger=logger,
-            dict_logger=dict_logger,
-            _resume=args.resume,
-            _infer_mode=(not args.learning),
-            data_root=data_root,
-        )
-    except TypeError as e:
-        logger.error(
-            f"{{'header': 'Project Exception TypeError', " f"'exception': '{e}'}}",
-            extra=dict_logger,
-        )
-        sys.exit(1)
-    except Exception as e:
-        logger.error(
-            f"{{'header': 'main Exception', " f"'exception': '{e}'}}",
-            extra=dict_logger,
-        )
-        sys.exit(1)
-
-    # initialize dataflow: pipelines, sync events among the threads
-    observe_pipeline = Pipeline[pd.DataFrame](
-        maxsize=3
-    )  # pipeline for observations (type dataframe)
-    flash_pipeline = Pipeline[pd.DataFrame](
-        maxsize=3
-    )  # pipeline for flashing torque tables (type dataframe)
-    start_event = Event()
-    stop_event = Event()
-    interrupt_event = Event()
-    exit_event = Event()
-    flash_event = Event()
-
-    logger.info(f"{{'header': 'main Thread Pool starts!'}}", extra=dict_logger)
-
-    # Gracefulkiller instance can be created only in the main thread!
-    killer = GracefulKiller(exit_event)
-    with concurrent.futures.ThreadPoolExecutor(
-        max_workers=2, thread_name_prefix="Avatar"
-    ) as executor:
-        executor.submit(
-            avatar.vehicle_interface.ignite,  # observe thread (spawns 4 threads for input, HMI and output)
-            observe_pipeline,  # input port; output
-            flash_pipeline,  # out port; input
-            start_event,
-            stop_event,
-            interrupt_event,
-            flash_event,
-            exit_event,
-            float(args.watchdog_nap_time),
-            int(args.watchdog_capture_error_upper_bound),
-            int(args.watchdog_flash_error_upper_bound),
-        )
-
-        executor.submit(
-            avatar.cruncher.filter,  # data crunch thread
-            observe_pipeline,  # output port; input
-            flash_pipeline,  # input port; output
-            start_event,
-            stop_event,
-            interrupt_event,
-            flash_event,
-            exit_event,
-        )
-
-    logger.info(f"{{'header': 'Start main Thread Pool dies!'}}", extra=dict_logger)
-    # default behavior is "observe" will start and send out all the events to orchestrate other three threads.
-    logger.info("Program exit!")
-
-# %% ../nbs/00.avatar.ipynb 35
+# %% ../nbs/00.avatar.ipynb 34
 if (
     __name__ == "__main__" and "__file__" in globals()
 ):  # in order to be compatible for both script and notebnook
