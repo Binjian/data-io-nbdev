@@ -1,0 +1,1384 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.4.557">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="description" content="DDPG class">
+
+<title>tspace - DDPG</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+
+<link rel="stylesheet" href="styles.css">
+<meta property="og:title" content="tspace - DDPG">
+<meta property="og:description" content="DDPG class">
+<meta property="og:site_name" content="tspace">
+<meta name="twitter:title" content="tspace - DDPG">
+<meta name="twitter:description" content="DDPG class">
+<meta name="twitter:card" content="summary">
+</head>
+
+<body class="nav-sidebar floating nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="./index.html">
+    <span class="navbar-title">tspace</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/Binjian/tspace"> <i class="bi bi-github" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+          <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./07.agent.dpg.html"><b style="color:DodgerBlue;">Agent</b></a></li><li class="breadcrumb-item"><a href="./07.agent.ddpg.html">DDPG</a></li></ol></nav>
+        <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">tspace</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./00.avatar.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Avatar</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">
+ <span class="menu-text"><b style="color:DodgerBlue;">Data</b></span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./01.data.core.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">core</span></a>
+  </div>
+</li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="false">
+ <span class="menu-text"><b>External</b></span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./01.data.external.numpy_utils.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Numpy utilities</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./01.data.external.pandas_utils.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Pandas utilities</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./01.data.location.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">location</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./01.data.time.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">time</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="true">
+ <span class="menu-text"><b style="color:DodgerBlue;">System</b></span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./02.system.decorator.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">decorator</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./02.system.exception.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">exception</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./02.system.gracefulkiller.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">graceful killer</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./02.system.log.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">log</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./02.system.plot.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">plot</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" aria-expanded="true">
+ <span class="menu-text"><b style="color:DodgerBlue;">Config</b></span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./03.config.vehicles.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">vehicles</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./03.config.drivers.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">drivers</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./03.config.db.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">database</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./03.config.messenger.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">messengers</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./03.config.utils.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">utils</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./03.config.vcu.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">vcu</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" aria-expanded="true">
+ <span class="menu-text"><b style="color:DodgerBlue;">Connection</b></span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./04.conn.remote_can_client.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">RemoteCanClient</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./04.conn.remote_can_exceptions.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Exceptions</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./04.conn.tcp.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">TCP</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./04.conn.udp.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">UDP</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./04.conn.tbox.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">tbox interface</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" aria-expanded="true">
+ <span class="menu-text"><b style="color:DodgerBlue;">Storage</b></span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-6" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" aria-expanded="false">
+ <span class="menu-text"><b>Pool</b></span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-7" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./05.storage.pool.pool.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Pool</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./05.storage.pool.mongo.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Mongo</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./05.storage.pool.dask.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Dask</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./05.storage.pool.parquet.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Parquet</span></a>
+  </div>
+</li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-8" aria-expanded="false">
+ <span class="menu-text"><b>Avro</b></span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-8" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-8" class="collapse list-unstyled sidebar-section depth3 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./05.storage.pool.avro.avro.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Avro</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./05.storage.pool.avro.schema.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Schema</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-9" aria-expanded="false">
+ <span class="menu-text"><b>Buffer</b></span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-9" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-9" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./05.storage.buffer.buffer.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Buffer</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./05.storage.buffer.mongo.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Mongo</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./05.storage.buffer.dask.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Dask</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-10" aria-expanded="true">
+ <span class="menu-text"><b style="color:DodgerBlue;">Dataflow</b></span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-10" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-10" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-11" aria-expanded="false">
+ <span class="menu-text"><b>Pipeline</b></span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-11" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-11" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./06.dataflow.pipeline.queue.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Queue</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./06.dataflow.pipeline.deque.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Deque</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-12" aria-expanded="false">
+ <span class="menu-text"><b>Filter</b></span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-12" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-12" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./06.dataflow.filter.filter.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Filter</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./06.dataflow.filter.homo.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Homofilter</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./06.dataflow.filter.hetero.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Heterofilter</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./06.dataflow.consumer.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Consumer</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./06.dataflow.producer.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Producer</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./06.dataflow.vehicle_interface.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">VehicleInterface</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./06.dataflow.kvaser.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Kvaser</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./06.dataflow.cloud.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Cloud</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./06.dataflow.cruncher.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Cruncher</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-13" aria-expanded="true">
+ <span class="menu-text"><b style="color:DodgerBlue;">Agent</b></span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-13" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-13" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./07.agent.dpg.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">DPG</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./07.agent.ddpg.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">DDPG</span></a>
+  </div>
+</li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-14" aria-expanded="false">
+ <span class="menu-text"><b>rdpg</b></span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-14" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-14" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./07.agent.rdpg.actor.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">SeqActor</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./07.agent.rdpg.critic.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">SeqCritic</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./07.agent.rdpg.rdpg.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">RDPG</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./07.agent.idql.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">IDQL</span></a>
+  </div>
+</li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-15" aria-expanded="false">
+ <span class="menu-text"><b>utils</b></span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-15" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-15" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./07.agent.utils.hyperparams.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Hyperparameters</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./07.agent.utils.ou_action_noise.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">OUActionNoise</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+      </ul>
+  </li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./utils.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">utils</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./sandbox.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">sandbox</span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#ddpg" id="toc-ddpg" class="nav-link active" data-scroll-target="#ddpg">DDPG</a></li>
+  <li><a href="#ddpg.init_checkpoint" id="toc-ddpg.init_checkpoint" class="nav-link" data-scroll-target="#ddpg.init_checkpoint">DDPG.init_checkpoint</a></li>
+  <li><a href="#ddpg.save_as_saved_model" id="toc-ddpg.save_as_saved_model" class="nav-link" data-scroll-target="#ddpg.save_as_saved_model">DDPG.save_as_saved_model</a></li>
+  <li><a href="#ddpg.load_saved_model" id="toc-ddpg.load_saved_model" class="nav-link" data-scroll-target="#ddpg.load_saved_model">DDPG.load_saved_model</a></li>
+  <li><a href="#ddpg.convert_to_tflite" id="toc-ddpg.convert_to_tflite" class="nav-link" data-scroll-target="#ddpg.convert_to_tflite">DDPG.convert_to_tflite</a></li>
+  <li><a href="#ddpg.model_summary_print" id="toc-ddpg.model_summary_print" class="nav-link" data-scroll-target="#ddpg.model_summary_print">DDPG.model_summary_print</a></li>
+  <li><a href="#ddpg.tflite_analytics_print" id="toc-ddpg.tflite_analytics_print" class="nav-link" data-scroll-target="#ddpg.tflite_analytics_print">DDPG.tflite_analytics_print</a></li>
+  <li><a href="#ddpg.save_ckpt" id="toc-ddpg.save_ckpt" class="nav-link" data-scroll-target="#ddpg.save_ckpt">DDPG.save_ckpt</a></li>
+  <li><a href="#ddpg.update_target" id="toc-ddpg.update_target" class="nav-link" data-scroll-target="#ddpg.update_target">DDPG.update_target</a></li>
+  <li><a href="#ddpg.soft_update_target" id="toc-ddpg.soft_update_target" class="nav-link" data-scroll-target="#ddpg.soft_update_target">DDPG.soft_update_target</a></li>
+  <li><a href="#ddpg.get_actor" id="toc-ddpg.get_actor" class="nav-link" data-scroll-target="#ddpg.get_actor">DDPG.get_actor</a></li>
+  <li><a href="#ddpg.get_critic" id="toc-ddpg.get_critic" class="nav-link" data-scroll-target="#ddpg.get_critic">DDPG.get_critic</a></li>
+  <li><a href="#ddpg.policy" id="toc-ddpg.policy" class="nav-link" data-scroll-target="#ddpg.policy">DDPG.policy</a></li>
+  <li><a href="#ddpg.actor_predict" id="toc-ddpg.actor_predict" class="nav-link" data-scroll-target="#ddpg.actor_predict">DDPG.actor_predict</a></li>
+  <li><a href="#ddpg.infer_single_sample" id="toc-ddpg.infer_single_sample" class="nav-link" data-scroll-target="#ddpg.infer_single_sample">DDPG.infer_single_sample</a></li>
+  <li><a href="#ddpg.touch_gpu" id="toc-ddpg.touch_gpu" class="nav-link" data-scroll-target="#ddpg.touch_gpu">DDPG.touch_gpu</a></li>
+  <li><a href="#ddpg.sample_minibatch" id="toc-ddpg.sample_minibatch" class="nav-link" data-scroll-target="#ddpg.sample_minibatch">DDPG.sample_minibatch</a></li>
+  <li><a href="#ddpg.train" id="toc-ddpg.train" class="nav-link" data-scroll-target="#ddpg.train">DDPG.train</a></li>
+  <li><a href="#ddpg.update_with_batch" id="toc-ddpg.update_with_batch" class="nav-link" data-scroll-target="#ddpg.update_with_batch">DDPG.update_with_batch</a></li>
+  <li><a href="#ddpg.get_losses" id="toc-ddpg.get_losses" class="nav-link" data-scroll-target="#ddpg.get_losses">DDPG.get_losses</a></li>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://github.com/Binjian/tspace/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./07.agent.dpg.html"><b style="color:DodgerBlue;">Agent</b></a></li><li class="breadcrumb-item"><a href="./07.agent.ddpg.html">DDPG</a></li></ol></nav>
+<div class="quarto-title">
+<h1 class="title">DDPG</h1>
+</div>
+
+<div>
+  <div class="description">
+    DDPG class
+  </div>
+</div>
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<!-- WARNING: THIS FILE WAS AUTOGENERATED! DO NOT EDIT! -->
+<hr>
+<p><a href="https://github.com/Binjian/tspace/blob/main/tspace/agent/ddpg.py#L34" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<section id="ddpg" class="level3">
+<h3 class="anchored" data-anchor-id="ddpg">DDPG</h3>
+<blockquote class="blockquote">
+<pre><code> DDPG (_buffer:Union[tspace.storage.buffer.mongo.MongoBuffer,tspace.storag
+       e.buffer.dask.DaskBuffer,NoneType]=None,
+       _actor_model:Optional[keras.src.models.model.Model]=None,
+       _critic_model:Optional[keras.src.models.model.Model]=None,
+       _target_actor_model:Optional[keras.src.models.model.Model]=None,
+       _target_critic_model:Optional[keras.src.models.model.Model]=None, m
+       anager_critic:Optional[tensorflow.python.checkpoint.checkpoint_mana
+       gement.CheckpointManager]=None, ckpt_critic:Optional[tensorflow.pyt
+       hon.checkpoint.checkpoint.Checkpoint]=None, manager_actor:Optional[
+       tensorflow.python.checkpoint.checkpoint_management.CheckpointManage
+       r]=None, ckpt_actor:Optional[tensorflow.python.checkpoint.checkpoin
+       t.Checkpoint]=None,
+       actor_saved_model_path:Optional[pathlib.Path]=None,
+       critic_saved_model_path:Optional[pathlib.Path]=None,
+       _truck:tspace.config.vehicles.Truck,
+       _driver:tspace.config.drivers.Driver, _resume:bool, _coll_type:str,
+       _hyper_param:Union[tspace.agent.utils.hyperparams.HyperParamDDPG,ts
+       pace.agent.utils.hyperparams.HyperParamRDPG,tspace.agent.utils.hype
+       rparams.HyperParamIDQL], _pool_key:str, _data_folder:str,
+       _infer_mode:bool, _episode_start_dt:Optional[pandas._libs.tslibs.ti
+       mestamps.Timestamp]=None, _observation_meta:Union[tspace.data.core.
+       ObservationMetaCloud,tspace.data.core.ObservationMetaECU,NoneType]=
+       None, _torque_table_row_names:Optional[list[str]]=None,
+       _observations:Optional[list[pandas.core.series.Series]]=None,
+       _epi_no:Optional[int]=None, logger:Optional[logging.Logger]=None,
+       dict_logger:Optional[dict]=None)</code></pre>
+</blockquote>
+<p>*DDPG agent.</p>
+<p>data interface: - pool in mongodb - buffer in memory (numpy array) model interface: - actor network - critic network</p>
+<p>Attributes:</p>
+<pre><code>_buffer: Optional[Union[MongoBuffer, DaskBuffer]] = None
+    buffer for storing data, default is None
+_actor_model: Optional[tf.keras.Model] = None
+    actor network, default is None
+_critic_model: Optional[tf.keras.Model] = None
+    critic network, default is None
+_target_actor_model: Optional[tf.keras.Model] = None
+    target actor network, default is None
+_target_critic_model: Optional[tf.keras.Model] = None
+    target critic network, default is None
+manager_critic: Optional[tf.train.CheckpointManager] = None
+    manager for saving critic network, default is None
+ckpt_critic: Optional[tf.train.Checkpoint] = None
+    checkpoint for saving critic network, default is None
+manager_actor: Optional[tf.train.CheckpointManager] = None
+    manager for saving actor network, default is None
+ckpt_actor: Optional[tf.train.Checkpoint] = None
+    checkpoint for saving actor network, default is None
+actor_saved_model_path: Optional[Path] = None
+    path for saving actor network as saved model, default is None
+critic_saved_model_path: Optional[Path] = None
+    path for saving critic network as saved model, default is None*</code></pre>
+<hr>
+<p><a href="https://github.com/Binjian/tspace/blob/main/tspace/agent/ddpg.py#L218" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="ddpg.init_checkpoint" class="level3">
+<h3 class="anchored" data-anchor-id="ddpg.init_checkpoint">DDPG.init_checkpoint</h3>
+<blockquote class="blockquote">
+<pre><code> DDPG.init_checkpoint ()</code></pre>
+</blockquote>
+<p><em>add checkpoints manager</em></p>
+<hr>
+<p><a href="https://github.com/Binjian/tspace/blob/main/tspace/agent/ddpg.py#L353" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="ddpg.save_as_saved_model" class="level3">
+<h3 class="anchored" data-anchor-id="ddpg.save_as_saved_model">DDPG.save_as_saved_model</h3>
+<blockquote class="blockquote">
+<pre><code> DDPG.save_as_saved_model ()</code></pre>
+</blockquote>
+<p><em>save the actor and critic networks as saved model</em></p>
+<hr>
+<p><a href="https://github.com/Binjian/tspace/blob/main/tspace/agent/ddpg.py#L359" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="ddpg.load_saved_model" class="level3">
+<h3 class="anchored" data-anchor-id="ddpg.load_saved_model">DDPG.load_saved_model</h3>
+<blockquote class="blockquote">
+<pre><code> DDPG.load_saved_model ()</code></pre>
+</blockquote>
+<p><em>load the actor and critic networks from saved model</em></p>
+<hr>
+<p><a href="https://github.com/Binjian/tspace/blob/main/tspace/agent/ddpg.py#L371" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="ddpg.convert_to_tflite" class="level3">
+<h3 class="anchored" data-anchor-id="ddpg.convert_to_tflite">DDPG.convert_to_tflite</h3>
+<blockquote class="blockquote">
+<pre><code> DDPG.convert_to_tflite ()</code></pre>
+</blockquote>
+<p><em>convert the actor and critic networks to tflite format</em></p>
+<hr>
+<p><a href="https://github.com/Binjian/tspace/blob/main/tspace/agent/ddpg.py#L401" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="ddpg.model_summary_print" class="level3">
+<h3 class="anchored" data-anchor-id="ddpg.model_summary_print">DDPG.model_summary_print</h3>
+<blockquote class="blockquote">
+<pre><code> DDPG.model_summary_print (mdl:keras.src.models.model.Model,
+                           file_path:pathlib.Path)</code></pre>
+</blockquote>
+<p><em>print the model summary to a file</em></p>
+<hr>
+<p><a href="https://github.com/Binjian/tspace/blob/main/tspace/agent/ddpg.py#L408" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="ddpg.tflite_analytics_print" class="level3">
+<h3 class="anchored" data-anchor-id="ddpg.tflite_analytics_print">DDPG.tflite_analytics_print</h3>
+<blockquote class="blockquote">
+<pre><code> DDPG.tflite_analytics_print (tflite_file_path:pathlib.Path)</code></pre>
+</blockquote>
+<p><em>print the tflite model analytics to a file</em></p>
+<hr>
+<p><a href="https://github.com/Binjian/tspace/blob/main/tspace/agent/ddpg.py#L414" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="ddpg.save_ckpt" class="level3">
+<h3 class="anchored" data-anchor-id="ddpg.save_ckpt">DDPG.save_ckpt</h3>
+<blockquote class="blockquote">
+<pre><code> DDPG.save_ckpt ()</code></pre>
+</blockquote>
+<p><em>Save checkpoints for the actor and critic networks</em></p>
+<hr>
+<p><a href="https://github.com/Binjian/tspace/blob/main/tspace/agent/ddpg.py#L433" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="ddpg.update_target" class="level3">
+<h3 class="anchored" data-anchor-id="ddpg.update_target">DDPG.update_target</h3>
+<blockquote class="blockquote">
+<pre><code> DDPG.update_target (target_weights, weights, tau)</code></pre>
+</blockquote>
+<p><em>update the target networks</em></p>
+<hr>
+<p><a href="https://github.com/Binjian/tspace/blob/main/tspace/agent/ddpg.py#L439" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="ddpg.soft_update_target" class="level3">
+<h3 class="anchored" data-anchor-id="ddpg.soft_update_target">DDPG.soft_update_target</h3>
+<blockquote class="blockquote">
+<pre><code> DDPG.soft_update_target ()</code></pre>
+</blockquote>
+<p><em>update the target networks with Polyak averaging</em></p>
+<hr>
+<p><a href="https://github.com/Binjian/tspace/blob/main/tspace/agent/ddpg.py#L474" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="ddpg.get_actor" class="level3">
+<h3 class="anchored" data-anchor-id="ddpg.get_actor">DDPG.get_actor</h3>
+<blockquote class="blockquote">
+<pre><code> DDPG.get_actor (num_states:int, num_actions:int,
+                 num_actor_inputs1:int=256, num_actor_inputs2:int=256,
+                 num_layers:int=2, action_bias:float=0)</code></pre>
+</blockquote>
+<p><em>Create actor network</em></p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 6%">
+<col style="width: 25%">
+<col style="width: 34%">
+<col style="width: 34%">
+</colgroup>
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Type</strong></th>
+<th><strong>Default</strong></th>
+<th><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>num_states</td>
+<td>int</td>
+<td></td>
+<td>number of states, 600</td>
+</tr>
+<tr class="even">
+<td>num_actions</td>
+<td>int</td>
+<td></td>
+<td>number of actions, 68</td>
+</tr>
+<tr class="odd">
+<td>num_actor_inputs1</td>
+<td>int</td>
+<td>256</td>
+<td>number of inputs to the first dense layer, 256</td>
+</tr>
+<tr class="even">
+<td>num_actor_inputs2</td>
+<td>int</td>
+<td>256</td>
+<td>number of inputs to the second and subsequent dense layers, 256</td>
+</tr>
+<tr class="odd">
+<td>num_layers</td>
+<td>int</td>
+<td>2</td>
+<td>number of layers, 2</td>
+</tr>
+<tr class="even">
+<td>action_bias</td>
+<td>float</td>
+<td>0</td>
+<td>action bias, 0</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<p><a href="https://github.com/Binjian/tspace/blob/main/tspace/agent/ddpg.py#L529" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="ddpg.get_critic" class="level3">
+<h3 class="anchored" data-anchor-id="ddpg.get_critic">DDPG.get_critic</h3>
+<blockquote class="blockquote">
+<pre><code> DDPG.get_critic (num_states:int, num_actions:int,
+                  num_state_input_dense1:int=16,
+                  num_state_input_dense2:int=32,
+                  num_action_input_dense:int=32,
+                  num_output_dense1:int=256, num_output_dense2:int=256,
+                  num_layers:int=2)</code></pre>
+</blockquote>
+<hr>
+<p><a href="https://github.com/Binjian/tspace/blob/main/tspace/agent/ddpg.py#L586" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="ddpg.policy" class="level3">
+<h3 class="anchored" data-anchor-id="ddpg.policy">DDPG.policy</h3>
+<blockquote class="blockquote">
+<pre><code> DDPG.policy (state:pandas.core.series.Series)</code></pre>
+</blockquote>
+<p>*sample actions with additive ou noise</p>
+<p>input: state is a pd.Series of length 3<em>10</em>3/4<em>50</em>3 (r*c), output numpy array</p>
+<p>Action outputs and noise object are all row vectors of length 21<em>17 (r</em>c), output numpy array*</p>
+<hr>
+<p><a href="https://github.com/Binjian/tspace/blob/main/tspace/agent/ddpg.py#L614" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="ddpg.actor_predict" class="level3">
+<h3 class="anchored" data-anchor-id="ddpg.actor_predict">DDPG.actor_predict</h3>
+<blockquote class="blockquote">
+<pre><code> DDPG.actor_predict (state:pandas.core.series.Series)</code></pre>
+</blockquote>
+<p><em><code>actor_predict</code> returns an action sampled from our Actor network without noise. add optional t just to have uniform interface with rdpg</em></p>
+<hr>
+<p><a href="https://github.com/Binjian/tspace/blob/main/tspace/agent/ddpg.py#L622" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="ddpg.infer_single_sample" class="level3">
+<h3 class="anchored" data-anchor-id="ddpg.infer_single_sample">DDPG.infer_single_sample</h3>
+<blockquote class="blockquote">
+<pre><code> DDPG.infer_single_sample
+                           (state_flat:tensorflow.python.framework.tensor.
+                           Tensor)</code></pre>
+</blockquote>
+<p><em>Get a single sample from inferring</em></p>
+<hr>
+<p><a href="https://github.com/Binjian/tspace/blob/main/tspace/agent/ddpg.py#L630" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="ddpg.touch_gpu" class="level3">
+<h3 class="anchored" data-anchor-id="ddpg.touch_gpu">DDPG.touch_gpu</h3>
+<blockquote class="blockquote">
+<pre><code> DDPG.touch_gpu ()</code></pre>
+</blockquote>
+<p><em>touch gpu to initialize the graph</em></p>
+<hr>
+<p><a href="https://github.com/Binjian/tspace/blob/main/tspace/agent/ddpg.py#L675" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="ddpg.sample_minibatch" class="level3">
+<h3 class="anchored" data-anchor-id="ddpg.sample_minibatch">DDPG.sample_minibatch</h3>
+<blockquote class="blockquote">
+<pre><code> DDPG.sample_minibatch ()</code></pre>
+</blockquote>
+<p><em>Convert batch type from DataFrames to flattened tensors.</em></p>
+<hr>
+<p><a href="https://github.com/Binjian/tspace/blob/main/tspace/agent/ddpg.py#L752" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="ddpg.train" class="level3">
+<h3 class="anchored" data-anchor-id="ddpg.train">DDPG.train</h3>
+<blockquote class="blockquote">
+<pre><code> DDPG.train ()</code></pre>
+</blockquote>
+<p><em>Train the networks on the batch sampled from the pool.</em></p>
+<hr>
+<p><a href="https://github.com/Binjian/tspace/blob/main/tspace/agent/ddpg.py#L767" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="ddpg.update_with_batch" class="level3">
+<h3 class="anchored" data-anchor-id="ddpg.update_with_batch">DDPG.update_with_batch</h3>
+<blockquote class="blockquote">
+<pre><code> DDPG.update_with_batch (state_batch, action_batch, reward_batch,
+                         next_state_batch, training=True)</code></pre>
+</blockquote>
+<p>*Update the networks with the batch sampled from the pool.</p>
+<p>Eager execution is turned on by default in TensorFlow 2. Decorating with tf.function allows TensorFlow to build a static graph out of the logic and computations in our function. This provides a large speed-up for blocks of code that contain many small TensorFlow operations such as this one.*</p>
+<hr>
+<p><a href="https://github.com/Binjian/tspace/blob/main/tspace/agent/ddpg.py#L845" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="ddpg.get_losses" class="level3">
+<h3 class="anchored" data-anchor-id="ddpg.get_losses">DDPG.get_losses</h3>
+<blockquote class="blockquote">
+<pre><code> DDPG.get_losses ()</code></pre>
+</blockquote>
+<p><em>Get the losses of the networks on the batch sampled from the pool.</em></p>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp("https:\/\/Binjian\.github\.io\/tspace");
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/Binjian/tspace/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></div></div></footer></body></html>

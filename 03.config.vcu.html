@@ -1,0 +1,1742 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.4.557">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="description" content="vcu torque table generation">
+
+<title>tspace - vcu</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script><script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" integrity="sha512-c3Nl8+7g4LMSTdrm621y7kf9v3SDPnhxLNhcjFJbKECVnmZHTdo+IRO05sNLTH/D3vA6u1X32ehoLC7WFVdheg==" crossorigin="anonymous"></script>
+
+<script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
+
+
+<link rel="stylesheet" href="styles.css">
+<meta property="og:title" content="tspace - vcu">
+<meta property="og:description" content="vcu torque table generation">
+<meta property="og:site_name" content="tspace">
+<meta name="twitter:title" content="tspace - vcu">
+<meta name="twitter:description" content="vcu torque table generation">
+<meta name="twitter:card" content="summary">
+</head>
+
+<body class="nav-sidebar floating nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="./index.html">
+    <span class="navbar-title">tspace</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/Binjian/tspace"> <i class="bi bi-github" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+          <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./03.config.vehicles.html"><b style="color:DodgerBlue;">Config</b></a></li><li class="breadcrumb-item"><a href="./03.config.vcu.html">vcu</a></li></ol></nav>
+        <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">tspace</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./00.avatar.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Avatar</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">
+ <span class="menu-text"><b style="color:DodgerBlue;">Data</b></span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./01.data.core.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">core</span></a>
+  </div>
+</li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="false">
+ <span class="menu-text"><b>External</b></span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./01.data.external.numpy_utils.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Numpy utilities</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./01.data.external.pandas_utils.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Pandas utilities</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./01.data.location.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">location</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./01.data.time.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">time</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="true">
+ <span class="menu-text"><b style="color:DodgerBlue;">System</b></span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./02.system.decorator.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">decorator</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./02.system.exception.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">exception</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./02.system.gracefulkiller.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">graceful killer</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./02.system.log.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">log</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./02.system.plot.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">plot</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" aria-expanded="true">
+ <span class="menu-text"><b style="color:DodgerBlue;">Config</b></span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./03.config.vehicles.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">vehicles</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./03.config.drivers.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">drivers</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./03.config.db.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">database</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./03.config.messenger.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">messengers</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./03.config.utils.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">utils</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./03.config.vcu.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">vcu</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" aria-expanded="true">
+ <span class="menu-text"><b style="color:DodgerBlue;">Connection</b></span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./04.conn.remote_can_client.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">RemoteCanClient</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./04.conn.remote_can_exceptions.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Exceptions</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./04.conn.tcp.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">TCP</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./04.conn.udp.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">UDP</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./04.conn.tbox.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">tbox interface</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" aria-expanded="true">
+ <span class="menu-text"><b style="color:DodgerBlue;">Storage</b></span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-6" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" aria-expanded="false">
+ <span class="menu-text"><b>Pool</b></span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-7" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./05.storage.pool.pool.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Pool</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./05.storage.pool.mongo.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Mongo</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./05.storage.pool.dask.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Dask</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./05.storage.pool.parquet.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Parquet</span></a>
+  </div>
+</li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-8" aria-expanded="false">
+ <span class="menu-text"><b>Avro</b></span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-8" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-8" class="collapse list-unstyled sidebar-section depth3 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./05.storage.pool.avro.avro.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Avro</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./05.storage.pool.avro.schema.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Schema</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-9" aria-expanded="false">
+ <span class="menu-text"><b>Buffer</b></span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-9" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-9" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./05.storage.buffer.buffer.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Buffer</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./05.storage.buffer.mongo.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Mongo</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./05.storage.buffer.dask.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Dask</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-10" aria-expanded="true">
+ <span class="menu-text"><b style="color:DodgerBlue;">Dataflow</b></span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-10" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-10" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-11" aria-expanded="false">
+ <span class="menu-text"><b>Pipeline</b></span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-11" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-11" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./06.dataflow.pipeline.queue.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Queue</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./06.dataflow.pipeline.deque.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Deque</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-12" aria-expanded="false">
+ <span class="menu-text"><b>Filter</b></span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-12" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-12" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./06.dataflow.filter.filter.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Filter</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./06.dataflow.filter.homo.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Homofilter</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./06.dataflow.filter.hetero.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Heterofilter</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./06.dataflow.consumer.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Consumer</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./06.dataflow.producer.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Producer</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./06.dataflow.vehicle_interface.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">VehicleInterface</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./06.dataflow.kvaser.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Kvaser</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./06.dataflow.cloud.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Cloud</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./06.dataflow.cruncher.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Cruncher</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-13" aria-expanded="true">
+ <span class="menu-text"><b style="color:DodgerBlue;">Agent</b></span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-13" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-13" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./07.agent.dpg.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">DPG</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./07.agent.ddpg.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">DDPG</span></a>
+  </div>
+</li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-14" aria-expanded="false">
+ <span class="menu-text"><b>rdpg</b></span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-14" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-14" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./07.agent.rdpg.actor.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">SeqActor</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./07.agent.rdpg.critic.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">SeqCritic</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./07.agent.rdpg.rdpg.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">RDPG</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./07.agent.idql.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">IDQL</span></a>
+  </div>
+</li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-15" aria-expanded="false">
+ <span class="menu-text"><b>utils</b></span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-15" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-15" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./07.agent.utils.hyperparams.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Hyperparameters</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./07.agent.utils.ou_action_noise.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">OUActionNoise</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+      </ul>
+  </li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./utils.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">utils</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./sandbox.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">sandbox</span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction">introduction</a>
+  <ul>
+  <li><a href="#generate_torque_table" id="toc-generate_torque_table" class="nav-link" data-scroll-target="#generate_torque_table">generate_torque_table</a></li>
+  <li><a href="#generate_vcu_calibration" id="toc-generate_vcu_calibration" class="nav-link" data-scroll-target="#generate_vcu_calibration">generate_vcu_calibration</a></li>
+  <li><a href="#generate_lookup_table" id="toc-generate_lookup_table" class="nav-link" data-scroll-target="#generate_lookup_table">generate_lookup_table</a></li>
+  <li><a href="#testing" id="toc-testing" class="nav-link" data-scroll-target="#testing">testing</a>
+  <ul class="collapse">
+  <li><a href="#test_generate_vcu_calibration" id="toc-test_generate_vcu_calibration" class="nav-link" data-scroll-target="#test_generate_vcu_calibration">test_generate_vcu_calibration</a></li>
+  <li><a href="#test_generate_lookup_table" id="toc-test_generate_lookup_table" class="nav-link" data-scroll-target="#test_generate_lookup_table">test_generate_lookup_table</a></li>
+  </ul></li>
+  </ul></li>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://github.com/Binjian/tspace/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./03.config.vehicles.html"><b style="color:DodgerBlue;">Config</b></a></li><li class="breadcrumb-item"><a href="./03.config.vcu.html">vcu</a></li></ol></nav>
+<div class="quarto-title">
+<h1 class="title">vcu</h1>
+</div>
+
+<div>
+  <div class="description">
+    vcu torque table generation
+  </div>
+</div>
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<!-- WARNING: THIS FILE WAS AUTOGENERATED! DO NOT EDIT! -->
+<section id="introduction" class="level1">
+<h1>introduction</h1>
+<p>For real vcu, values in the table will be the requrested torque Current throttlel (0,1) should be a coefficient of multplicative factor like between +/- 20% or empirically give safety bounds. action space will be then within the bounds TODO ask for safety bounds and real vcu to be integrated. TODO generate a mask according to WLTC to reduce parameter optimization space.</p>
+<hr>
+<p><a href="https://github.com/Binjian/tspace/blob/main/tspace/config/vcu.py#L17" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<section id="generate_torque_table" class="level3">
+<h3 class="anchored" data-anchor-id="generate_torque_table">generate_torque_table</h3>
+<blockquote class="blockquote">
+<pre><code> generate_torque_table (pedal_scale:tuple, speed_scale:tuple)</code></pre>
+</blockquote>
+<p>*Generate VCU calibration parameters for a given truck. simple piecewise linear surface, close to default calibration table Input is npd 17, nvl 21; output vcu_param_list as float32 pedal is x(column), velocity is y(row) )</p>
+<p>Parameters:</p>
+<pre><code>pedal_scale: tuple
+    pedal range (0,1)
+speed_scale: tuple
+    speed range (0,120)</code></pre>
+<p>Return: pandas dataframe*</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Type</strong></th>
+<th><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>pedal_scale</td>
+<td>tuple</td>
+<td></td>
+</tr>
+<tr class="even">
+<td>speed_scale</td>
+<td>tuple</td>
+<td>pedal range (0,1) # speed range (0,120)</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<p><a href="https://github.com/Binjian/tspace/blob/main/tspace/config/vcu.py#L44" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="generate_vcu_calibration" class="level3">
+<h3 class="anchored" data-anchor-id="generate_vcu_calibration">generate_vcu_calibration</h3>
+<blockquote class="blockquote">
+<pre><code> generate_vcu_calibration (npd:int, pedal_range:tuple, nvl:int,
+                           velocity_range:tuple, shortcut:int,
+                           data_root:pathlib.Path)</code></pre>
+</blockquote>
+<p>*Generate VCU calibration parameters for a given truck.</p>
+<p>pedal is x(column), velocity is y(row) input : npd 17, nvl 21; output vcu_param_list as float32</p>
+<p>Parameters:</p>
+<pre><code>npd: int
+    number of pedal steps
+pedal_range: tuple
+    pedal range (0,1)
+nvl: int
+    number of velocity steps
+velocity_range: tuple
+    speed range (0,120)
+shortcut: int
+    1: use segment-wise linear eco calibration table
+    2: use init table
+    3: use latest pedal map that was used
+data_root: str
+    path to data folder</code></pre>
+<p>Return: pandas dataframe*</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Type</strong></th>
+<th><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>npd</td>
+<td>int</td>
+<td>number of pedal steps</td>
+</tr>
+<tr class="even">
+<td>pedal_range</td>
+<td>tuple</td>
+<td>pedal range (0,1)</td>
+</tr>
+<tr class="odd">
+<td>nvl</td>
+<td>int</td>
+<td>number of velocity steps</td>
+</tr>
+<tr class="even">
+<td>velocity_range</td>
+<td>tuple</td>
+<td>speed range (0,120)</td>
+</tr>
+<tr class="odd">
+<td>shortcut</td>
+<td>int</td>
+<td>1: use default eco calibration table</td>
+</tr>
+<tr class="even">
+<td>data_root</td>
+<td>Path</td>
+<td>path to data folder</td>
+</tr>
+</tbody>
+</table>
+<div id="bb6054469fdb6a5" class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># fig, ax = plt.subplots(subplot_kw={"projection": "3d"})</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="co"># # Plot the surface.</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="co"># surf = ax.plot_surface(pdv, vlv, v, cmap=cm.coolwarm,</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="co">#                        linewidth=0, antialiased=False)</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="co"># # Customize the z axis.</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="co"># ax.set_zlim(-0.01, 1.01)</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="co"># ax.zaxis.set_major_locator(LinearLocator(10))</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="co"># # A StrMethodFormatter is used automatically</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a><span class="co"># ax.zaxis.set_major_formatter('{x:.02f}')</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a><span class="co"># </span></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a><span class="co"># # Add a color bar which maps values to colors.</span></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a><span class="co"># fig.colorbar(surf, shrink=0.5, aspect=5)</span></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a><span class="co"># plt.show()</span></span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a><span class="co"># return np.float32(v)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<hr>
+<p><a href="https://github.com/Binjian/tspace/blob/main/tspace/config/vcu.py#L115" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="generate_lookup_table" class="level3">
+<h3 class="anchored" data-anchor-id="generate_lookup_table">generate_lookup_table</h3>
+<blockquote class="blockquote">
+<pre><code> generate_lookup_table (pedal_range:tuple, velocity_range:tuple,
+                        calib_table:pandas.core.frame.DataFrame)</code></pre>
+</blockquote>
+<p>*Generate VCU calibration parameters for a given truck.</p>
+<p>pedal in x(col), velocity in y(row) input : npd 17, nvl 21; output vcu_param_list as float32</p>
+<p>Parameters:</p>
+<pre><code>pedal_range: tuple
+    pedal range (0,1)
+velocity_range: tuple
+    speed range (0,120)
+calib_table: pandas dataframe
+    calibration table</code></pre>
+<p>Return:</p>
+<pre><code>numpy array*</code></pre>
+</section>
+<section id="testing" class="level2">
+<h2 class="anchored" data-anchor-id="testing">testing</h2>
+<hr>
+<p><a href="https://github.com/Binjian/tspace/blob/main/tspace/config/vcu.py#L169" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<section id="test_generate_vcu_calibration" class="level3">
+<h3 class="anchored" data-anchor-id="test_generate_vcu_calibration">test_generate_vcu_calibration</h3>
+<blockquote class="blockquote">
+<pre><code> test_generate_vcu_calibration ()</code></pre>
+</blockquote>
+<hr>
+<p><a href="https://github.com/Binjian/tspace/blob/main/tspace/config/vcu.py#L150" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="test_generate_lookup_table" class="level3">
+<h3 class="anchored" data-anchor-id="test_generate_lookup_table">test_generate_lookup_table</h3>
+<blockquote class="blockquote">
+<pre><code> test_generate_lookup_table ()</code></pre>
+</blockquote>
+<div id="6d3b50060a7f834a" class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>vcu_calib_table <span class="op">=</span> test_generate_vcu_calibration()</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>vcu_calib_table</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">0.0000</th>
+<th data-quarto-table-cell-role="th">0.0625</th>
+<th data-quarto-table-cell-role="th">0.1250</th>
+<th data-quarto-table-cell-role="th">0.1875</th>
+<th data-quarto-table-cell-role="th">0.2500</th>
+<th data-quarto-table-cell-role="th">0.3125</th>
+<th data-quarto-table-cell-role="th">0.3750</th>
+<th data-quarto-table-cell-role="th">0.4375</th>
+<th data-quarto-table-cell-role="th">0.5000</th>
+<th data-quarto-table-cell-role="th">0.5625</th>
+<th data-quarto-table-cell-role="th">0.6250</th>
+<th data-quarto-table-cell-role="th">0.6875</th>
+<th data-quarto-table-cell-role="th">0.7500</th>
+<th data-quarto-table-cell-role="th">0.8125</th>
+<th data-quarto-table-cell-role="th">0.8750</th>
+<th data-quarto-table-cell-role="th">0.9375</th>
+<th data-quarto-table-cell-role="th">1.0000</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">0.000000</td>
+<td>0.0</td>
+<td>0.062500</td>
+<td>0.125000</td>
+<td>0.187500</td>
+<td>0.250000</td>
+<td>0.312500</td>
+<td>0.375000</td>
+<td>0.437500</td>
+<td>0.500000</td>
+<td>0.562500</td>
+<td>0.625000</td>
+<td>0.687500</td>
+<td>0.750000</td>
+<td>0.812500</td>
+<td>0.875000</td>
+<td>0.937500</td>
+<td>1.000000</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">7.000000</td>
+<td>0.0</td>
+<td>0.026102</td>
+<td>0.052204</td>
+<td>0.078307</td>
+<td>0.104409</td>
+<td>0.130511</td>
+<td>0.156613</td>
+<td>0.182715</td>
+<td>0.208818</td>
+<td>0.234920</td>
+<td>0.261022</td>
+<td>0.287124</td>
+<td>0.313227</td>
+<td>0.339329</td>
+<td>0.365431</td>
+<td>0.391533</td>
+<td>0.417635</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">1.052632</td>
+<td>0.0</td>
+<td>0.040565</td>
+<td>0.081130</td>
+<td>0.121695</td>
+<td>0.162260</td>
+<td>0.202825</td>
+<td>0.243390</td>
+<td>0.283955</td>
+<td>0.324520</td>
+<td>0.365085</td>
+<td>0.405650</td>
+<td>0.446215</td>
+<td>0.486780</td>
+<td>0.527345</td>
+<td>0.567910</td>
+<td>0.608475</td>
+<td>0.649040</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">2.105263</td>
+<td>0.0</td>
+<td>0.035416</td>
+<td>0.070833</td>
+<td>0.106249</td>
+<td>0.141666</td>
+<td>0.177082</td>
+<td>0.212498</td>
+<td>0.247915</td>
+<td>0.283331</td>
+<td>0.318748</td>
+<td>0.354164</td>
+<td>0.389580</td>
+<td>0.424997</td>
+<td>0.460413</td>
+<td>0.495830</td>
+<td>0.531246</td>
+<td>0.566662</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">3.157895</td>
+<td>0.0</td>
+<td>0.032273</td>
+<td>0.064547</td>
+<td>0.096820</td>
+<td>0.129093</td>
+<td>0.161366</td>
+<td>0.193640</td>
+<td>0.225913</td>
+<td>0.258186</td>
+<td>0.290460</td>
+<td>0.322733</td>
+<td>0.355006</td>
+<td>0.387280</td>
+<td>0.419553</td>
+<td>0.451826</td>
+<td>0.484099</td>
+<td>0.516373</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">4.210526</td>
+<td>0.0</td>
+<td>0.030027</td>
+<td>0.060054</td>
+<td>0.090080</td>
+<td>0.120107</td>
+<td>0.150134</td>
+<td>0.180161</td>
+<td>0.210187</td>
+<td>0.240214</td>
+<td>0.270241</td>
+<td>0.300268</td>
+<td>0.330294</td>
+<td>0.360321</td>
+<td>0.390348</td>
+<td>0.420375</td>
+<td>0.450402</td>
+<td>0.480428</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">5.263158</td>
+<td>0.0</td>
+<td>0.028292</td>
+<td>0.056583</td>
+<td>0.084875</td>
+<td>0.113167</td>
+<td>0.141459</td>
+<td>0.169750</td>
+<td>0.198042</td>
+<td>0.226334</td>
+<td>0.254625</td>
+<td>0.282917</td>
+<td>0.311209</td>
+<td>0.339501</td>
+<td>0.367792</td>
+<td>0.396084</td>
+<td>0.424376</td>
+<td>0.452667</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">6.315789</td>
+<td>0.0</td>
+<td>0.026887</td>
+<td>0.053774</td>
+<td>0.080661</td>
+<td>0.107549</td>
+<td>0.134436</td>
+<td>0.161323</td>
+<td>0.188210</td>
+<td>0.215097</td>
+<td>0.241984</td>
+<td>0.268871</td>
+<td>0.295758</td>
+<td>0.322646</td>
+<td>0.349533</td>
+<td>0.376420</td>
+<td>0.403307</td>
+<td>0.430194</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">7.368421</td>
+<td>0.0</td>
+<td>0.025713</td>
+<td>0.051426</td>
+<td>0.077140</td>
+<td>0.102853</td>
+<td>0.128566</td>
+<td>0.154279</td>
+<td>0.179992</td>
+<td>0.205706</td>
+<td>0.231419</td>
+<td>0.257132</td>
+<td>0.282845</td>
+<td>0.308558</td>
+<td>0.334272</td>
+<td>0.359985</td>
+<td>0.385698</td>
+<td>0.411411</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">8.421053</td>
+<td>0.0</td>
+<td>0.024709</td>
+<td>0.049418</td>
+<td>0.074127</td>
+<td>0.098836</td>
+<td>0.123545</td>
+<td>0.148254</td>
+<td>0.172963</td>
+<td>0.197672</td>
+<td>0.222381</td>
+<td>0.247090</td>
+<td>0.271799</td>
+<td>0.296509</td>
+<td>0.321218</td>
+<td>0.345927</td>
+<td>0.370636</td>
+<td>0.395345</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">9.473684</td>
+<td>0.0</td>
+<td>0.023835</td>
+<td>0.047670</td>
+<td>0.071504</td>
+<td>0.095339</td>
+<td>0.119174</td>
+<td>0.143009</td>
+<td>0.166844</td>
+<td>0.190679</td>
+<td>0.214513</td>
+<td>0.238348</td>
+<td>0.262183</td>
+<td>0.286018</td>
+<td>0.309853</td>
+<td>0.333687</td>
+<td>0.357522</td>
+<td>0.381357</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">10.526316</td>
+<td>0.0</td>
+<td>0.023063</td>
+<td>0.046126</td>
+<td>0.069189</td>
+<td>0.092252</td>
+<td>0.115315</td>
+<td>0.138378</td>
+<td>0.161441</td>
+<td>0.184504</td>
+<td>0.207567</td>
+<td>0.230630</td>
+<td>0.253693</td>
+<td>0.276756</td>
+<td>0.299819</td>
+<td>0.322883</td>
+<td>0.345946</td>
+<td>0.369009</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">11.578947</td>
+<td>0.0</td>
+<td>0.022374</td>
+<td>0.044748</td>
+<td>0.067122</td>
+<td>0.089496</td>
+<td>0.111870</td>
+<td>0.134244</td>
+<td>0.156618</td>
+<td>0.178992</td>
+<td>0.201366</td>
+<td>0.223740</td>
+<td>0.246114</td>
+<td>0.268488</td>
+<td>0.290862</td>
+<td>0.313236</td>
+<td>0.335609</td>
+<td>0.357983</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">12.631579</td>
+<td>0.0</td>
+<td>0.021753</td>
+<td>0.043506</td>
+<td>0.065259</td>
+<td>0.087012</td>
+<td>0.108765</td>
+<td>0.130518</td>
+<td>0.152271</td>
+<td>0.174024</td>
+<td>0.195777</td>
+<td>0.217530</td>
+<td>0.239283</td>
+<td>0.261036</td>
+<td>0.282789</td>
+<td>0.304542</td>
+<td>0.326294</td>
+<td>0.348047</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">13.684211</td>
+<td>0.0</td>
+<td>0.021189</td>
+<td>0.042378</td>
+<td>0.063567</td>
+<td>0.084756</td>
+<td>0.105944</td>
+<td>0.127133</td>
+<td>0.148322</td>
+<td>0.169511</td>
+<td>0.190700</td>
+<td>0.211889</td>
+<td>0.233078</td>
+<td>0.254267</td>
+<td>0.275456</td>
+<td>0.296644</td>
+<td>0.317833</td>
+<td>0.339022</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">14.736842</td>
+<td>0.0</td>
+<td>0.020673</td>
+<td>0.041346</td>
+<td>0.062019</td>
+<td>0.082692</td>
+<td>0.103365</td>
+<td>0.124038</td>
+<td>0.144712</td>
+<td>0.165385</td>
+<td>0.186058</td>
+<td>0.206731</td>
+<td>0.227404</td>
+<td>0.248077</td>
+<td>0.268750</td>
+<td>0.289423</td>
+<td>0.310096</td>
+<td>0.330769</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">15.789474</td>
+<td>0.0</td>
+<td>0.020199</td>
+<td>0.040397</td>
+<td>0.060596</td>
+<td>0.080795</td>
+<td>0.100993</td>
+<td>0.121192</td>
+<td>0.141390</td>
+<td>0.161589</td>
+<td>0.181788</td>
+<td>0.201986</td>
+<td>0.222185</td>
+<td>0.242384</td>
+<td>0.262582</td>
+<td>0.282781</td>
+<td>0.302979</td>
+<td>0.323178</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">16.842105</td>
+<td>0.0</td>
+<td>0.019760</td>
+<td>0.039520</td>
+<td>0.059280</td>
+<td>0.079040</td>
+<td>0.098800</td>
+<td>0.118560</td>
+<td>0.138320</td>
+<td>0.158080</td>
+<td>0.177840</td>
+<td>0.197600</td>
+<td>0.217360</td>
+<td>0.237120</td>
+<td>0.256880</td>
+<td>0.276640</td>
+<td>0.296400</td>
+<td>0.316160</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">17.894737</td>
+<td>0.0</td>
+<td>0.019353</td>
+<td>0.038705</td>
+<td>0.058058</td>
+<td>0.077411</td>
+<td>0.096764</td>
+<td>0.116116</td>
+<td>0.135469</td>
+<td>0.154822</td>
+<td>0.174174</td>
+<td>0.193527</td>
+<td>0.212880</td>
+<td>0.232233</td>
+<td>0.251585</td>
+<td>0.270938</td>
+<td>0.290291</td>
+<td>0.309644</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">18.947368</td>
+<td>0.0</td>
+<td>0.018973</td>
+<td>0.037946</td>
+<td>0.056919</td>
+<td>0.075892</td>
+<td>0.094865</td>
+<td>0.113838</td>
+<td>0.132811</td>
+<td>0.151784</td>
+<td>0.170757</td>
+<td>0.189730</td>
+<td>0.208703</td>
+<td>0.227676</td>
+<td>0.246649</td>
+<td>0.265622</td>
+<td>0.284595</td>
+<td>0.303568</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">20.000000</td>
+<td>0.0</td>
+<td>0.018618</td>
+<td>0.037235</td>
+<td>0.055853</td>
+<td>0.074471</td>
+<td>0.093088</td>
+<td>0.111706</td>
+<td>0.130324</td>
+<td>0.148942</td>
+<td>0.167559</td>
+<td>0.186177</td>
+<td>0.204795</td>
+<td>0.223412</td>
+<td>0.242030</td>
+<td>0.260648</td>
+<td>0.279265</td>
+<td>0.297883</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+<div id="d6ce72696a164ac" class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># #| output: true</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="co"># vcu_lookup_table = test_generate_lookup_table()</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="co"># vcu_calib_table</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+
+
+</section>
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp("https:\/\/Binjian\.github\.io\/tspace");
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/Binjian/tspace/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></div></div></footer></body></html>

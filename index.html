@@ -1,0 +1,1443 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.4.557">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="description" content="Time sequence data pipleline framework for deep reinforcement learning">
+
+<title>tspace</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="styles.css">
+<meta property="og:title" content="tspace">
+<meta property="og:description" content="Time sequence data pipleline framework for deep reinforcement learning">
+<meta property="og:site_name" content="tspace">
+<meta name="twitter:title" content="tspace">
+<meta name="twitter:description" content="Time sequence data pipleline framework for deep reinforcement learning">
+<meta name="twitter:card" content="summary">
+</head>
+
+<body class="nav-sidebar floating nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="./index.html">
+    <span class="navbar-title">tspace</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/Binjian/tspace"> <i class="bi bi-github" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+          <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./index.html">tspace</a></li></ol></nav>
+        <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">tspace</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./00.avatar.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Avatar</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">
+ <span class="menu-text"><b style="color:DodgerBlue;">Data</b></span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./01.data.core.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">core</span></a>
+  </div>
+</li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="false">
+ <span class="menu-text"><b>External</b></span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./01.data.external.numpy_utils.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Numpy utilities</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./01.data.external.pandas_utils.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Pandas utilities</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./01.data.location.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">location</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./01.data.time.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">time</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="true">
+ <span class="menu-text"><b style="color:DodgerBlue;">System</b></span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./02.system.decorator.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">decorator</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./02.system.exception.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">exception</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./02.system.gracefulkiller.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">graceful killer</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./02.system.log.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">log</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./02.system.plot.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">plot</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" aria-expanded="true">
+ <span class="menu-text"><b style="color:DodgerBlue;">Config</b></span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./03.config.vehicles.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">vehicles</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./03.config.drivers.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">drivers</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./03.config.db.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">database</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./03.config.messenger.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">messengers</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./03.config.utils.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">utils</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./03.config.vcu.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">vcu</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" aria-expanded="true">
+ <span class="menu-text"><b style="color:DodgerBlue;">Connection</b></span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./04.conn.remote_can_client.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">RemoteCanClient</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./04.conn.remote_can_exceptions.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Exceptions</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./04.conn.tcp.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">TCP</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./04.conn.udp.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">UDP</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./04.conn.tbox.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">tbox interface</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" aria-expanded="true">
+ <span class="menu-text"><b style="color:DodgerBlue;">Storage</b></span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-6" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" aria-expanded="false">
+ <span class="menu-text"><b>Pool</b></span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-7" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./05.storage.pool.pool.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Pool</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./05.storage.pool.mongo.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Mongo</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./05.storage.pool.dask.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Dask</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./05.storage.pool.parquet.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Parquet</span></a>
+  </div>
+</li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-8" aria-expanded="false">
+ <span class="menu-text"><b>Avro</b></span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-8" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-8" class="collapse list-unstyled sidebar-section depth3 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./05.storage.pool.avro.avro.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Avro</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./05.storage.pool.avro.schema.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Schema</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-9" aria-expanded="false">
+ <span class="menu-text"><b>Buffer</b></span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-9" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-9" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./05.storage.buffer.buffer.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Buffer</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./05.storage.buffer.mongo.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Mongo</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./05.storage.buffer.dask.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Dask</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-10" aria-expanded="true">
+ <span class="menu-text"><b style="color:DodgerBlue;">Dataflow</b></span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-10" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-10" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-11" aria-expanded="false">
+ <span class="menu-text"><b>Pipeline</b></span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-11" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-11" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./06.dataflow.pipeline.queue.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Queue</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./06.dataflow.pipeline.deque.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Deque</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-12" aria-expanded="false">
+ <span class="menu-text"><b>Filter</b></span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-12" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-12" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./06.dataflow.filter.filter.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Filter</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./06.dataflow.filter.homo.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Homofilter</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./06.dataflow.filter.hetero.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Heterofilter</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./06.dataflow.consumer.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Consumer</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./06.dataflow.producer.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Producer</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./06.dataflow.vehicle_interface.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">VehicleInterface</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./06.dataflow.kvaser.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Kvaser</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./06.dataflow.cloud.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Cloud</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./06.dataflow.cruncher.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Cruncher</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-13" aria-expanded="true">
+ <span class="menu-text"><b style="color:DodgerBlue;">Agent</b></span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-13" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-13" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./07.agent.dpg.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">DPG</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./07.agent.ddpg.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">DDPG</span></a>
+  </div>
+</li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-14" aria-expanded="false">
+ <span class="menu-text"><b>rdpg</b></span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-14" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-14" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./07.agent.rdpg.actor.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">SeqActor</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./07.agent.rdpg.critic.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">SeqCritic</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./07.agent.rdpg.rdpg.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">RDPG</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./07.agent.idql.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">IDQL</span></a>
+  </div>
+</li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-15" aria-expanded="false">
+ <span class="menu-text"><b>utils</b></span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-15" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-15" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./07.agent.utils.hyperparams.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Hyperparameters</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./07.agent.utils.ou_action_noise.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">OUActionNoise</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+      </ul>
+  </li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./utils.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">utils</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./sandbox.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">sandbox</span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#overview" id="toc-overview" class="nav-link active" data-scroll-target="#overview">Overview</a></li>
+  <li><a href="#avatar" id="toc-avatar" class="nav-link" data-scroll-target="#avatar"><code>Avatar</code></a></li>
+  <li><a href="#kvasercan" id="toc-kvasercan" class="nav-link" data-scroll-target="#kvasercan">KvaserCAN</a></li>
+  <li><a href="#remotecan" id="toc-remotecan" class="nav-link" data-scroll-target="#remotecan">RemoteCAN</a></li>
+  <li><a href="#cruncher" id="toc-cruncher" class="nav-link" data-scroll-target="#cruncher">Cruncher</a></li>
+  <li><a href="#agent" id="toc-agent" class="nav-link" data-scroll-target="#agent">Agent</a>
+  <ul>
+  <li><a href="#ddpg" id="toc-ddpg" class="nav-link" data-scroll-target="#ddpg"><code>DDPG</code></a></li>
+  <li><a href="#rdpg" id="toc-rdpg" class="nav-link" data-scroll-target="#rdpg"><code>RDPG</code></a></li>
+  <li><a href="#idql" id="toc-idql" class="nav-link" data-scroll-target="#idql"><code>IDQL</code></a></li>
+  </ul></li>
+  <li><a href="#model" id="toc-model" class="nav-link" data-scroll-target="#model">Model</a>
+  <ul>
+  <li><a href="#seqactor" id="toc-seqactor" class="nav-link" data-scroll-target="#seqactor"><code>SeqActor</code></a></li>
+  <li><a href="#seqcritic" id="toc-seqcritic" class="nav-link" data-scroll-target="#seqcritic"><code>SeqCritic</code></a></li>
+  </ul></li>
+  <li><a href="#storage" id="toc-storage" class="nav-link" data-scroll-target="#storage">Storage</a>
+  <ul>
+  <li><a href="#buffer" id="toc-buffer" class="nav-link" data-scroll-target="#buffer"><code>Buffer</code></a>
+  <ul class="collapse">
+  <li><a href="#mongobuffer" id="toc-mongobuffer" class="nav-link" data-scroll-target="#mongobuffer"><code>MongoBuffer</code></a></li>
+  <li><a href="#daskbuffer" id="toc-daskbuffer" class="nav-link" data-scroll-target="#daskbuffer"><code>DaskBuffer</code></a></li>
+  </ul></li>
+  <li><a href="#pool" id="toc-pool" class="nav-link" data-scroll-target="#pool"><code>Pool</code></a>
+  <ul class="collapse">
+  <li><a href="#mongopool" id="toc-mongopool" class="nav-link" data-scroll-target="#mongopool"><code>MongoPool</code></a></li>
+  <li><a href="#daskpool" id="toc-daskpool" class="nav-link" data-scroll-target="#daskpool"><code>DaskPool</code></a>
+  <ul class="collapse">
+  <li><a href="#parquetpool" id="toc-parquetpool" class="nav-link" data-scroll-target="#parquetpool"><code>ParquetPool</code></a></li>
+  <li><a href="#avropool" id="toc-avropool" class="nav-link" data-scroll-target="#avropool"><code>AvroPool</code></a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+  <li><a href="#configuration" id="toc-configuration" class="nav-link" data-scroll-target="#configuration">Configuration</a></li>
+  <li><a href="#scheduling" id="toc-scheduling" class="nav-link" data-scroll-target="#scheduling">Scheduling</a>
+  <ul>
+  <li><a href="#primary-threading-pool" id="toc-primary-threading-pool" class="nav-link" data-scroll-target="#primary-threading-pool">Primary threading pool</a></li>
+  <li><a href="#data-capturing-thread" id="toc-data-capturing-thread" class="nav-link" data-scroll-target="#data-capturing-thread">Data capturing thread</a></li>
+  <li><a href="#model-training-and-inference-thread" id="toc-model-training-and-inference-thread" class="nav-link" data-scroll-target="#model-training-and-inference-thread">Model training and inference thread</a></li>
+  </ul></li>
+  <li><a href="#todo" id="toc-todo" class="nav-link" data-scroll-target="#todo">TODO</a></li>
+  <li><a href="#how-to-use" id="toc-how-to-use" class="nav-link" data-scroll-target="#how-to-use">How to use</a>
+  <ul>
+  <li><a href="#install" id="toc-install" class="nav-link" data-scroll-target="#install">Install</a></li>
+  </ul></li>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://github.com/Binjian/tspace/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">tspace</h1>
+</div>
+
+<div>
+  <div class="description">
+    Time sequence data pipleline framework <br>for deep reinforcement learning
+  </div>
+</div>
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<!-- WARNING: THIS FILE WAS AUTOGENERATED! DO NOT EDIT! -->
+<section id="overview" class="level1">
+<h1>Overview</h1>
+<p><strong>tspace</strong> is an data pipleline framework for deep reinforcement learning with IO interface, processing and configuration. The current code base depicts an automotive implementation. The goal of the system is to increase the energy efficiency (reward) of a BEV by imposing modification on parameters (action) of powertrain controller, the VCU, based on observations of the vehicle (state), i.e.&nbsp;speed, acceleration, electric engine current, voltage etc. The main features are:</p>
+<ul>
+<li>works in both training and inferrence mode, supporting
+<ul>
+<li>coordinated <a href="https://en.wikipedia.org/wiki/Extract,_transform,_load">ETL</a> and ML pipelines,</li>
+<li>online and offline training,</li>
+<li>local and distributed training;</li>
+</ul></li>
+<li>supports multiple models:
+<ul>
+<li>reinforcement learning models with DDPG and</li>
+<li>recurrent models (RDPG) for time sequences with arbitrary length;</li>
+<li>offline reinforcement learning with “Implict Diffusion Q-Learning” (IDQ)</li>
+</ul></li>
+<li>the data pipelines are compatible to both ETL and ML dataflow with
+<ul>
+<li>support of multiple data sources (local CAN or remote cloud object storage),</li>
+<li>stateful time sequence processing with sequential model and</li>
+<li>support of both NoSQL database, local and cloud data storage.</li>
+</ul></li>
+</ul>
+<p><img src="res/tspace_overview.svg" alt="Overview of tspace architecture" width="80%"></p>
+<p>The diagram shows the basic architecture of <strong>tspace</strong>.</p>
+</section>
+<section id="avatar" class="level1">
+<h1><a href="https://Binjian.github.io/tspace/00.avatar.html#avatar"><code>Avatar</code></a></h1>
+<p>It is the entry point of the <code>tspace</code>. It orchestrates the whole ETL and ML workflow.</p>
+<ul>
+<li>It configures KvaserCAN, RemoteCAN, Cruncher, Agent, Model, Database, Pipeline.</li>
+<li>It manages the scheduling of two primary threads in the first tier of cascaded threading pools in <a href="https://Binjian.github.io/tspace/00.avatar.html#main"><code>tspace.avatar.main</code></a>.</li>
+<li>It selects the either <strong>KvaserCAN</strong> or <strong>RemoteCAN</strong> as the vehicle interface for reading the observation and applying the action.</li>
+</ul>
+</section>
+<section id="kvasercan" class="level1">
+<h1>KvaserCAN</h1>
+<p>It is implemented with <a href="https://Binjian.github.io/tspace/06.dataflow.kvaser.html#kvaser"><code>Kvaser</code></a> which provides</p>
+<ul>
+<li><p>a local interface for reading the observation (CAN messages of vehicle states) via Kvaser using <a href="https://Binjian.github.io/tspace/04.conn.udp.html#udp_context"><code>udp_context</code></a> to get CAN messages as json data from a local udp server. Then it encodes the raw json data into a <a href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.html">pandas.DataFrame</a> for forwarding through the data pipeline to <a href="https://Binjian.github.io/tspace/06.dataflow.cruncher.html#cruncher"><code>Cruncher</code></a>.</p></li>
+<li><p>It provides a local interface for applying the action (flashing parameters) onto the vehicle ECU (VCU). Before sending the action, it decodes the action from the <a href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.html">pandas.DataFrame</a> into packed string buffer and then sends it to the ECU by calling <a href="https://Binjian.github.io/tspace/04.conn.tbox.html#send_float_array"><code>send_float_array</code></a> from <a href="https://Binjian.github.io/tspace/06.dataflow.vehicle_interface.html#vehicleinterface.consume"><code>VehicleInterface.consume</code></a>.</p></li>
+<li><p>The control messages for training HMI go through the same UDP port. They are used to modify the threading events to control the episodic training process with <a href="https://Binjian.github.io/tspace/06.dataflow.vehicle_interface.html#vehicleinterface.hmi_control"><code>VehicleInterface.hmi_control</code></a>.</p></li>
+</ul>
+</section>
+<section id="remotecan" class="level1">
+<h1>RemoteCAN</h1>
+<p>It provides a remote interface to the vehicle via the object storage system on the cloud sent by the onboard TBox. It’s implemented with <a href="https://Binjian.github.io/tspace/06.dataflow.cloud.html#cloud"><code>Cloud</code></a>:</p>
+<ul>
+<li><p>It reads the observation (CAN messages of vehicle states) from the cloud object storage system through <a href="https://Binjian.github.io/tspace/04.conn.remote_can_client.html#remotecanclient.get_signals"><code>RemoteCanClient.get_signals</code></a>. It then encodes the raw json data into a <a href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.html">pandas.DataFrame</a> and forward it to <a href="https://Binjian.github.io/tspace/06.dataflow.cruncher.html#cruncher"><code>Cruncher</code></a> through the data pipeline.</p></li>
+<li><p>It sends the action (flashing parameters) to the vehicle ECU (VCU) in the shared <a href="https://Binjian.github.io/tspace/06.dataflow.vehicle_interface.html#vehicleinterface.consume"><code>VehicleInterface.consume</code></a> by calling <a href="https://Binjian.github.io/tspace/04.conn.remote_can_client.html#remotecanclient.send_torque_map"><code>RemoteCanClient.send_torque_map</code></a>, which decodes the action from the <a href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.html">pandas.DataFrame</a> into raw json string.</p></li>
+<li><p>It selects the training HMI to get the vehicle and driver information as configuration with <a href="https://Binjian.github.io/tspace/06.dataflow.cloud.html#cloud.hmi_capture_from_udp"><code>Cloud.hmi_capture_from_udp</code></a> for local udp server, with <a href="https://Binjian.github.io/tspace/06.dataflow.cloud.html#cloud.hmi_capture_from_rmq"><code>Cloud.hmi_capture_from_rmq</code></a> for remote RocketMQ server, with <a href="https://Binjian.github.io/tspace/06.dataflow.cloud.html#cloud.hmi_capture_from_dummy"><code>Cloud.hmi_capture_from_dummy</code></a> for pure inference mode without training or updating models. It shares the same control logic <a href="https://Binjian.github.io/tspace/06.dataflow.vehicle_interface.html#vehicleinterface.hmi_control"><code>VehicleInterface.hmi_control</code></a> with <strong>KvaserCAN</strong>.</p></li>
+</ul>
+</section>
+<section id="cruncher" class="level1">
+<h1>Cruncher</h1>
+<p>It is main pivot of the data pipeline for pre-processing the observation and post-processing the action:</p>
+<ul>
+<li><p>The <a href="https://Binjian.github.io/tspace/06.dataflow.cruncher.html#cruncher.filter"><code>Cruncher.filter</code></a> reveives the observation through the data pipeline from <strong>KvaserCAN</strong> or <strong>RemoteCAN</strong>. It pre-processes the input data into the quadruple with a timestamp <span class="math inline">\((timestamp, state, action, reward, state')\)</span> and give it to the reinforcement <strong>Agent</strong> <a href="https://Binjian.github.io/tspace/07.agent.dpg.html#dpg"><code>DPG</code></a>, subsequently its child <a href="https://Binjian.github.io/tspace/07.agent.ddpg.html#ddpg"><code>DDPG</code></a> or <a href="https://Binjian.github.io/tspace/07.agent.rdpg.rdpg.html#rdpg"><code>RDPG</code></a>, for inferring an optimal action determined by its current policy. After getting the prediction of the agent, it encodes the prediction result into an action object and forwards it to <a href="https://Binjian.github.io/tspace/06.dataflow.vehicle_interface.html#vehicleinterface.consume"><code>VehicleInterface.consume</code></a> to be flashed onto VCU.</p></li>
+<li><p>It collects the critic, actor loss, the total reward for each episode, the running reward and the action at the end of the episode. It also saves the model checkpoint and the training log locally.</p></li>
+</ul>
+</section>
+<section id="agent" class="level1">
+<h1>Agent</h1>
+<p>It provides a wrapper for the reinforcement learning model with <a href="https://Binjian.github.io/tspace/07.agent.dpg.html#dpg"><code>DPG</code></a>:</p>
+<ul>
+<li><p>It has an interface to data storage:</p>
+<ul>
+<li><p>retrieves the observation meta information and database configuration from <a href="https://Binjian.github.io/tspace/00.avatar.html#avatar"><code>Avatar</code></a>,</p></li>
+<li><p>initializes repo interface <a href="https://Binjian.github.io/tspace/05.storage.buffer.buffer.html#buffer"><code>Buffer</code></a>, subsequently <a href="https://Binjian.github.io/tspace/05.storage.buffer.mongo.html#mongobuffer"><code>MongoBuffer</code></a> or <a href="https://Binjian.github.io/tspace/05.storage.buffer.dask.html#daskbuffer"><code>DaskBuffer</code></a> which then initializes the database connection with <a href="https://Binjian.github.io/tspace/05.storage.pool.mongo.html#mongopool"><code>MongoPool</code></a> or <a href="https://Binjian.github.io/tspace/05.storage.pool.dask.html#daskpool"><code>DaskPool</code></a> respectively.</p></li>
+</ul></li>
+<li><p>It transfers observation data to the neural network:</p>
+<ul>
+<li><p>initializes the episode states,</p></li>
+<li><p>defines abstract methods <a href="https://Binjian.github.io/tspace/07.agent.dpg.html#dpg.actor_predict"><code>DPG.actor_predict</code></a>, <a href="https://Binjian.github.io/tspace/07.agent.dpg.html#dpg.train"><code>DPG.train</code></a>, <a href="https://Binjian.github.io/tspace/07.agent.dpg.html#dpg.get_losses"><code>DPG.get_losses</code></a>, <a href="https://Binjian.github.io/tspace/07.agent.dpg.html#dpg.soft_update_target"><code>DPG.soft_update_target</code></a>, <a href="https://Binjian.github.io/tspace/07.agent.dpg.html#dpg.init_checkpoint"><code>DPG.init_checkpoint</code></a>, <a href="https://Binjian.github.io/tspace/07.agent.dpg.html#dpg.save_ckpt"><code>DPG.save_ckpt</code></a>, <a href="https://Binjian.github.io/tspace/07.agent.dpg.html#dpg.touch_gpu"><code>DPG.touch_gpu</code></a> for concrete implementations in child classes <a href="https://Binjian.github.io/tspace/07.agent.ddpg.html#ddpg"><code>DDPG</code></a> and <a href="https://Binjian.github.io/tspace/07.agent.rdpg.rdpg.html#rdpg"><code>RDPG</code></a>,</p></li>
+<li><p>provides the concrete methods <a href="https://Binjian.github.io/tspace/07.agent.dpg.html#dpg.start_episode"><code>DPG.start_episode</code></a>, <a href="https://Binjian.github.io/tspace/07.agent.dpg.html#dpg.end_episode"><code>DPG.end_episode</code></a>, <a href="https://Binjian.github.io/tspace/07.agent.dpg.html#dpg.deposit"><code>DPG.deposit</code></a>, <a href="https://Binjian.github.io/tspace/07.agent.dpg.html#dpg.deposit_episode"><code>DPG.deposit_episode</code></a>.</p></li>
+<li><p><a href="https://Binjian.github.io/tspace/07.agent.dpg.html#dpg.touch_gpu"><code>DPG.touch_gpu</code></a> is used to warm up the GPU before starting inference.</p></li>
+</ul></li>
+</ul>
+<section id="ddpg" class="level2">
+<h2 class="anchored" data-anchor-id="ddpg"><a href="https://Binjian.github.io/tspace/07.agent.ddpg.html#ddpg"><code>DDPG</code></a></h2>
+<ul>
+<li>provides methods to create, load or initialize the <a href="https://arxiv.org/abs/1509.02971">Deep Deterministic Policy Gradient</a> <strong>Model</strong>, or restore checkpoints to it. It also exports the tflite model.</li>
+<li>It provides the concrete methods for the abstract ones in the <a href="https://Binjian.github.io/tspace/07.agent.dpg.html#dpg"><code>DPG</code></a> interface.</li>
+<li><a href="https://Binjian.github.io/tspace/07.agent.ddpg.html#ddpg.infer_single_sample"><code>DDPG.infer_single_sample</code></a> is the inference method with graph optimization via <a href="https://www.tensorflow.org/guide/function">tf.function</a>.</li>
+<li><a href="https://Binjian.github.io/tspace/07.agent.ddpg.html#ddpg.sample_minibatch"><code>DDPG.sample_minibatch</code></a> provides a minibatch sampled from the buffer. It handles the bootstrap when the buffer is empty thus there is no samples in the <a href="https://Binjian.github.io/tspace/05.storage.buffer.buffer.html#buffer"><code>Buffer</code></a> when the first episode has not ended.</li>
+<li><a href="https://Binjian.github.io/tspace/07.agent.ddpg.html#ddpg.update_with_batch"><code>DDPG.update_with_batch</code></a> enforces the back propagation and applies the weight update to the actor and critic network during <a href="https://Binjian.github.io/tspace/07.agent.ddpg.html#ddpg.train"><code>DDPG.train</code></a>.</li>
+</ul>
+</section>
+<section id="rdpg" class="level2">
+<h2 class="anchored" data-anchor-id="rdpg"><a href="https://Binjian.github.io/tspace/07.agent.rdpg.rdpg.html#rdpg"><code>RDPG</code></a></h2>
+<ul>
+<li>provides methods to create, load or initialize the <a href="https://arxiv.org/abs/1512.04455">Recurrent Deterministic Policy Gradient</a> <strong>Model</strong>, or restore checkpoints to it.</li>
+<li>It provides the concrete methods for the abstract ones in the <a href="https://Binjian.github.io/tspace/07.agent.dpg.html#dpg"><code>DPG</code></a> interface.</li>
+<li><a href="https://Binjian.github.io/tspace/07.agent.rdpg.rdpg.html#rdpg.actor_predict_step"><code>RDPG.actor_predict_step</code></a> is the inference method with graph optimization via <a href="https://www.tensorflow.org/guide/function">tf.function</a>.</li>
+<li><a href="https://Binjian.github.io/tspace/07.agent.rdpg.rdpg.html#rdpg.train_step"><code>RDPG.train_step</code></a> is the training method with graph optimization via <a href="https://www.tensorflow.org/guide/function">tf.function</a>. It also applies the weight update to the actor and critic network</li>
+<li><a href="https://Binjian.github.io/tspace/07.agent.rdpg.rdpg.html#rdpg.train"><code>RDPG.train</code></a> samples a ragged minibatch of episodes with different lengths from the buffer. It can handle training of time sequences with arbitrary length by truncated back propagation through time (TBPTT) with splitting the episodes and looping over the subsequences with Masking layers to update the weights by <a href="https://Binjian.github.io/tspace/07.agent.rdpg.rdpg.html#rdpg.train_step"><code>RDPG.train_step</code></a>.</li>
+</ul>
+</section>
+<section id="idql" class="level2">
+<h2 class="anchored" data-anchor-id="idql"><a href="https://Binjian.github.io/tspace/07.agent.idql.html#idql"><code>IDQL</code></a></h2>
+<ul>
+<li>provides methods to create and initialize the <a href="https://arxiv.org/abs/2304.10573">Implicit Diffusion Q-learning</a> <strong>Model</strong>.</li>
+<li>The implementation of model is based on the repo <a href="https://github.com/philippe-eecs/IDQL/blob/main/jaxrl5/agents/ddpm_iql/ddpm_iql_learner.py">jaxrl5</a> with Jax and Flax interface.</li>
+<li>It provides the concrete methods for the abstract ones in the <a href="https://Binjian.github.io/tspace/07.agent.dpg.html#dpg"><code>DPG</code></a> interface.</li>
+<li><a href="https://Binjian.github.io/tspace/07.agent.idql.html#idql.actor_predict"><code>IDQL.actor_predict</code></a> is the inference method.</li>
+<li><a href="https://Binjian.github.io/tspace/07.agent.idql.html#idql.train"><code>IDQL.train</code></a> is the training method. Jaxrl5 takes care of the weight update to the actor and critic and the value network. It samples a minibatch of tuples (state, action, reward, next state) from the buffer.</li>
+</ul>
+</section>
+</section>
+<section id="model" class="level1">
+<h1>Model</h1>
+<p>It’s the neural network model for the reinforcement learning agent. For now it’s only implemented for <a href="https://Binjian.github.io/tspace/07.agent.rdpg.rdpg.html#rdpg"><code>RDPG</code></a> in <a href="https://Binjian.github.io/tspace/07.agent.rdpg.actor.html#seqactor"><code>SeqActor</code></a> and <a href="https://Binjian.github.io/tspace/07.agent.rdpg.critic.html#seqcritic"><code>SeqCritic</code></a>.</p>
+<section id="seqactor" class="level2">
+<h2 class="anchored" data-anchor-id="seqactor"><a href="https://Binjian.github.io/tspace/07.agent.rdpg.actor.html#seqactor"><code>SeqActor</code></a></h2>
+<p>It is the actor network with two recurrent LSTM layers, two dense layers and a Masking layer for handling ragged input sequence.</p>
+<ul>
+<li><a href="https://Binjian.github.io/tspace/07.agent.rdpg.actor.html#seqactor.predict"><code>SeqActor.predict</code></a> outputs the action given the state for inference, thus the batch dimension has to be one.</li>
+<li><a href="https://Binjian.github.io/tspace/07.agent.rdpg.actor.html#seqactor.evaluate_actions"><code>SeqActor.evaluate_actions</code></a> outputs the action given a batch of states for training. It’s used in the training loop to get the prediction of the target actor network to calculate the critic loss.</li>
+<li>It handles the ragged input sequences with Masking layer and the stateful recurrent layers for TBPTT</li>
+<li>For inference, <a href="https://Binjian.github.io/tspace/07.agent.rdpg.critic.html#seqcritic"><code>SeqCritic</code></a> is not used and only <a href="https://Binjian.github.io/tspace/07.agent.rdpg.actor.html#seqactor"><code>SeqActor</code></a> is required.</li>
+</ul>
+</section>
+<section id="seqcritic" class="level2">
+<h2 class="anchored" data-anchor-id="seqcritic"><a href="https://Binjian.github.io/tspace/07.agent.rdpg.critic.html#seqcritic"><code>SeqCritic</code></a></h2>
+<p>It is the critic network with two recurrent LSTM layers and two dense layer and a Masking layer for handling ragged input sequence.</p>
+<ul>
+<li><a href="https://Binjian.github.io/tspace/07.agent.rdpg.critic.html#seqcritic.evaluate_q"><code>SeqCritic.evaluate_q</code></a> gives the Q-value given a batch of the state and action. It’s used in the training loop <a href="https://Binjian.github.io/tspace/07.agent.rdpg.rdpg.html#rdpg.train_step"><code>RDPG.train_step</code></a> to calculate the critic and actor loss.</li>
+</ul>
+</section>
+</section>
+<section id="storage" class="level1">
+<h1>Storage</h1>
+<p>represents the data storage in the repository pattern with two polymorphic abstraction layers <a href="https://Binjian.github.io/tspace/05.storage.buffer.buffer.html#buffer"><code>Buffer</code></a> and <a href="https://Binjian.github.io/tspace/05.storage.pool.pool.html#pool"><code>Pool</code></a>.</p>
+<section id="buffer" class="level2">
+<h2 class="anchored" data-anchor-id="buffer"><a href="https://Binjian.github.io/tspace/05.storage.buffer.buffer.html#buffer"><code>Buffer</code></a></h2>
+<p>is an abstract class. It provides a view of data storage to the agent:</p>
+<ul>
+<li><strong>Agent</strong> uses the abstract methods <a href="https://Binjian.github.io/tspace/05.storage.buffer.buffer.html#buffer.load"><code>Buffer.load</code></a>, <code>Buffer.save</code> and <a href="https://Binjian.github.io/tspace/05.storage.buffer.buffer.html#buffer.close"><code>Buffer.close</code></a> loads or saves data from or to the <a href="https://Binjian.github.io/tspace/05.storage.pool.pool.html#pool"><code>Pool</code></a>, and closes the connection to the <a href="https://Binjian.github.io/tspace/05.storage.pool.pool.html#pool"><code>Pool</code></a>.</li>
+<li>The abstract <a href="https://Binjian.github.io/tspace/05.storage.buffer.buffer.html#buffer.sample"><code>Buffer.sample</code></a> samples a minibatch from the <a href="https://Binjian.github.io/tspace/05.storage.pool.pool.html#pool"><code>Pool</code></a>. It needs the child of <a href="https://Binjian.github.io/tspace/05.storage.buffer.buffer.html#buffer"><code>Buffer</code></a> to implement the concrete efficient sampling method, which depends on the underlying data storage system.</li>
+<li>The concrete methode <a href="https://Binjian.github.io/tspace/05.storage.buffer.buffer.html#buffer.store"><code>Buffer.store</code></a> store the whole episode data into the <a href="https://Binjian.github.io/tspace/05.storage.pool.pool.html#pool"><code>Pool</code></a></li>
+<li>The concrete methode <a href="https://Binjian.github.io/tspace/05.storage.buffer.buffer.html#buffer.find"><code>Buffer.find</code></a> simply calls <a href="https://Binjian.github.io/tspace/05.storage.pool.pool.html#pool.find"><code>Pool.find</code></a> to find the data with the given query.</li>
+</ul>
+<section id="mongobuffer" class="level3">
+<h3 class="anchored" data-anchor-id="mongobuffer"><a href="https://Binjian.github.io/tspace/05.storage.buffer.mongo.html#mongobuffer"><code>MongoBuffer</code></a></h3>
+<p>It’s a concrete class for the underlying NoSQL database MongoDB.</p>
+<ul>
+<li>It implements the abstract methods required by the <a href="https://Binjian.github.io/tspace/05.storage.buffer.buffer.html#buffer"><code>Buffer</code></a> interface.</li>
+<li><a href="https://Binjian.github.io/tspace/05.storage.buffer.mongo.html#mongobuffer.decode_batch_records"><code>MongoBuffer.decode_batch_records</code></a> prepare the sample batch data from <a href="https://Binjian.github.io/tspace/05.storage.pool.mongo.html#mongopool"><code>MongoPool</code></a> into a compliant format for agent training.</li>
+<li>It can handle both DDPG record data type and RDPG episode data type.</li>
+</ul>
+</section>
+<section id="daskbuffer" class="level3">
+<h3 class="anchored" data-anchor-id="daskbuffer"><a href="https://Binjian.github.io/tspace/05.storage.buffer.dask.html#daskbuffer"><code>DaskBuffer</code></a></h3>
+<p>It’s a concrete class for the distributed data storage system Dask.</p>
+<ul>
+<li>It implements the abstract methods required by the <a href="https://Binjian.github.io/tspace/05.storage.buffer.buffer.html#buffer"><code>Buffer</code></a> interface.</li>
+<li><a href="https://Binjian.github.io/tspace/05.storage.buffer.dask.html#daskbuffer.decode_batch_records"><code>DaskBuffer.decode_batch_records</code></a> prepare the sample batch data from <a href="https://Binjian.github.io/tspace/05.storage.pool.dask.html#daskpool"><code>DaskPool</code></a> into a compliant format for agent training.</li>
+<li>It can handle both DDPG record data type and RDPG episode data type.</li>
+</ul>
+</section>
+</section>
+<section id="pool" class="level2">
+<h2 class="anchored" data-anchor-id="pool"><a href="https://Binjian.github.io/tspace/05.storage.pool.pool.html#pool"><code>Pool</code></a></h2>
+<p>is an abstract class. It’s the interface for the underlying data storage. For the moment, it’s implemented with <a href="https://Binjian.github.io/tspace/05.storage.pool.mongo.html#mongopool"><code>MongoPool</code></a> and <a href="https://Binjian.github.io/tspace/05.storage.pool.dask.html#daskpool"><code>DaskPool</code></a>.</p>
+<ul>
+<li>It defines the abstract methods <a href="https://Binjian.github.io/tspace/05.storage.pool.pool.html#pool.load"><code>Pool.load</code></a>, <a href="https://Binjian.github.io/tspace/05.storage.pool.pool.html#pool.close"><code>Pool.close</code></a>, <a href="https://Binjian.github.io/tspace/05.storage.pool.pool.html#pool.store"><code>Pool.store</code></a>, <a href="https://Binjian.github.io/tspace/05.storage.pool.pool.html#pool.delete"><code>Pool.delete</code></a>, <a href="https://Binjian.github.io/tspace/05.storage.pool.pool.html#pool.find"><code>Pool.find</code></a>, <a href="https://Binjian.github.io/tspace/05.storage.pool.pool.html#pool.sample"><code>Pool.sample</code></a> and <a href="https://Binjian.github.io/tspace/05.storage.pool.pool.html#pool._count"><code>Pool._count</code></a> for the concrete classes to implement.</li>
+<li>It defines <a href="https://Binjian.github.io/tspace/01.data.core.html#poolquery"><code>PoolQuery</code></a> as the query object for <a href="https://Binjian.github.io/tspace/05.storage.pool.pool.html#pool.sample"><code>Pool.sample</code></a>, <a href="https://Binjian.github.io/tspace/05.storage.pool.pool.html#pool.find"><code>Pool.find</code></a> and <a href="https://Binjian.github.io/tspace/05.storage.pool.pool.html#pool._count"><code>Pool._count</code></a> method.</li>
+<li>It implements the iterable protocol with <a href="https://Binjian.github.io/tspace/05.storage.pool.pool.html#pool.__iter__"><code>Pool.__iter__</code></a> and <a href="https://Binjian.github.io/tspace/05.storage.pool.pool.html#pool.__getitem__"><code>Pool.__getitem__</code></a> for the concrete classes to implement an efficient indexing method.</li>
+</ul>
+<section id="mongopool" class="level3">
+<h3 class="anchored" data-anchor-id="mongopool"><a href="https://Binjian.github.io/tspace/05.storage.pool.mongo.html#mongopool"><code>MongoPool</code></a></h3>
+<p>It’s a concrete class for the underlying NoSQL database MongoDB with time series support. It handles both record data type and episode data type with MongoDB collection features.</p>
+<ul>
+<li>It provides the interface to the MongoDB database with the <a href="https://pymongo.readthedocs.io/en/stable">pymongo</a> library.</li>
+<li>It implements the abstract methods required by the <a href="https://Binjian.github.io/tspace/05.storage.pool.pool.html#pool"><code>Pool</code></a> interface.</li>
+<li><a href="https://Binjian.github.io/tspace/05.storage.pool.mongo.html#mongopool.store_record"><code>MongoPool.store_record</code></a> stores the record data into the MongoDB database for <a href="https://Binjian.github.io/tspace/07.agent.ddpg.html#ddpg"><code>DDPG</code></a> agent.</li>
+<li><a href="https://Binjian.github.io/tspace/05.storage.pool.mongo.html#mongopool.store_episode"><code>MongoPool.store_episode</code></a> stores the episode data into the MongoDB database for <a href="https://Binjian.github.io/tspace/07.agent.rdpg.rdpg.html#rdpg"><code>RDPG</code></a> agent.</li>
+</ul>
+</section>
+<section id="daskpool" class="level3">
+<h3 class="anchored" data-anchor-id="daskpool"><a href="https://Binjian.github.io/tspace/05.storage.pool.dask.html#daskpool"><code>DaskPool</code></a></h3>
+<p>It’s an abstract class for the distributed data storage system Dask, since we have to use different backends: Parquet for record data type and avro for episode data type.</p>
+<ul>
+<li>It supports both local file storage and remote object storage with the <a href="https://dask.org">dask</a> library.</li>
+<li>It defines the generic data type for the abstract method required by the <a href="https://Binjian.github.io/tspace/05.storage.pool.pool.html#pool"><code>Pool</code></a> interface. The generic data type can then be specialized by the concrete classes either as dask.DataFrame for record data type or dask.Bag for episode data type.</li>
+</ul>
+<section id="parquetpool" class="level4">
+<h4 class="anchored" data-anchor-id="parquetpool"><a href="https://Binjian.github.io/tspace/05.storage.pool.parquet.html#parquetpool"><code>ParquetPool</code></a></h4>
+<p>is a concrete class for the record data type with the Parquet file format as backend storage.</p>
+<ul>
+<li>It implements the abstract methods required by the <a href="https://Binjian.github.io/tspace/05.storage.pool.dask.html#daskpool"><code>DaskPool</code></a> interface and <a href="https://Binjian.github.io/tspace/05.storage.pool.pool.html#pool"><code>Pool</code></a> subsequently.</li>
+<li><a href="https://Binjian.github.io/tspace/05.storage.pool.parquet.html#parquetpool.sample"><code>ParquetPool.sample</code></a> provides an efficient unified sampling interface via Dask.DataFrame to a Parquet storage either locally or remotely.</li>
+<li><a href="https://Binjian.github.io/tspace/05.storage.pool.parquet.html#parquetpool.get_query"><code>ParquetPool.get_query</code></a> provides the query object through Dask indexing for the <a href="https://Binjian.github.io/tspace/05.storage.pool.parquet.html#parquetpool.sample"><code>ParquetPool.sample</code></a> method.</li>
+</ul>
+</section>
+<section id="avropool" class="level4">
+<h4 class="anchored" data-anchor-id="avropool"><a href="https://Binjian.github.io/tspace/05.storage.pool.avro.avro.html#avropool"><code>AvroPool</code></a></h4>
+<p>is a concrete class for the episode data type with the avro file format as backend storage.</p>
+<ul>
+<li>It implements the abstract methods required by the <a href="https://Binjian.github.io/tspace/05.storage.pool.dask.html#daskpool"><code>DaskPool</code></a> interface and <a href="https://Binjian.github.io/tspace/05.storage.pool.pool.html#pool"><code>Pool</code></a> subsequently.</li>
+<li><a href="https://Binjian.github.io/tspace/05.storage.pool.avro.avro.html#avropool.sample"><code>AvroPool.sample</code></a> provides an efficient unified sampling interface via Dask.Bag to a avro storage either locally or remotely.</li>
+<li><a href="https://Binjian.github.io/tspace/05.storage.pool.avro.avro.html#avropool.get_query"><code>AvroPool.get_query</code></a> provides the query object through Dask indexing for the <a href="https://Binjian.github.io/tspace/05.storage.pool.avro.avro.html#avropool.sample"><code>AvroPool.sample</code></a> method.</li>
+</ul>
+</section>
+</section>
+</section>
+</section>
+<section id="configuration" class="level1">
+<h1>Configuration</h1>
+<p>provides all classes for the configuration of the <strong>tspace</strong> framework. Most of them serve as meta information for the observation data and used in later indexing or grouping for efficient sampling. It includes</p>
+<ul>
+<li><a href="https://Binjian.github.io/tspace/03.config.vehicles.html#truck"><code>Truck</code></a> with children <a href="https://Binjian.github.io/tspace/03.config.vehicles.html#truckincloud"><code>TruckInCloud</code></a> and <a href="https://Binjian.github.io/tspace/03.config.vehicles.html#truckinfield"><code>TruckInField</code></a> with different interfaces using mixins <a href="https://Binjian.github.io/tspace/03.config.vehicles.html#tboxmixin"><code>TboxMixin</code></a> and <a href="https://Binjian.github.io/tspace/03.config.vehicles.html#kvasermixin"><code>KvaserMixin</code></a>. It provides a managed truck list and two dictionaries for quick access to the truck configuration;</li>
+<li><a href="https://Binjian.github.io/tspace/03.config.drivers.html#driver"><code>Driver</code></a> with properties to be store in the meta information of the observation data;</li>
+<li><code>TripMessenger</code> for different the HMI input source;</li>
+<li><code>CANMessenger</code> for different CAN message source;</li>
+<li><code>DBConfig</code> for management of the database configuration;</li>
+</ul>
+</section>
+<section id="scheduling" class="level1">
+<h1>Scheduling</h1>
+<p>The schduling of ETL and ML training and inference is carried out as two levels of cascaded threading pools.</p>
+<section id="primary-threading-pool" class="level2">
+<h2 class="anchored" data-anchor-id="primary-threading-pool">Primary threading pool</h2>
+<p>is managed by <a href="https://Binjian.github.io/tspace/00.avatar.html#avatar"><code>Avatar</code></a> with two primary threads in <a href="https://Binjian.github.io/tspace/00.avatar.html#main"><code>tspace.avatar.main</code></a>:</p>
+<ul>
+<li>The first primary thread is for data caputring</li>
+<li>The second primary thread is for training and inference</li>
+</ul>
+</section>
+<section id="data-capturing-thread" class="level2">
+<h2 class="anchored" data-anchor-id="data-capturing-thread">Data capturing thread</h2>
+<p>calls <a href="https://Binjian.github.io/tspace/06.dataflow.vehicle_interface.html#vehicleinterface.ignite"><code>VehicleInterface.ignite</code></a>, which is shared by <a href="https://Binjian.github.io/tspace/06.dataflow.kvaser.html#kvaser"><code>Kvaser</code></a> and <a href="https://Binjian.github.io/tspace/06.dataflow.cloud.html#cloud"><code>Cloud</code></a>. It just starts a secondary threading pool containing six threads</p>
+<ul>
+<li><a href="https://Binjian.github.io/tspace/06.dataflow.vehicle_interface.html#vehicleinterface.produce"><code>VehicleInterface.produce</code></a> get the raw data either from the local UDP server as in <a href="https://Binjian.github.io/tspace/06.dataflow.kvaser.html#kvaser"><code>Kvaser</code></a> or the remote cloud object storage as in <a href="https://Binjian.github.io/tspace/06.dataflow.cloud.html#cloud"><code>Cloud</code></a> and forward it to the raw data pipeline. In case of <a href="https://Binjian.github.io/tspace/06.dataflow.kvaser.html#kvaser"><code>Kvaser</code></a>, it also gets the training HMI control messages from the same UDP server and put them in the HMI data pipeline.</li>
+<li><a href="https://Binjian.github.io/tspace/06.dataflow.vehicle_interface.html#vehicleinterface.hmi_control"><code>VehicleInterface.hmi_control</code></a> manages the episodic state machine to control the training and inference process.</li>
+<li><a href="https://Binjian.github.io/tspace/06.dataflow.vehicle_interface.html#vehicleinterface.countdown"><code>VehicleInterface.countdown</code></a> handles the episode end with a countdown timer to synchronize the data caputring is aligned with the episode end event.</li>
+<li><a href="https://Binjian.github.io/tspace/06.dataflow.vehicle_interface.html#vehicleinterface.filter"><code>VehicleInterface.filter</code></a> transforms the raw input json object into pandas.DataFrame and forward it to the input data pipeline of <a href="https://Binjian.github.io/tspace/06.dataflow.cruncher.html#cruncher.filter"><code>Cruncher.filter</code></a> thread.</li>
+<li><a href="https://Binjian.github.io/tspace/06.dataflow.vehicle_interface.html#vehicleinterface.consume"><code>VehicleInterface.consume</code></a> is responsible for fetching the action object from the output data pipeline of <a href="https://Binjian.github.io/tspace/06.dataflow.cruncher.html#cruncher.filter"><code>Cruncher.filter</code></a> thread and having it flashed on the vehicle ECU (VCU).</li>
+<li><a href="https://Binjian.github.io/tspace/06.dataflow.vehicle_interface.html#vehicleinterface.watch_dog"><code>VehicleInterface.watch_dog</code></a> provides a watchdog to monitor the health of the data capturing process and the training process. It triggers the system stop if the observation or action quality is below a threshold.</li>
+</ul>
+</section>
+<section id="model-training-and-inference-thread" class="level2">
+<h2 class="anchored" data-anchor-id="model-training-and-inference-thread">Model training and inference thread</h2>
+<p>call <a href="https://Binjian.github.io/tspace/06.dataflow.cruncher.html#cruncher.filter"><code>Cruncher.filter</code></a>. <strong>Importantly, all processing in this thread is done synchronously in order to preserve the order of the time sequence, thus the causality of the oberservation and action.</strong></p>
+<ul>
+<li>It gets the data through the input pipeline and delegates the data to the agent for training or inference.</li>
+<li>After getting the prediction from the agent, it encodes the prediction result into an action object and forwards it through the output pipeline to <a href="https://Binjian.github.io/tspace/06.dataflow.vehicle_interface.html#vehicleinterface.consume"><code>VehicleInterface.consume</code></a> to have it flashed on VCU.</li>
+<li>It also controls the training loop, the inference loop and manage the training log and model checkpoint.</li>
+<li>This thread is synchronized with the threads in the secondary threading pool with pre-defined <code>threading.Event</code>: <code>start_event</code>, <code>stop_event</code>, <code>flash_event</code>, <code>interrupt_event</code> and <code>exit_event</code>.</li>
+</ul>
+</section>
+</section>
+<section id="todo" class="level1">
+<h1>TODO</h1>
+<ol type="1">
+<li>Add time sequence embedding database support with LanceDB for TimeGPT</li>
+<li>Batch mode for large scale inference and training with Unit of Work pattern</li>
+<li>Add schemes for serializing generic time series data</li>
+</ol>
+</section>
+<section id="how-to-use" class="level1">
+<h1>How to use</h1>
+<section id="install" class="level2">
+<h2 class="anchored" data-anchor-id="install">Install</h2>
+<div class="sourceCode" id="cb1"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pip</span> install tspace</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp("https:\/\/Binjian\.github\.io\/tspace");
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/Binjian/tspace/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></div></div></footer></body></html>
