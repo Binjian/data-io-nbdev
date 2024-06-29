@@ -68,14 +68,13 @@ class IDQL(DPG):
             - pool in mongodb
             - buffer in memory (numpy array)
         model interface:
-            - actor networkVj
-            - critic network
-
-
-    Attributes:
-
-        idql_net: actor network
-        _ckpt_idql_dir: checkpoint directory for critic
+            - idql_net: the implicit diffusion q-learning networks, which contains
+                - actor_net: the behavior actor network (from the data)
+                - critic_net: the critic network (Q-value function)
+                - value_net: the value network (V-value function)
+                The immplicit policy is re-weighting the sample from the behavior actor network with the importance weights
+                recommending the expectile loss by the paper
+            _ckpt_idql_dir: checkpoint directory for critic
 
     """
 
@@ -91,8 +90,9 @@ class IDQL(DPG):
         """initialize the rdpg agent.
 
         args:
-            truck.ObservationNumber (int): dimension of the state space.
-            padding_value (float): value to pad the state with, impossible value for observation, action or re
+
+            - truck.ObservationNumber (int): dimension of the state space.
+            - padding_value (float): value to pad the state with, impossible value for observation, action or re
         """
 
         self.logger = self.logger.getChild("eos").getChild(self.__str__())
